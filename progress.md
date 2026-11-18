@@ -34,5 +34,8 @@ Published as a claude.ai artifact (private to the owner until shared).
 - [ ] Tanzil for several dead children at once; multi-generation tanzil.
 - [ ] Optional dark theme.
 
+## Deploy
+GitHub Pages from `main` / root (`index.html` is self-contained, `.nojekyll` added). URL: https://xxvista.github.io/mawarith-maliki/
+
 ## Build
 `python3 build.py` assembles `index.html` from `template.html` + `engine.js` + `ui.js`.

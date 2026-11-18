@@ -9,3 +9,7 @@ Arabic (RTL) single-page inheritance calculator and teaching tool following the 
 - `test.js` — regression tests: `node test.js`
 
 See `progress.md` and `bugs.md`.
+
+## Live site
+GitHub Pages (branch `main`, root): https://xxvista.github.io/mawarith-maliki/
+Every push to `main` redeploys it.
