@@ -31,6 +31,7 @@ Published as a claude.ai artifact (private to the owner until shared).
 - [ ] Test on a real iPhone/Android browser (only headless Chrome emulation so far).
 - [ ] Add past-exam questions and lecture examples as exercises (waiting for the files).
 - [ ] Student name line in the header (name not provided yet).
+- [ ] Student progress dashboard (#6), exam mode (#7), dark mode / font size (#9), free-text heir entry (#11).
 - [ ] Drowned/burned (gharqa/hadma) dedicated calculator.
 - [ ] Per-class degree handling inside dhawu al-arham class 4 (strength of kinship).
 - [ ] Tanzil for several dead children at once; multi-generation tanzil.
@@ -63,3 +64,11 @@ GitHub Pages from `main` / root (`index.html` is self-contained, `.nojekyll` add
 ## حاسبات الحالات الخاصة (2026-11-18)
 - تبويب جديد «حالات خاصة» يعمل على الورثة المدخلين في الحاسبة: الحمل (إيقاف النصيب بحسب 1–4 أجنة)، المفقود (حالتا الحياة والموت)، الخنثى (متوسط حالتي الذكورة والأنوثة)، المناسخات (طريقة السهام والجامعة مع ربط الوارث المشترك).
 - أُضيفت 7 اختبارات انحدار (المجموع 33). مقدار ما يُوقف للحمل مختلف فيه (قيد L ما زال مفتوحاً).
+
+## إضافات الواجهة (2026-11-18) — extras.js
+- مشاركة بالرابط: الحالة كاملة في الـhash (`#calc?h=wives:1,sons:2&m=B&g=m&e=240000`) تُفتح وتُحسب تلقائياً؛ أزرار نسخ الرابط ونسخ النتيجة كنص وطباعة/PDF (ورقة بترويسة المقرر).
+- مخطط دائري للأنصبة وشجرة عائلة SVG (وارث/محجوب/لا يرث) تحت النتيجة.
+- مقارنة الصيغ الثلاث جنباً إلى جنب مع تلوين الفروق، وحلّ خطوة بخطوة (6 خطوات: الورثة، الحجب، الفروض، العصبة، الأصل والعول والردّ، النتيجة).
+- تبويب «بحث وقاموس»: 35 مصطلحاً وبحث في نصوص الدروس (تطبيع الحروف العربية) مع فتح الدرس.
+- PWA: manifest وsw.js (شبكة أولاً ثم ذاكرة مؤقتة) وأيقونتان، وزر تثبيت (وإرشاد iOS). التسجيل يعمل على GitHub Pages فقط؛ في نسخة claude.ai لا يعمل ولا يضرّ.
+- build.py يحقن extras.js في ui.js عند العلامة /*EXTRAS*/.
