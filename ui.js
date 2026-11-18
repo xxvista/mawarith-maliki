@@ -15,9 +15,24 @@ const val={};E.KEYS.forEach(k=>val[k]=0);
 const $=s=>document.querySelector(s);
 const TABS=['calc','learn','arham','takh','rules','ex','refs'];
 
-function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));try{history.replaceState(null,'','#'+t)}catch(e){}
+function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));moreBtn.classList.toggle('on',['rules','ex','refs'].includes(t));try{history.replaceState(null,'','#'+t)}catch(e){}
   if(t==='takh')drawTakh();if(t==='learn'&&curL<0&&!chal)renderLessonList();}
-$('#nav').onclick=e=>{const b=e.target.closest('button');if(b){tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})}};
+const sheet=$('#moreSheet'),moreBtn=$('#moreBtn');
+const closeSheet=()=>{sheet.hidden=true;moreBtn.setAttribute('aria-expanded','false')};
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.id==='moreBtn'){sheet.hidden=!sheet.hidden;moreBtn.setAttribute('aria-expanded',String(!sheet.hidden));return}
+  closeSheet();tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})};
+sheet.onclick=e=>{const b=e.target.closest('button');if(!b)return;closeSheet();tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})};
+document.addEventListener('click',e=>{if(!sheet.hidden&&!e.target.closest('#moreSheet,#moreBtn'))closeSheet()});
+function stackify(c){c.querySelectorAll('table').forEach(tb=>{
+  const rows=[...tb.querySelectorAll('tr')];if(!rows.length)return;
+  const h=rows[0];const ths=[...h.children];
+  if(ths.length<3||!ths.every(x=>x.tagName==='TH'))return;
+  tb.classList.add('stack');h.classList.add('hd');
+  const labels=ths.map(x=>x.textContent.trim());
+  rows.slice(1).forEach(r=>[...r.children].forEach((td,i)=>{if(td.tagName==='TD'&&labels[i])td.setAttribute('data-label',labels[i])}));
+})}
+['#out','#arOut','#tkOut'].forEach(s=>{const el=$(s);new MutationObserver(()=>stackify(el)).observe(el,{childList:true})});
 const h0=(location.hash||'').slice(1);if(TABS.includes(h0))tab(h0);
 
 function drawModes(){$('#modes').innerHTML=MODES.map(m=>`<button class="mode ${m.id===mode?'on':''}" data-m="${m.id}"><b>${m.t}</b><span>${m.d}</span></button>`).join('')}
@@ -133,7 +148,7 @@ function run(){
   if(tza)tza.groups.forEach(g=>parts.push({l:g.label+' (تنزيل)',f:g.share,c:'#d4a64a'}));
   if(!r.bayt.isZero())parts.push({l:mode==='A'?'الباقي (بيت المال)':'الباقي (غير موزَّع)',f:fac?r.bayt.mul(fac):r.bayt,c:'#b9b19b'});
   o+=`<div class="bar">${parts.map(p=>`<i title="${p.l}" style="width:${p.f.num()*100}%;background:${p.c}"></i>`).join('')}</div><div class="legend">${parts.map(p=>`<span><b style="background:${p.c}"></b>${p.l} ${pct(p.f)}</span>`).join('')}</div>`;
-  o+=`<div class="tbl" style="margin-top:12px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>%</th><th>السهام من ${r.base}</th>${tza?'<th>من أصل التركة</th>':''}${net!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>الحالة والسبب</th></tr>`;
+  o+=`<div class="tbl" style="margin-top:12px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>النسبة</th><th>السهام من ${r.base}</th>${tza?'<th>من أصل التركة</th>':''}${net!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>الحالة والسبب</th></tr>`;
   r.heirs.forEach(hh=>{
     o+=`<tr><td class="who"><b>${hh.label}</b></td><td class="num">${hh.count}</td><td class="num frac">${F(hh.share)}</td><td class="num">${pct(hh.share)}</td><td class="num">${hh.units}</td>${tza?`<td class="num">${F(hh.share.mul(fac))}</td>`:''}${net!=null?`<td class="num">${money(hh.share,net)}</td><td class="num">${hh.count>1?money(hh.per,net):'—'}</td>`:''}<td><span class="chip g">${hh.kind}</span> <span class="small">${esc(hh.why)}</span></td></tr>`;
   });
@@ -148,7 +163,7 @@ function run(){
       <li>سقف التنزيل ثلث التركة (1/3). ${tza.capped?`النصيب أكبر من الثلث فيُقتصر على <b>1/3</b>، والزيادة لا تنفذ إلا بإجازة الورثة.`:`النصيب لا يتجاوز الثلث فيؤخذ كاملاً: <b>${tza.tz.str()}</b>.`}</li>
       <li>يُخرج التنزيل أولاً قبل الوصية الاختيارية وقبل قسمة الميراث، ثم يُقسَّم الباقي (${tza.factor.str()} من التركة) على الورثة الموجودين بالأنصبة المبيّنة في الجدول أعلاه.</li>
       <li>يقتسم الأحفاد نصيب أصلهم قسمة ميراث للذكر مثل حظ الأنثيين.</li></ol>
-      <div class="tbl"><table><tr><th>المنزَّل</th><th>العدد</th><th>من التركة</th><th>%</th>${after!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}</tr>
+      <div class="tbl"><table><tr><th>المنزَّل</th><th>العدد</th><th>من التركة</th><th>النسبة</th>${after!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}</tr>
       ${tza.groups.map(g=>`<tr><td><b>${g.label}</b></td><td class="num">${g.count}</td><td class="num frac">${F(g.share)}</td><td class="num">${pct(g.share)}</td>${after!=null?`<td class="num">${money(g.share,after)}</td><td class="num">${g.count>1?money(g.per,after):'—'}</td>`:''}</tr>`).join('')}</table></div>
       <div class="note" style="margin-top:8px">ملاحظة: يُحسب هنا التنزيل من التركة بعد التجهيز والديون، ثم تُقسَّم بقية التركة على الورثة الباقين بأنصبتهم. بعض الشروح تحسب النتيجة بصورة أخرى، فراجع المحكمة أو الموثّق عند التطبيق.</div></div>`;
   }
@@ -185,7 +200,7 @@ $('#arSp').onclick=e=>{const b=e.target.closest('button');if(!b)return;ar.spouse
 $('#arGo').onclick=()=>{
   const r=E.solveArham(ar);const M=parseFloat($('#arMoney').value);const net=isFinite(M)&&M>0?M:null;
   if(r.errors.length&&!r.heirs.length){$('#arOut').innerHTML=`<div class="err">${r.errors.join('<br>')}</div>`;return}
-  let o=`<div class="card"><h2>نتيجة ذوي الأرحام</h2><div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>%</th>${net?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>السبب</th></tr>`;
+  let o=`<div class="card"><h2>نتيجة ذوي الأرحام</h2><div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>النسبة</th>${net?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>السبب</th></tr>`;
   r.heirs.forEach(h=>{o+=`<tr><td><b>${h.label}</b></td><td class="num">${h.count}</td><td class="num frac">${F(h.share)}</td><td class="num">${pct(h.share)}</td>${net?`<td class="num">${money(h.share,net)}</td><td class="num">${h.count>1?money(h.per,net):'—'}</td>`:''}<td class="small">${esc(h.why)}</td></tr>`});
   o+=`</table></div></div><div class="card"><h3 style="margin-top:0">شرح الخطوات</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>${r.notes.map(n=>`<div class="note" style="margin-top:8px">${esc(n)}</div>`).join('')}${r.errors.length?`<div class="err">${r.errors.join('<br>')}</div>`:''}<p class="small">القاعدة: الأقرب درجةً يحجب الأبعد، وكل ذي رحم يأخذ نصيب من يُدلي به إلى الميت لو كان حيّاً. وقد سُمّي هذا مذهب أهل التنزيل.</p></div>`;
   $('#arOut').innerHTML=o;$('#arOut').scrollIntoView({behavior:'smooth',block:'start'});
@@ -219,7 +234,7 @@ function runTakh(){
   const M=parseFloat($('#tkEstate').value);const X=parseFloat($('#tkX').value)||0;const hasM=isFinite(M)&&M>0;
   const T=res.rows.reduce((s,r)=>s.add(r.share),E.fr(0));
   let o=`<div class="card"><h2>نتيجة التخارج</h2><p>الخارج: <b>${res.k>1?res.k+' من ':''}${res.label}</b> ونصيبه الأصلي <span class="frac">${res.exitShare.str()}</span> (${pct(res.exitShare)}) من التركة.</p><p>${res.note}</p>`;
-  o+=`<div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب الأصلي</th><th>بعد التخارج</th><th>%</th>${hasM?'<th>يستلم</th><th>يدفع</th><th>الصافي</th>':''}</tr>`;
+  o+=`<div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب الأصلي</th><th>بعد التخارج</th><th>النسبة</th>${hasM?'<th>يستلم</th><th>يدفع</th><th>الصافي</th>':''}</tr>`;
   const pool=tkSel.mode==='estate'?M-X:M;
   res.rows.forEach(r=>{
     let pay=0;

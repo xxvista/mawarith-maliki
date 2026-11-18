@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f5a43">
 <title>حاسبة المواريث — على المذهب المالكي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -117,7 +118,77 @@ nav button{transition:.15s}nav button:hover:not(.on){background:var(--soft);colo
 .fbl li.ok{background:#f0f8f2}.fbl li.bad{background:#fff3ee}
 @media print{nav,.btn,.ex,header .basmala{display:none!important}.tab{display:block!important}.card{box-shadow:none;break-inside:avoid}}
 @media(max-width:560px){.inst .tx{text-align:center}.inst{justify-content:center}h2{font-size:23px}.lgrid{grid-template-columns:1fr}}
-.edu h4{margin:14px 0 4px;color:var(--gold);font-size:16px}.edu p{margin:4px 0}.edu{line-height:1.9}
+
+/* ===== تحسينات الهاتف والمساحات البيضاء ===== */
+html{-webkit-text-size-adjust:100%}
+body{line-height:1.9}
+main{max-width:980px;padding:30px 20px 60px}
+.card{padding:26px 26px;margin-bottom:24px}
+h2{margin:0 0 14px;font-size:27px}
+h3{margin:22px 0 8px}
+p{margin:0 0 14px}
+.grid{gap:14px}
+.grp{margin-top:24px}
+.grp>div.t{margin-bottom:10px;padding-bottom:6px}
+.hv{padding:8px 14px;min-height:52px}
+.step button{width:40px;height:40px;font-size:22px;border-radius:12px}
+.step output{min-width:30px;font-size:18px}
+input[type=number],input,select{font-size:16px;min-height:46px}
+.modes{gap:14px}.mode{padding:14px 18px}
+.btn{min-height:48px;padding:12px 28px}
+.row{gap:14px}
+.lcard{padding:18px 18px 16px}
+.exc{padding:16px 18px;margin:18px 0}
+th,td{padding:12px 10px}
+.morebtn,#moreSheet{display:none}
+@media(max-width:700px){
+  html{font-size:17px}
+  header{padding:26px 16px 22px}
+  header h1{font-size:30px;line-height:1.4;margin-bottom:10px}
+  header p{font-size:15px;line-height:1.8}
+  .inst{flex-direction:column;gap:12px;margin-bottom:20px}
+  .inst .lg{width:76px;height:76px}
+  .inst .tx{text-align:center}
+  main{padding:22px 14px 130px}
+  .card{padding:22px 18px;margin-bottom:22px;border-radius:20px}
+  h2{font-size:25px}
+  .grid{grid-template-columns:1fr}
+  .grp>div.t{font-size:15px}
+  .hv{min-height:58px;padding:8px 16px}
+  .hv label{font-size:17px}
+  .row .btn,.row .seg{flex:1 1 100%}
+  .row .seg button{flex:1}
+  .modes{grid-template-columns:1fr}
+  .opts,.crow{grid-template-columns:1fr}
+  .lgrid{grid-template-columns:1fr}
+  .exc{padding:16px 14px}
+  .legend{gap:8px 14px;font-size:14px}
+  .bar{height:30px}
+  /* شريط تنقل سفلي */
+  nav{position:fixed;top:auto;bottom:0;inset-inline:0;z-index:20;padding:6px 6px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;gap:2px;border-top:1px solid var(--line);border-bottom:0;box-shadow:0 -4px 16px rgba(0,0,0,.08);overflow:visible}
+  nav button{flex:1;min-width:0;padding:10px 2px;font-size:13.5px;border-radius:12px;min-height:52px;white-space:normal;line-height:1.3;background:none;color:var(--mute)}
+  nav button.on{background:var(--soft);color:var(--g);box-shadow:inset 0 3px 0 var(--g)}
+  nav button.more{display:none}
+  .morebtn{display:block}
+  #moreSheet{position:fixed;inset-inline:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:21;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.2);flex-direction:column;gap:4px}
+  #moreSheet:not([hidden]){display:flex}
+  #moreSheet button{border:0;background:none;font:inherit;font-weight:600;padding:14px 16px;text-align:right;border-radius:12px;color:var(--ink);min-height:52px}
+  #moreSheet button:active{background:var(--soft)}
+  /* جداول النتائج بطاقات */
+  table.stack,table.stack tbody{display:block;width:100%}
+  table.stack tr.hd{display:none}
+  table.stack tr{display:block;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 16px;margin:0 0 14px}
+  table.stack td{display:flex;justify-content:space-between;align-items:baseline;gap:16px;border:0;padding:8px 0;border-bottom:1px dashed #efe6d2;background:none!important;text-align:right}
+  table.stack td:last-child{border-bottom:0}
+  table.stack td::before{content:attr(data-label);color:var(--mute);font-size:14px;flex:none}
+  table.stack td.num{direction:rtl;text-align:left;font-size:16px}
+  table.stack td.who{font-size:18px;color:var(--g)}
+  table.stack td.who::before{display:none}
+  table.stack td.who b{display:inline}
+  .tbl{overflow:visible}
+  .edu h4{margin:14px 0 4px;color:var(--gold);font-size:16px}.edu p{margin:4px 0}.edu{line-height:1.9}
+footer{padding-bottom:110px}
+}
 footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
 @media(max-width:560px){.card{padding:14px}th,td{padding:7px 5px;font-size:14px}}
 </style>
@@ -132,15 +203,21 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
   <h1>حاسبة المواريث على المذهب المالكي</h1>
   <p>أدخل الورثة والتركة فيظهر نصيب كل وارث مع بيان سبب الفرض أو التعصيب أو الحجب، وخطوات الحساب، وما تفرّد به المذهب من مسائل.</p>
 </header>
-<nav id="nav">
+<nav id="nav" aria-label="التنقل">
   <button data-t="calc" class="on">الحاسبة</button>
-  <button data-t="learn">الدروس والتمارين</button>
-  <button data-t="arham">ذوو الأرحام</button>
+  <button data-t="learn">الدروس</button>
+  <button data-t="arham">الأرحام</button>
   <button data-t="takh">التخارج</button>
+  <button data-t="rules" class="more">القواعد</button>
+  <button data-t="ex" class="more">المسائل</button>
+  <button data-t="refs" class="more">المراجع</button>
+  <button id="moreBtn" class="morebtn" aria-expanded="false">المزيد</button>
+</nav>
+<div id="moreSheet" hidden>
   <button data-t="rules">قواعد المذهب</button>
   <button data-t="ex">مسائل مشهورة</button>
   <button data-t="refs">المراجع والتنبيهات</button>
-</nav>
+</div>
 <main>
 
 <section id="calc" class="tab on">
@@ -825,9 +902,24 @@ const val={};E.KEYS.forEach(k=>val[k]=0);
 const $=s=>document.querySelector(s);
 const TABS=['calc','learn','arham','takh','rules','ex','refs'];
 
-function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));try{history.replaceState(null,'','#'+t)}catch(e){}
+function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));moreBtn.classList.toggle('on',['rules','ex','refs'].includes(t));try{history.replaceState(null,'','#'+t)}catch(e){}
   if(t==='takh')drawTakh();if(t==='learn'&&curL<0&&!chal)renderLessonList();}
-$('#nav').onclick=e=>{const b=e.target.closest('button');if(b){tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})}};
+const sheet=$('#moreSheet'),moreBtn=$('#moreBtn');
+const closeSheet=()=>{sheet.hidden=true;moreBtn.setAttribute('aria-expanded','false')};
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.id==='moreBtn'){sheet.hidden=!sheet.hidden;moreBtn.setAttribute('aria-expanded',String(!sheet.hidden));return}
+  closeSheet();tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})};
+sheet.onclick=e=>{const b=e.target.closest('button');if(!b)return;closeSheet();tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})};
+document.addEventListener('click',e=>{if(!sheet.hidden&&!e.target.closest('#moreSheet,#moreBtn'))closeSheet()});
+function stackify(c){c.querySelectorAll('table').forEach(tb=>{
+  const rows=[...tb.querySelectorAll('tr')];if(!rows.length)return;
+  const h=rows[0];const ths=[...h.children];
+  if(ths.length<3||!ths.every(x=>x.tagName==='TH'))return;
+  tb.classList.add('stack');h.classList.add('hd');
+  const labels=ths.map(x=>x.textContent.trim());
+  rows.slice(1).forEach(r=>[...r.children].forEach((td,i)=>{if(td.tagName==='TD'&&labels[i])td.setAttribute('data-label',labels[i])}));
+})}
+['#out','#arOut','#tkOut'].forEach(s=>{const el=$(s);new MutationObserver(()=>stackify(el)).observe(el,{childList:true})});
 const h0=(location.hash||'').slice(1);if(TABS.includes(h0))tab(h0);
 
 function drawModes(){$('#modes').innerHTML=MODES.map(m=>`<button class="mode ${m.id===mode?'on':''}" data-m="${m.id}"><b>${m.t}</b><span>${m.d}</span></button>`).join('')}
@@ -943,7 +1035,7 @@ function run(){
   if(tza)tza.groups.forEach(g=>parts.push({l:g.label+' (تنزيل)',f:g.share,c:'#d4a64a'}));
   if(!r.bayt.isZero())parts.push({l:mode==='A'?'الباقي (بيت المال)':'الباقي (غير موزَّع)',f:fac?r.bayt.mul(fac):r.bayt,c:'#b9b19b'});
   o+=`<div class="bar">${parts.map(p=>`<i title="${p.l}" style="width:${p.f.num()*100}%;background:${p.c}"></i>`).join('')}</div><div class="legend">${parts.map(p=>`<span><b style="background:${p.c}"></b>${p.l} ${pct(p.f)}</span>`).join('')}</div>`;
-  o+=`<div class="tbl" style="margin-top:12px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>%</th><th>السهام من ${r.base}</th>${tza?'<th>من أصل التركة</th>':''}${net!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>الحالة والسبب</th></tr>`;
+  o+=`<div class="tbl" style="margin-top:12px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>النسبة</th><th>السهام من ${r.base}</th>${tza?'<th>من أصل التركة</th>':''}${net!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>الحالة والسبب</th></tr>`;
   r.heirs.forEach(hh=>{
     o+=`<tr><td class="who"><b>${hh.label}</b></td><td class="num">${hh.count}</td><td class="num frac">${F(hh.share)}</td><td class="num">${pct(hh.share)}</td><td class="num">${hh.units}</td>${tza?`<td class="num">${F(hh.share.mul(fac))}</td>`:''}${net!=null?`<td class="num">${money(hh.share,net)}</td><td class="num">${hh.count>1?money(hh.per,net):'—'}</td>`:''}<td><span class="chip g">${hh.kind}</span> <span class="small">${esc(hh.why)}</span></td></tr>`;
   });
@@ -958,7 +1050,7 @@ function run(){
       <li>سقف التنزيل ثلث التركة (1/3). ${tza.capped?`النصيب أكبر من الثلث فيُقتصر على <b>1/3</b>، والزيادة لا تنفذ إلا بإجازة الورثة.`:`النصيب لا يتجاوز الثلث فيؤخذ كاملاً: <b>${tza.tz.str()}</b>.`}</li>
       <li>يُخرج التنزيل أولاً قبل الوصية الاختيارية وقبل قسمة الميراث، ثم يُقسَّم الباقي (${tza.factor.str()} من التركة) على الورثة الموجودين بالأنصبة المبيّنة في الجدول أعلاه.</li>
       <li>يقتسم الأحفاد نصيب أصلهم قسمة ميراث للذكر مثل حظ الأنثيين.</li></ol>
-      <div class="tbl"><table><tr><th>المنزَّل</th><th>العدد</th><th>من التركة</th><th>%</th>${after!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}</tr>
+      <div class="tbl"><table><tr><th>المنزَّل</th><th>العدد</th><th>من التركة</th><th>النسبة</th>${after!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}</tr>
       ${tza.groups.map(g=>`<tr><td><b>${g.label}</b></td><td class="num">${g.count}</td><td class="num frac">${F(g.share)}</td><td class="num">${pct(g.share)}</td>${after!=null?`<td class="num">${money(g.share,after)}</td><td class="num">${g.count>1?money(g.per,after):'—'}</td>`:''}</tr>`).join('')}</table></div>
       <div class="note" style="margin-top:8px">ملاحظة: يُحسب هنا التنزيل من التركة بعد التجهيز والديون، ثم تُقسَّم بقية التركة على الورثة الباقين بأنصبتهم. بعض الشروح تحسب النتيجة بصورة أخرى، فراجع المحكمة أو الموثّق عند التطبيق.</div></div>`;
   }
@@ -995,7 +1087,7 @@ $('#arSp').onclick=e=>{const b=e.target.closest('button');if(!b)return;ar.spouse
 $('#arGo').onclick=()=>{
   const r=E.solveArham(ar);const M=parseFloat($('#arMoney').value);const net=isFinite(M)&&M>0?M:null;
   if(r.errors.length&&!r.heirs.length){$('#arOut').innerHTML=`<div class="err">${r.errors.join('<br>')}</div>`;return}
-  let o=`<div class="card"><h2>نتيجة ذوي الأرحام</h2><div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>%</th>${net?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>السبب</th></tr>`;
+  let o=`<div class="card"><h2>نتيجة ذوي الأرحام</h2><div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>النسبة</th>${net?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>السبب</th></tr>`;
   r.heirs.forEach(h=>{o+=`<tr><td><b>${h.label}</b></td><td class="num">${h.count}</td><td class="num frac">${F(h.share)}</td><td class="num">${pct(h.share)}</td>${net?`<td class="num">${money(h.share,net)}</td><td class="num">${h.count>1?money(h.per,net):'—'}</td>`:''}<td class="small">${esc(h.why)}</td></tr>`});
   o+=`</table></div></div><div class="card"><h3 style="margin-top:0">شرح الخطوات</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>${r.notes.map(n=>`<div class="note" style="margin-top:8px">${esc(n)}</div>`).join('')}${r.errors.length?`<div class="err">${r.errors.join('<br>')}</div>`:''}<p class="small">القاعدة: الأقرب درجةً يحجب الأبعد، وكل ذي رحم يأخذ نصيب من يُدلي به إلى الميت لو كان حيّاً. وقد سُمّي هذا مذهب أهل التنزيل.</p></div>`;
   $('#arOut').innerHTML=o;$('#arOut').scrollIntoView({behavior:'smooth',block:'start'});
@@ -1029,7 +1121,7 @@ function runTakh(){
   const M=parseFloat($('#tkEstate').value);const X=parseFloat($('#tkX').value)||0;const hasM=isFinite(M)&&M>0;
   const T=res.rows.reduce((s,r)=>s.add(r.share),E.fr(0));
   let o=`<div class="card"><h2>نتيجة التخارج</h2><p>الخارج: <b>${res.k>1?res.k+' من ':''}${res.label}</b> ونصيبه الأصلي <span class="frac">${res.exitShare.str()}</span> (${pct(res.exitShare)}) من التركة.</p><p>${res.note}</p>`;
-  o+=`<div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب الأصلي</th><th>بعد التخارج</th><th>%</th>${hasM?'<th>يستلم</th><th>يدفع</th><th>الصافي</th>':''}</tr>`;
+  o+=`<div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب الأصلي</th><th>بعد التخارج</th><th>النسبة</th>${hasM?'<th>يستلم</th><th>يدفع</th><th>الصافي</th>':''}</tr>`;
   const pool=tkSel.mode==='estate'?M-X:M;
   res.rows.forEach(r=>{
     let pay=0;

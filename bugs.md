@@ -8,6 +8,8 @@
 | 3 | MCQ "two daughters and a full brother" had two correct options | Options "1/3" and "1/3 (remainder after 2/3)" | Options rewritten, single correct answer |
 | 4 | Year printed 2025/2026 | Copied from the course file header | Changed to 2026/2027 |
 | 5 | Challenge button missing inside lessons | `#chalBtn` only existed on the list view | Added to the lesson header (last-lesson duplicate removed) |
+| 6 | Hard to use on phones (cramped cards, wide tables, tiny top tabs) | Desktop-first layout | Mobile redesign: bottom nav, card-style result tables, larger controls, more spacing |
+| 7 | Title lines too tall on phones | Body line-height inherited by `h1` | `header h1{line-height:1.4}` |
 
 ## Open / known limitations
 | # | Item | Notes |
@@ -21,3 +23,4 @@
 | G | localStorage | Lesson progress may not persist in sandboxed viewers (handled with try/catch). |
 | H | Random challenge | Draws random heir sets; occasionally produces unusual but valid combinations. |
 | I | Maliki opinions | Grandmother lines (mother of mother's mother, etc.) and some Mushtaraka details should be checked against Khalil's Mukhtasar and its commentaries before classroom use. |
+| J | Phone layout only verified in headless Chrome emulation | Check Safari iOS (bottom bar + safe area) and small Android screens |

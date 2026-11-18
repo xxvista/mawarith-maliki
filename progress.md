@@ -25,8 +25,10 @@ Published as a claude.ai artifact (private to the owner until shared).
 - [x] 8 interactive lessons, MCQ + calculation exercises auto-checked by the engine, detailed solution, open-in-calculator, random challenge, progress in localStorage (optional).
 - [x] University logo (taken from Dr. Saadi's own handout, embedded as data URI) and course info in header/footer.
 - [x] Light theme forced, explicit button colours, stacked fractions, zebra tables, print styles.
+- [x] Phone-first redesign: bottom tab bar (calculator, lessons, relatives, takharuj + "More" sheet for rules / examples / references), larger touch targets (40px steppers, 48px buttons, 16px inputs so iOS does not zoom), result tables turned into cards on narrow screens, more white space (card padding 22-26px, 24px between cards), safe-area padding. Checked with headless Chrome at 390x844 (no horizontal overflow) and 1280x800.
 
 ## Next / ideas
+- [ ] Test on a real iPhone/Android browser (only headless Chrome emulation so far).
 - [ ] Add past-exam questions and lecture examples as exercises (waiting for the files).
 - [ ] Student name line in the header (name not provided yet).
 - [ ] Missing-person (mafqud), pregnancy (haml), khuntha, drowned/burned (gharqa/hadma), munasakha.
