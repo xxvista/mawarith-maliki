@@ -41,3 +41,8 @@ GitHub Pages from `main` / root (`index.html` is self-contained, `.nojekyll` add
 
 ## Build
 `python3 build.py` assembles `index.html` from `template.html` + `engine.js` + `ui.js`.
+
+## تحديث التصميم الثاني (2026-11-18)
+- ترويسة مدمجة بالشعار، مجموعات ورثة قابلة للطي، شريط إجراء ثابت («احسب الأنصبة») مع عدّاد الورثة.
+- أرقام الأقسام، شرائح «ملخص النتيجة»، والشرح التعليمي داخل بطاقة قابلة للطي.
+- إصلاح عدم ظهور الدروس (انهيار عند الفتح على #learn).

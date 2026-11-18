@@ -24,3 +24,8 @@
 | H | Random challenge | Draws random heir sets; occasionally produces unusual but valid combinations. |
 | I | Maliki opinions | Grandmother lines (mother of mother's mother, etc.) and some Mushtaraka details should be checked against Khalil's Mukhtasar and its commentaries before classroom use. |
 | J | Phone layout only verified in headless Chrome emulation | Check Safari iOS (bottom bar + safe area) and small Android screens |
+
+## أخطاء مُصلحة (تحديث)
+8. **الدروس لا تظهر**: فتح الصفحة على `#learn` كان يسبب خطأ TDZ ("Cannot access 'curL' before initialization") فتفرغ الواجهة. الحل: نقل استدعاء التهيئة إلى نهاية ui.js.
+9. **CSS الجديد داخل @media للجوال**: لم يظهر التصميم على الحاسوب. الحل: نقله قبل `</style>`.
+10. **الصفحة تبدأ مُمرَّرة 193px على الجوال**: سببه `replaceState('#calc')` أثناء التهيئة (يُنفّذ المتصفح تمريراً إلى المعرّف بعد التحميل). الحل: عدم تحديث الـhash إلا بعد التهيئة.

@@ -15,7 +15,7 @@ const val={};E.KEYS.forEach(k=>val[k]=0);
 const $=s=>document.querySelector(s);
 const TABS=['calc','learn','arham','takh','rules','ex','refs'];
 
-function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));moreBtn.classList.toggle('on',['rules','ex','refs'].includes(t));try{history.replaceState(null,'','#'+t)}catch(e){}
+function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));moreBtn.classList.toggle('on',['rules','ex','refs'].includes(t));const ab=$('#actbar');if(ab)ab.hidden=(t!=='calc');if(window.__inited)try{history.replaceState(null,'','#'+t)}catch(e){}
   if(t==='takh')drawTakh();if(t==='learn'&&curL<0&&!chal)renderLessonList();}
 const sheet=$('#moreSheet'),moreBtn=$('#moreBtn');
 const closeSheet=()=>{sheet.hidden=true;moreBtn.setAttribute('aria-expanded','false')};
@@ -33,25 +33,32 @@ function stackify(c){c.querySelectorAll('table').forEach(tb=>{
   rows.slice(1).forEach(r=>[...r.children].forEach((td,i)=>{if(td.tagName==='TD'&&labels[i])td.setAttribute('data-label',labels[i])}));
 })}
 ['#out','#arOut','#tkOut'].forEach(s=>{const el=$(s);new MutationObserver(()=>stackify(el)).observe(el,{childList:true})});
-const h0=(location.hash||'').slice(1);if(TABS.includes(h0))tab(h0);
 
 function drawModes(){$('#modes').innerHTML=MODES.map(m=>`<button class="mode ${m.id===mode?'on':''}" data-m="${m.id}"><b>${m.t}</b><span>${m.d}</span></button>`).join('')}
 $('#modes').onclick=e=>{const b=e.target.closest('.mode');if(!b)return;mode=b.dataset.m;if(mode==='C')val.mawla=0;drawModes();drawHeirs()};
 $('#gender').onclick=e=>{const b=e.target.closest('button');if(!b)return;gender=b.dataset.g;setGender();drawHeirs()};
 function setGender(){document.querySelectorAll('#gender button').forEach(b=>b.classList.toggle('on',b.dataset.g===gender));if(gender==='m')val.husband=0;else val.wives=0}
 
-function drawHeirs(){
-  const openFar=[...document.querySelectorAll('#heirs details')].map(x=>x.open);
-  let html='';
-  GROUPS.forEach(([title,items])=>{
-    const its=items.filter(([k])=>!(k==='husband'&&gender==='m')&&!(k==='wives'&&gender==='f')&&!(k==='mawla'&&mode==='C'));
-    const far=title==='العصبات الأبعد';
-    const body=its.map(([k,l,mx])=>`<div class="hv ${val[k]?'has':''}"><label>${l}</label><div class="step"><button data-k="${k}" data-d="-1" aria-label="إنقاص">−</button><output>${val[k]}</output><button data-k="${k}" data-d="1" data-mx="${mx}" aria-label="زيادة">+</button></div></div>`).join('');
-    const open=far&&(its.some(([k])=>val[k])||openFar[0])?' open':'';
-    html+=far?`<details class="grp"${open}><summary>${title}</summary><div class="grid" style="margin-top:8px">${body}</div></details>`:`<div class="grp"><div class="t">${title}</div><div class="grid">${body}</div></div>`;
-  });
-  $('#heirs').innerHTML=html;
+const openG=[true,true,true,false,false];
+function visibleItems(items){return items.filter(([k])=>!(k==='husband'&&gender==='m')&&!(k==='wives'&&gender==='f')&&!(k==='mawla'&&mode==='C'))}
+function updateBar(){
+  const sel=[];let n=0;
+  GROUPS.forEach(([t,items])=>visibleItems(items).forEach(([k,l])=>{if(val[k]>0){n+=val[k];sel.push(val[k]>1?`${l} (${val[k]})`:l)}}));
+  const c=$('#abCount'),l=$('#abList');if(!c)return;
+  c.textContent=n?`${sel.length} فئات من الورثة محددة`:'لم تحدد ورثة بعد';
+  l.textContent=n?sel.join('، '):'اختر الورثة من القوائم أعلاه';
+  $('#abGo').disabled=!n;
 }
+function drawHeirs(){
+  let html='';
+  GROUPS.forEach(([title,items],gi)=>{
+    const its=visibleItems(items);const cnt=its.reduce((s,[k])=>s+val[k],0);
+    const body=its.map(([k,l,mx])=>`<div class="hv tile ${val[k]?'has':''}"><label>${l}</label><div class="step"><button data-k="${k}" data-d="-1" aria-label="إنقاص ${l}">−</button><output>${val[k]}</output><button data-k="${k}" data-d="1" data-mx="${mx}" aria-label="زيادة ${l}">+</button></div></div>`).join('');
+    html+=`<details class="grp2" data-g="${gi}"${openG[gi]||cnt?' open':''}><summary><span>${title}</span>${cnt?`<span class="badge">${cnt}</span>`:''}</summary><div class="grid2">${body}</div></details>`;
+  });
+  $('#heirs').innerHTML=html;updateBar();
+}
+$('#heirs').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.g!==undefined)openG[+d.dataset.g]=d.open},true);
 $('#heirs').onclick=e=>{const b=e.target.closest('button[data-k]');if(!b)return;const k=b.dataset.k,d=+b.dataset.d;
   const cap=+(document.querySelector(`button[data-k="${k}"][data-mx]`).dataset.mx);
   val[k]=Math.max(0,Math.min(cap,val[k]+d));drawHeirs()};
@@ -142,6 +149,7 @@ function run(){
   o+=`<div class="card"><h2>النتيجة</h2>`;
   const chips=r.special.map(s=>`<span class="chip">${s}</span>`).join('')+(tza?'<span class="chip">التنزيل</span>':'');
   if(chips)o+=`<div>${chips}</div>`;
+  o+=`<div class="glance">${r.heirs.map(hh=>`<span><b>${hh.label}</b>${hh.share.str()}</span>`).join('')}${!r.bayt.isZero()?`<span><b>${mode==='A'?'بيت المال':'الباقي'}</b>${r.bayt.str()}</span>`:''}</div>`;
   o+=`<p class="small" style="margin:6px 0">أصل المسألة: <b>${r.base}</b> سهماً${r.awl?` (عالت من ${r.awl.from} إلى ${r.awl.to})`:''}.${tza?' والأنصبة التالية من الباقي بعد التنزيل.':''}</p>`;
   if(r.errors.length)o+=`<div class="err">${r.errors.join('<br>')}</div>`;
   const parts=r.heirs.map((hh,i)=>({l:hh.label,f:fac?hh.share.mul(fac):hh.share,c:COLORS[i%COLORS.length]}));
@@ -168,12 +176,12 @@ function run(){
       <div class="note" style="margin-top:8px">ملاحظة: يُحسب هنا التنزيل من التركة بعد التجهيز والديون، ثم تُقسَّم بقية التركة على الورثة الباقين بأنصبتهم. بعض الشروح تحسب النتيجة بصورة أخرى، فراجع المحكمة أو الموثّق عند التطبيق.</div></div>`;
   }
   if(r.steps.length){o+=`<div class="card"><h3 style="margin-top:0">المسائل الخاصة في هذه التركة</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>`}
-  o+=`<div class="card">${explain(r,{net})}</div>`;
+  o+=`<details class="card edu-d"${window.innerWidth>700?' open':''}><summary>شرح تعليمي مفصّل: لماذا هذه الأنصبة؟</summary>${explain(r,{net})}</details>`;
   if(mode==='C')o+=`<div class="note">ذكّرنا بأن الصيغة الجزائرية هنا تحسب الردّ، وتحسب التنزيل إن فعّلته، وذوي الأرحام في تبويب مستقل.</div>`;
   $('#out').innerHTML=o;
   $('#out').scrollIntoView({behavior:'smooth',block:'start'});
 }
-$('#go').onclick=run;
+$('#go').onclick=run;$('#abGo').onclick=run;
 $('#reset').onclick=()=>{E.KEYS.forEach(k=>val[k]=0);['estate','funeral','debts','bequest'].forEach(i=>$('#'+i).value='');$('#tzOn').checked=false;$('#out').innerHTML='';last=null;drawHeirs()};
 
 // ---------- ذوو الأرحام ----------
@@ -450,4 +458,5 @@ function loadCalc(h,m){E.KEYS.forEach(k=>val[k]=0);Object.assign(val,h);gender=h
   $('#tzOn').checked=false;document.querySelectorAll('#gender button').forEach(bb=>bb.classList.toggle('on',bb.dataset.g===gender));drawModes();drawHeirs();tab('calc');run()}
 
 setGender();drawModes();drawHeirs();drawAr();
+const h0=(location.hash||'').slice(1);tab(TABS.includes(h0)?h0:'calc');window.__inited=1;
 })();

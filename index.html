@@ -191,17 +191,74 @@ footer{padding-bottom:110px}
 }
 footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
 @media(max-width:560px){.card{padding:14px}th,td{padding:7px 5px;font-size:14px}}
+
+/* ===== تصميم محسّن: ترويسة مضغوطة، مجموعات قابلة للطي، شريط إجراء ===== */
+header.hd{padding:20px 18px 18px;text-align:right}
+.hd-in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:18px;position:relative}
+.hd .lg{width:78px;height:78px;border-radius:50%;background:#fff;padding:4px;flex:none;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.hd .bsm{font-family:'Amiri',serif;color:#e8c777;font-size:17px;line-height:1.4}
+.hd h1{font-family:'Amiri',serif;font-size:32px;line-height:1.35;margin:2px 0 4px}
+.hd .sub{margin:0;font-size:14px;line-height:1.7;opacity:.92;max-width:none}
+.lead{color:var(--mute);margin:0 4px 18px;font-size:15.5px}
+.sh{display:flex;align-items:center;gap:10px}
+.sh::before{display:none}
+.sn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;font:700 15px 'Cairo',sans-serif;flex:none}
+summary .sn{margin-inline-end:6px;vertical-align:1px}
+details.grp2{border:1px solid var(--line);border-radius:16px;background:#fff;margin:12px 0;overflow:hidden}
+details.grp2>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;padding:15px 18px;font-weight:700;color:var(--g);cursor:pointer;min-height:54px}
+details.grp2>summary::-webkit-details-marker{display:none}
+details.grp2>summary::after{content:"﹀";color:var(--gold);font-size:15px;margin-inline-start:10px;transition:.2s}
+details.grp2[open]>summary::after{transform:rotate(180deg)}
+details.grp2>summary span:first-child{flex:1}
+.badge{background:var(--g);color:#fff;border-radius:999px;min-width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;padding:0 8px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;padding:4px 14px 16px}
+.hv.tile{flex-direction:column;align-items:stretch;gap:8px;padding:12px 10px;text-align:center;min-height:0}
+.tile label{font-size:15.5px;line-height:1.45;min-height:44px;display:flex;align-items:center;justify-content:center}
+.tile .step{justify-content:center;gap:12px}
+.glance{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.glance span{background:var(--soft);border:1px solid #cfe1d5;border-radius:12px;padding:6px 12px;font-weight:700;color:var(--g);direction:rtl;font-size:15px}
+.glance b{font-weight:600;color:var(--ink);margin-inline-end:8px}
+details.edu-d>summary{font-size:19px;font-weight:700;color:var(--g);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:44px}
+details.edu-d>summary::after{content:"﹀";color:var(--gold);transition:.2s}
+details.edu-d[open]>summary::after{transform:rotate(180deg)}
+details.edu-d>summary::-webkit-details-marker{display:none}
+#actbar{position:fixed;z-index:15;inset-inline:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,253,248,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+#actbar[hidden]{display:none}
+.ab-in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.ab-txt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.5}
+.ab-txt b{font-size:15.5px;color:var(--g)}
+.ab-txt .small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#abGo{flex:none;min-width:130px}
+#abGo:disabled{background:#b8c6bd;box-shadow:none;cursor:not-allowed}
+main{padding-bottom:110px}
+@media(max-width:700px){
+  header.hd{padding:14px 14px 14px}
+  .hd-in{gap:12px;align-items:flex-start}
+  .hd .lg{width:56px;height:56px;margin-top:4px}
+  .hd .bsm{font-size:14px}
+  .hd h1{font-size:22px;margin:0 0 4px}
+  .hd .sub{font-size:12.5px;line-height:1.6}
+  .lead{font-size:14.5px}
+  .grid2{grid-template-columns:repeat(2,1fr);gap:8px;padding:2px 10px 14px}
+  .tile label{font-size:14.5px;min-height:40px}
+  #actbar{bottom:calc(66px + env(safe-area-inset-bottom));padding:8px 12px;border-top:0;border-bottom:1px solid var(--line)}
+  #abGo{min-width:108px;padding:10px 16px}
+  main{padding-bottom:190px}
+  .sn{width:28px;height:28px}
+}
 </style>
 </head>
 <body>
-<header>
-  <div class="inst">
+<header class="hd">
+  <div class="hd-in">
     <img class="lg" alt="شعار جامعة البويرة" src="data:image/png;base64,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">
-    <div class="tx"><small>وزارة التعليم العالي والبحث العلمي</small><b>جامعة البويرة – آكلي محند أولحاج</b><small>كلية العلوم الإنسانية – قسم الشريعة</small><small>مقياس المواريث – السنة الثالثة شريعة – 2026/2027</small><small>تحت إشراف الدكتورة حدة سعدي</small></div>
+    <div class="hd-tx">
+      <div class="bsm">بسم الله الرحمن الرحيم</div>
+      <h1>حاسبة المواريث على المذهب المالكي</h1>
+      <p class="sub">جامعة البويرة – كلية العلوم الإنسانية – قسم الشريعة</p>
+      <p class="sub">مقياس المواريث · السنة الثالثة شريعة · 2026/2027 · تحت إشراف الدكتورة حدة سعدي</p>
+    </div>
   </div>
-  <div class="basmala">بسم الله الرحمن الرحيم</div>
-  <h1>حاسبة المواريث على المذهب المالكي</h1>
-  <p>أدخل الورثة والتركة فيظهر نصيب كل وارث مع بيان سبب الفرض أو التعصيب أو الحجب، وخطوات الحساب، وما تفرّد به المذهب من مسائل.</p>
 </header>
 <nav id="nav" aria-label="التنقل">
   <button data-t="calc" class="on">الحاسبة</button>
@@ -221,13 +278,14 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
 <main>
 
 <section id="calc" class="tab on">
+  <p class="lead">اختر الصيغة، ثم حدّد الورثة، واضغط «احسب»: يظهر نصيب كل وارث مع سبب الفرض أو التعصيب أو الحجب، وخطوات الحساب.</p>
   <div class="card">
-    <h2>١. اختر الصيغة</h2>
+    <h2 class="sh"><span class="sn">1</span>اختر الصيغة</h2>
     <div class="modes" id="modes"></div>
   </div>
 
   <div class="card">
-    <h2>٢. الورثة</h2>
+    <h2 class="sh"><span class="sn">2</span>الورثة</h2>
     <div class="row"><b>المتوفّى:</b>
       <div class="seg" id="gender"><button data-g="m" class="on">ذكر</button><button data-g="f">أنثى</button></div>
       <span class="small">يحدّد الزوجين: زوجات للمتوفى الذكر، وزوج للمتوفاة الأنثى.</span></div>
@@ -235,7 +293,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
   </div>
 
   <div class="card">
-    <h2>٣. التركة (اختياري)</h2>
+    <h2 class="sh"><span class="sn">3</span>التركة (اختياري)</h2>
     <div class="grid">
       <div class="fld"><label>إجمالي التركة</label><input type="number" id="estate" min="0" step="any" placeholder="مثال: 1200000"></div>
       <div class="fld"><label>تجهيز الميت ودفنه</label><input type="number" id="funeral" min="0" step="any" placeholder="0"></div>
@@ -247,7 +305,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
   </div>
 
   <div class="card">
-    <details id="tzBox"><summary>٤. التنزيل (الوصية الواجبة للأحفاد) — اختياري</summary>
+    <details id="tzBox"><summary><span class="sn">4</span> التنزيل (الوصية الواجبة للأحفاد) — اختياري</summary>
       <p class="small">إذا مات أحد أبناء المتوفى أو بناته قبله (أو معه) وترك أولاداً لا يرثون جدّهم، يُنزَّلون منزلة أصلهم في حدود الثلث (المواد 169 إلى 172 من قانون الأسرة الجزائري). فعّله مع الصيغة الثالثة غالباً.</p>
       <label class="row"><input type="checkbox" id="tzOn"> <b>طبّق التنزيل في هذه المسألة</b></label>
       <div class="grid" style="margin-top:8px">
@@ -388,7 +446,8 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
   </div>
 </section>
 </main>
-<footer>حاسبة المواريث — المذهب المالكي. الحساب بكسور دقيقة بلا تقريب.<br>جامعة البويرة – كلية العلوم الإنسانية – قسم الشريعة، مقياس المواريث، تحت إشراف الدكتورة حدة سعدي.</footer>
+<div id="actbar"><div class="ab-in"><div class="ab-txt"><b id="abCount">لم تحدد ورثة بعد</b><span id="abList" class="small"></span></div><button class="btn" id="abGo" disabled>احسب الأنصبة</button></div></div>
+<footer>وزارة التعليم العالي والبحث العلمي<br>حاسبة المواريث — المذهب المالكي. الحساب بكسور دقيقة بلا تقريب.<br>جامعة البويرة – كلية العلوم الإنسانية – قسم الشريعة، مقياس المواريث، تحت إشراف الدكتورة حدة سعدي.</footer>
 
 <script>
 /* محرك حساب المواريث — المذهب المالكي (ثلاث صيغ) — حسابات كسرية دقيقة */
@@ -902,7 +961,7 @@ const val={};E.KEYS.forEach(k=>val[k]=0);
 const $=s=>document.querySelector(s);
 const TABS=['calc','learn','arham','takh','rules','ex','refs'];
 
-function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));moreBtn.classList.toggle('on',['rules','ex','refs'].includes(t));try{history.replaceState(null,'','#'+t)}catch(e){}
+function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));moreBtn.classList.toggle('on',['rules','ex','refs'].includes(t));const ab=$('#actbar');if(ab)ab.hidden=(t!=='calc');if(window.__inited)try{history.replaceState(null,'','#'+t)}catch(e){}
   if(t==='takh')drawTakh();if(t==='learn'&&curL<0&&!chal)renderLessonList();}
 const sheet=$('#moreSheet'),moreBtn=$('#moreBtn');
 const closeSheet=()=>{sheet.hidden=true;moreBtn.setAttribute('aria-expanded','false')};
@@ -920,25 +979,32 @@ function stackify(c){c.querySelectorAll('table').forEach(tb=>{
   rows.slice(1).forEach(r=>[...r.children].forEach((td,i)=>{if(td.tagName==='TD'&&labels[i])td.setAttribute('data-label',labels[i])}));
 })}
 ['#out','#arOut','#tkOut'].forEach(s=>{const el=$(s);new MutationObserver(()=>stackify(el)).observe(el,{childList:true})});
-const h0=(location.hash||'').slice(1);if(TABS.includes(h0))tab(h0);
 
 function drawModes(){$('#modes').innerHTML=MODES.map(m=>`<button class="mode ${m.id===mode?'on':''}" data-m="${m.id}"><b>${m.t}</b><span>${m.d}</span></button>`).join('')}
 $('#modes').onclick=e=>{const b=e.target.closest('.mode');if(!b)return;mode=b.dataset.m;if(mode==='C')val.mawla=0;drawModes();drawHeirs()};
 $('#gender').onclick=e=>{const b=e.target.closest('button');if(!b)return;gender=b.dataset.g;setGender();drawHeirs()};
 function setGender(){document.querySelectorAll('#gender button').forEach(b=>b.classList.toggle('on',b.dataset.g===gender));if(gender==='m')val.husband=0;else val.wives=0}
 
-function drawHeirs(){
-  const openFar=[...document.querySelectorAll('#heirs details')].map(x=>x.open);
-  let html='';
-  GROUPS.forEach(([title,items])=>{
-    const its=items.filter(([k])=>!(k==='husband'&&gender==='m')&&!(k==='wives'&&gender==='f')&&!(k==='mawla'&&mode==='C'));
-    const far=title==='العصبات الأبعد';
-    const body=its.map(([k,l,mx])=>`<div class="hv ${val[k]?'has':''}"><label>${l}</label><div class="step"><button data-k="${k}" data-d="-1" aria-label="إنقاص">−</button><output>${val[k]}</output><button data-k="${k}" data-d="1" data-mx="${mx}" aria-label="زيادة">+</button></div></div>`).join('');
-    const open=far&&(its.some(([k])=>val[k])||openFar[0])?' open':'';
-    html+=far?`<details class="grp"${open}><summary>${title}</summary><div class="grid" style="margin-top:8px">${body}</div></details>`:`<div class="grp"><div class="t">${title}</div><div class="grid">${body}</div></div>`;
-  });
-  $('#heirs').innerHTML=html;
+const openG=[true,true,true,false,false];
+function visibleItems(items){return items.filter(([k])=>!(k==='husband'&&gender==='m')&&!(k==='wives'&&gender==='f')&&!(k==='mawla'&&mode==='C'))}
+function updateBar(){
+  const sel=[];let n=0;
+  GROUPS.forEach(([t,items])=>visibleItems(items).forEach(([k,l])=>{if(val[k]>0){n+=val[k];sel.push(val[k]>1?`${l} (${val[k]})`:l)}}));
+  const c=$('#abCount'),l=$('#abList');if(!c)return;
+  c.textContent=n?`${sel.length} فئات من الورثة محددة`:'لم تحدد ورثة بعد';
+  l.textContent=n?sel.join('، '):'اختر الورثة من القوائم أعلاه';
+  $('#abGo').disabled=!n;
 }
+function drawHeirs(){
+  let html='';
+  GROUPS.forEach(([title,items],gi)=>{
+    const its=visibleItems(items);const cnt=its.reduce((s,[k])=>s+val[k],0);
+    const body=its.map(([k,l,mx])=>`<div class="hv tile ${val[k]?'has':''}"><label>${l}</label><div class="step"><button data-k="${k}" data-d="-1" aria-label="إنقاص ${l}">−</button><output>${val[k]}</output><button data-k="${k}" data-d="1" data-mx="${mx}" aria-label="زيادة ${l}">+</button></div></div>`).join('');
+    html+=`<details class="grp2" data-g="${gi}"${openG[gi]||cnt?' open':''}><summary><span>${title}</span>${cnt?`<span class="badge">${cnt}</span>`:''}</summary><div class="grid2">${body}</div></details>`;
+  });
+  $('#heirs').innerHTML=html;updateBar();
+}
+$('#heirs').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.g!==undefined)openG[+d.dataset.g]=d.open},true);
 $('#heirs').onclick=e=>{const b=e.target.closest('button[data-k]');if(!b)return;const k=b.dataset.k,d=+b.dataset.d;
   const cap=+(document.querySelector(`button[data-k="${k}"][data-mx]`).dataset.mx);
   val[k]=Math.max(0,Math.min(cap,val[k]+d));drawHeirs()};
@@ -1029,6 +1095,7 @@ function run(){
   o+=`<div class="card"><h2>النتيجة</h2>`;
   const chips=r.special.map(s=>`<span class="chip">${s}</span>`).join('')+(tza?'<span class="chip">التنزيل</span>':'');
   if(chips)o+=`<div>${chips}</div>`;
+  o+=`<div class="glance">${r.heirs.map(hh=>`<span><b>${hh.label}</b>${hh.share.str()}</span>`).join('')}${!r.bayt.isZero()?`<span><b>${mode==='A'?'بيت المال':'الباقي'}</b>${r.bayt.str()}</span>`:''}</div>`;
   o+=`<p class="small" style="margin:6px 0">أصل المسألة: <b>${r.base}</b> سهماً${r.awl?` (عالت من ${r.awl.from} إلى ${r.awl.to})`:''}.${tza?' والأنصبة التالية من الباقي بعد التنزيل.':''}</p>`;
   if(r.errors.length)o+=`<div class="err">${r.errors.join('<br>')}</div>`;
   const parts=r.heirs.map((hh,i)=>({l:hh.label,f:fac?hh.share.mul(fac):hh.share,c:COLORS[i%COLORS.length]}));
@@ -1055,12 +1122,12 @@ function run(){
       <div class="note" style="margin-top:8px">ملاحظة: يُحسب هنا التنزيل من التركة بعد التجهيز والديون، ثم تُقسَّم بقية التركة على الورثة الباقين بأنصبتهم. بعض الشروح تحسب النتيجة بصورة أخرى، فراجع المحكمة أو الموثّق عند التطبيق.</div></div>`;
   }
   if(r.steps.length){o+=`<div class="card"><h3 style="margin-top:0">المسائل الخاصة في هذه التركة</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>`}
-  o+=`<div class="card">${explain(r,{net})}</div>`;
+  o+=`<details class="card edu-d"${window.innerWidth>700?' open':''}><summary>شرح تعليمي مفصّل: لماذا هذه الأنصبة؟</summary>${explain(r,{net})}</details>`;
   if(mode==='C')o+=`<div class="note">ذكّرنا بأن الصيغة الجزائرية هنا تحسب الردّ، وتحسب التنزيل إن فعّلته، وذوي الأرحام في تبويب مستقل.</div>`;
   $('#out').innerHTML=o;
   $('#out').scrollIntoView({behavior:'smooth',block:'start'});
 }
-$('#go').onclick=run;
+$('#go').onclick=run;$('#abGo').onclick=run;
 $('#reset').onclick=()=>{E.KEYS.forEach(k=>val[k]=0);['estate','funeral','debts','bequest'].forEach(i=>$('#'+i).value='');$('#tzOn').checked=false;$('#out').innerHTML='';last=null;drawHeirs()};
 
 // ---------- ذوو الأرحام ----------
@@ -1337,6 +1404,7 @@ function loadCalc(h,m){E.KEYS.forEach(k=>val[k]=0);Object.assign(val,h);gender=h
   $('#tzOn').checked=false;document.querySelectorAll('#gender button').forEach(bb=>bb.classList.toggle('on',bb.dataset.g===gender));drawModes();drawHeirs();tab('calc');run()}
 
 setGender();drawModes();drawHeirs();drawAr();
+const h0=(location.hash||'').slice(1);tab(TABS.includes(h0)?h0:'calc');window.__inited=1;
 })();
 
 </script>
