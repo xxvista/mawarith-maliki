@@ -47,3 +47,14 @@ const base=E.solve({sons:2,wives:1,mother:1},'A');
 const tk=E.takharuj(base.heirs,{key:'wives',k:1,mode:'estate'});console.log('tk est',tk.rows.map(r=>r.label+' '+r.newShare.str()).join('|'));
 const tk2=E.takharuj(base.heirs,{key:'wives',k:1,mode:'payer',payer:'mother'});console.log('tk payer',tk2.rows.map(r=>r.label+' '+r.newShare.str()).join('|'));
 const tk3=E.takharuj(base.heirs,{key:'wives',k:1,mode:'payer',payer:'all'});console.log('tk all',tk3.rows.map(r=>r.label+' '+r.newShare.str()).join('|'));
+
+// ---- special cases: haml / mafqud / khuntha / munasakha
+const chk=(n,got,exp)=>console.log(got===exp?'PASS':'FAIL',n,got===exp?'':got+' vs '+exp);
+{const h=E.solveHaml({wives:1,father:1,mother:1},'A',{type:'child',maxN:1});
+ chk('haml given',h.given.map(g=>g.key+' '+g.share.str()).join('|'),'wives 1/8|father 1/6|mother 1/6');chk('haml held',h.held.str(),'13/24');
+ chk('haml maxN2 held',E.solveHaml({wives:1,father:1,mother:1},'A',{type:'child',maxN:2}).held.str(),'16/27');}
+{const m=E.solveMafqud({wives:1,mother:1,sons:2},'A','sons');chk('mafqud given',m.rows.map(r=>r.key+' '+r.given.str()).join('|'),'wives 1/8|mother 1/6|sons 17/48');}
+{const k=E.solveKhuntha({mother:1},'A','child');chk('khuntha',k.rows[0].avg.str()+'/'+k.khuntha.avg.str(),'1/6/2/3');
+ chk('khuntha usib rejected',E.solveKhuntha({mother:1},'A','usib').errors.length>0,true);}
+{const m=E.munasakha({wives:1,sons:1,daughters:1},'A','sons',{wives:1,mother:1,sons:1},'A',{mother:'wives'});
+ chk('munasakha',[m.errors.length,m.relation,m.T1,m.T2,m.J].join(','),'0,توافق,24,24,288');}

@@ -486,6 +486,137 @@ function takharuj(heirs, ex) {
   return res;
 }
 
-root.MawarithEngine = { solve, solveTanzil, solveArham, takharuj, Fr, fr, NAMES, KEYS };
+// ================== الحالات الخاصة: الحمل والمفقود والخنثى والمناسخات ==================
+const SPEC = {
+  child: ['sons', 'daughters', 'ولد للميت (ابن أو بنت)'],
+  gchild: ['gsons', 'gdaughters', 'ولد ابن (ابن ابن أو بنت ابن)'],
+  fsib: ['fb', 'fs', 'أخ شقيق أو أخت شقيقة'],
+  psib: ['pb', 'ps', 'أخ لأب أو أخت لأب'],
+  usib: ['mb', 'ms', 'أخ لأم أو أخت لأم']
+};
+const cpy = o => { const x = {}; KEYS.forEach(k => { x[k] = Number(o && o[k]) > 0 ? Math.floor(Number(o[k])) : 0; }); return x; };
+const rowsOf = r => { const m = {}; r.heirs.forEach(h => { m[h.key] = h; }); return m; };
+const minF = (...a) => a.reduce((m, x) => (x.lt(m) ? x : m));
+const grpShare = (rows, k, c) => (rows[k] ? rows[k].per.mul(c) : ZERO);
+const cntLabel = (m, f) => { const p = []; if (m) p.push(m === 1 ? 'ذكر' : m === 2 ? 'ذكران' : m + ' ذكور'); if (f) p.push(f === 1 ? 'أنثى' : f === 2 ? 'أنثيان' : f + ' إناث'); return p.join(' و'); };
+
+// الحمل: يُعطى كل وارث موجود اليقين (أقل نصيبيه في كل التقادير) ويُوقف الباقي
+function solveHaml(input, mode, o) {
+  const t = SPEC[o && o.type]; const out = { errors: [], scenarios: [], given: [], held: ZERO, hamalMax: ZERO, typeLabel: t ? t[2] : '' };
+  if (!t) { out.errors.push('اختر نوع الحمل.'); return out; }
+  const maxN = Math.max(1, Math.min(4, (o.maxN | 0) || 1));
+  const base = cpy(input);
+  const sc = [{ m: 0, f: 0, label: 'يُولد ميتاً (لا حمل)' }];
+  for (let tot = 1; tot <= maxN; tot++) for (let m = tot; m >= 0; m--) sc.push({ m, f: tot - m, label: cntLabel(m, tot - m) });
+  for (const s of sc) {
+    const h = cpy(base); h[t[0]] += s.m; h[t[1]] += s.f;
+    const r = solve(h, mode);
+    if (r.errors.length) { out.errors.push(...r.errors); return out; }
+    s.rows = rowsOf(r); s.bayt = r.bayt;
+    s.hamal = ZERO;
+    if (s.m && s.rows[t[0]]) s.hamal = s.hamal.add(s.rows[t[0]].per.mul(s.m));
+    if (s.f && s.rows[t[1]]) s.hamal = s.hamal.add(s.rows[t[1]].per.mul(s.f));
+    out.scenarios.push(s);
+  }
+  let sum = ZERO;
+  KEYS.forEach(k => {
+    if (!base[k]) return;
+    const vals = sc.map(s => grpShare(s.rows, k, base[k]));
+    const g = minF(...vals);
+    sum = sum.add(g);
+    out.given.push({ key: k, label: nm(k, base[k]), count: base[k], share: g, all: vals });
+  });
+  out.held = ONE.sub(sum);
+  out.hamalMax = maxF(...sc.map(s => s.hamal));
+  out.hamalKeys = t;
+  return out;
+}
+
+// المفقود: مسألتان (حياً / ميتاً) ويُعطى كل وارث موجود الأقل
+function solveMafqud(input, mode, key) {
+  const out = { errors: [], rows: [], held: ZERO };
+  const base = cpy(input);
+  if (!base[key]) { out.errors.push('اختر المفقود من بين الورثة المدخلين.'); return out; }
+  const A = solve(base, mode); if (A.errors.length) { out.errors.push(...A.errors); return out; }
+  const bd = cpy(base); bd[key] -= 1;
+  const B = solve(bd, mode); if (B.errors.length) { out.errors.push(...B.errors); return out; }
+  const ra = rowsOf(A), rb = rowsOf(B);
+  let sum = ZERO;
+  KEYS.forEach(k => {
+    const c = base[k] - (k === key ? 1 : 0);
+    if (c <= 0) return;
+    const a = grpShare(ra, k, c), b = grpShare(rb, k, c), g = minF(a, b);
+    sum = sum.add(g);
+    out.rows.push({ key: k, label: nm(k, c), count: c, alive: a, dead: b, given: g });
+  });
+  const mf = ra[key];
+  out.mafqudLabel = nm(key, 1);
+  out.mafqudAlive = mf ? mf.per : ZERO;
+  out.held = ONE.sub(sum);
+  out.baytAlive = A.bayt; out.baytDead = B.bayt;
+  return out;
+}
+
+// الخنثى المشكل (المالكية): لكل وارث نصف مجموع نصيبيه في حالتي الذكورة والأنوثة
+function solveKhuntha(input, mode, type) {
+  const t = SPEC[type]; const out = { errors: [], rows: [] };
+  if (!t || type === 'usib') { out.errors.push(type === 'usib' ? 'الإخوة لأم يرثون سواء كانوا ذكوراً أو إناثاً، فلا يتغير الحساب.' : 'اختر جهة الخنثى.'); if (!t) return out; }
+  const base = cpy(input);
+  const hm = cpy(base); hm[t[0]] += 1;
+  const hf = cpy(base); hf[t[1]] += 1;
+  const rm = solve(hm, mode), rf = solve(hf, mode);
+  if (rm.errors.length || rf.errors.length) { out.errors.push(...rm.errors, ...rf.errors); return out; }
+  const a = rowsOf(rm), b = rowsOf(rf), two = fr(2);
+  KEYS.forEach(k => {
+    if (!base[k]) return;
+    const x = grpShare(a, k, base[k]), y = grpShare(b, k, base[k]);
+    out.rows.push({ key: k, label: nm(k, base[k]), count: base[k], male: x, female: y, avg: x.add(y).div(two) });
+  });
+  const km = a[t[0]] ? a[t[0]].per : ZERO, kf = b[t[1]] ? b[t[1]].per : ZERO;
+  out.khuntha = { male: km, female: kf, avg: km.add(kf).div(two) };
+  out.bayt = { male: rm.bayt, female: rf.bayt, avg: rm.bayt.add(rf.bayt).div(two) };
+  out.typeLabel = t[2];
+  return out;
+}
+
+// المناسخات
+const lcmB = (a, b) => (a === 0n || b === 0n ? 0n : a / gcd(a, b) * b);
+function munasakha(p1, m1, deadKey, p2, m2, links) {
+  const out = { errors: [] };
+  const r1 = solve(p1, m1);
+  if (r1.errors.length) { out.errors.push(...r1.errors.map(e => 'المسألة الأولى: ' + e)); return out; }
+  const dead = r1.heirs.find(h => h.key === deadKey);
+  if (!dead) { out.errors.push('الميت الثاني يجب أن يكون من الورثة الفعليين في المسألة الأولى (غير محجوب).'); return out; }
+  const r2 = solve(p2, m2);
+  if (r2.errors.length) { out.errors.push(...r2.errors.map(e => 'المسألة الثانية: ' + e)); return out; }
+  if (!r2.heirs.length && r2.bayt.isZero()) { out.errors.push('أدخل ورثة الميت الثاني.'); return out; }
+  const s1 = dead.per;
+  const rows = [];
+  r1.heirs.forEach(h => { const c = h.key === deadKey ? h.count - 1 : h.count; if (c > 0) rows.push({ id: 'a' + h.key, key: h.key, label: h.label, count: c, per1: h.per, per2: ZERO, notes: [] }); });
+  r2.heirs.forEach(h => {
+    const p = s1.mul(h.per), lk = links && links[h.key];
+    const tgt = lk ? rows.find(r => r.id === 'a' + lk && r.count === 1 && h.count === 1) : null;
+    if (tgt) { tgt.per2 = tgt.per2.add(p); tgt.notes.push('وهو نفسه ' + h.label + ' في المسألة الثانية'); }
+    else rows.push({ id: 'b' + h.key, key: h.key, label: h.label, count: h.count, per1: ZERO, per2: p, notes: ['من ورثة الميت الثاني'] });
+  });
+  out.bayt = r1.bayt.add(s1.mul(r2.bayt));
+  out.rows = rows; out.s1 = s1; out.r1 = r1; out.r2 = r2; out.deadLabel = nm(deadKey, 1);
+  // طريقة السهام التقليدية
+  let T1 = 1n; r1.heirs.forEach(h => { T1 = lcmB(T1, h.per.d); }); T1 = lcmB(T1, r1.bayt.d);
+  let T2 = 1n; r2.heirs.forEach(h => { T2 = lcmB(T2, h.per.d); }); T2 = lcmB(T2, r2.bayt.d);
+  const dF = s1.mul(fr(Number(T1))); const d = dF.d === 1n ? dF.n : null;
+  out.T1 = T1; out.T2 = T2; out.d = d;
+  if (d !== null) {
+    const g = gcd(d, T2);
+    if (d % T2 === 0n) { out.relation = 'انقسام'; out.f1 = 1n; out.f2 = d / T2; }
+    else if (g > 1n) { out.relation = 'توافق'; out.g = g; out.f1 = T2 / g; out.f2 = d / g; }
+    else { out.relation = 'تباين'; out.f1 = T2; out.f2 = d; }
+    out.J = T1 * out.f1;
+    rows.forEach(r => { r.sihaam = r.per1.add(r.per2).mul(fr(Number(out.J))); });
+  }
+  return out;
+}
+
+root.MawarithEngine = { solve, solveTanzil, solveArham, takharuj, solveHaml, solveMafqud, solveKhuntha, munasakha, SPEC, Fr, fr, NAMES, KEYS };
 if (typeof module !== 'undefined') module.exports = root.MawarithEngine;
 })(typeof window !== 'undefined' ? window : globalThis);

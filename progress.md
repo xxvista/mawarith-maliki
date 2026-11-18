@@ -31,7 +31,7 @@ Published as a claude.ai artifact (private to the owner until shared).
 - [ ] Test on a real iPhone/Android browser (only headless Chrome emulation so far).
 - [ ] Add past-exam questions and lecture examples as exercises (waiting for the files).
 - [ ] Student name line in the header (name not provided yet).
-- [ ] Missing-person (mafqud), pregnancy (haml), khuntha, drowned/burned (gharqa/hadma), munasakha.
+- [ ] Drowned/burned (gharqa/hadma) dedicated calculator.
 - [ ] Per-class degree handling inside dhawu al-arham class 4 (strength of kinship).
 - [ ] Tanzil for several dead children at once; multi-generation tanzil.
 - [ ] Optional dark theme.
@@ -59,3 +59,7 @@ GitHub Pages from `main` / root (`index.html` is self-contained, `.nojekyll` add
 
 ## درس حل المناسخات (2026-11-18)
 - درس جديد «حل المناسخات» (الدرس 17) في القسم الرابع: تعريفها، الأحوال الثلاثة (لا عمل / انقسام / توافق أو تباين)، خطوات الحل، ومثال محلول جامعته 288 مُتحقَّق منه بمحرك الحساب وبالكسور. صار المجموع 20 درساً و99 تمريناً.
+
+## حاسبات الحالات الخاصة (2026-11-18)
+- تبويب جديد «حالات خاصة» يعمل على الورثة المدخلين في الحاسبة: الحمل (إيقاف النصيب بحسب 1–4 أجنة)، المفقود (حالتا الحياة والموت)، الخنثى (متوسط حالتي الذكورة والأنوثة)، المناسخات (طريقة السهام والجامعة مع ربط الوارث المشترك).
+- أُضيفت 7 اختبارات انحدار (المجموع 33). مقدار ما يُوقف للحمل مختلف فيه (قيد L ما زال مفتوحاً).
