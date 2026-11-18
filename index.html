@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة المواريث — على المذهب المالكي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f2e8;--card:#fffdf8;--ink:#23201a;--mute:#6b6455;--g:#1f5a43;--g2:#2f7a5b;--gold:#b5832a;--line:#e3d9c4;--warn:#9a3b1f;--soft:#eef4ef}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Cairo',system-ui,sans-serif;line-height:1.75;font-size:16px}
+header{background:linear-gradient(135deg,#17443a,#1f5a43 60%,#2c6e55);color:#fdf7e6;padding:34px 18px 26px;text-align:center;position:relative;overflow:hidden}
+header:before{content:"";position:absolute;inset:0;opacity:.07;background-image:radial-gradient(#fff 1px,transparent 1.5px);background-size:18px 18px}
+header h1{font-family:'Amiri',serif;font-size:clamp(28px,5vw,44px);margin:0 0 6px;position:relative}
+header p{margin:0;opacity:.9;position:relative;max-width:760px;margin-inline:auto}
+.basmala{font-family:'Amiri',serif;color:#e8c777;font-size:20px;margin-bottom:6px;position:relative}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:6px 10px;justify-content:center}
+nav button{border:0;background:none;font:inherit;font-weight:600;padding:8px 16px;border-radius:999px;color:var(--mute);cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--g);color:#fff}
+main{max-width:1060px;margin:0 auto;padding:20px 14px 60px}
+section.tab{display:none}section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+h2{font-family:'Amiri',serif;font-size:26px;color:var(--g);margin:0 0 10px}
+h3{font-size:17px;margin:16px 0 6px;color:var(--g)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.seg button{border:0;background:#fff;font:inherit;padding:8px 18px;cursor:pointer;font-weight:600;color:var(--mute)}
+.seg button.on{background:var(--g);color:#fff}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.mode{border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;background:#fff;cursor:pointer;text-align:right;font:inherit}
+.mode b{display:block;color:var(--g)}.mode span{font-size:13.5px;color:var(--mute)}
+.mode.on{border-color:var(--g);background:var(--soft);box-shadow:0 0 0 2px rgba(31,90,67,.12)}
+.grp{margin-top:14px}.grp>div.t{font-weight:700;color:var(--gold);font-size:14px;letter-spacing:.3px;margin-bottom:6px;border-bottom:1px dashed var(--line);padding-bottom:3px}
+.hv{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+.hv.has{border-color:var(--g2);background:var(--soft)}
+.hv label{font-size:15px}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1;cursor:pointer;color:var(--g)}
+.step button:hover{background:var(--g);color:#fff}
+.step output{min-width:22px;text-align:center;font-weight:700}
+input[type=number]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:#fff;direction:ltr;text-align:right}
+.fld label{display:block;font-size:13.5px;color:var(--mute)}
+.btn{background:var(--g);color:#fff;border:0;border-radius:12px;padding:11px 26px;font:inherit;font-weight:700;cursor:pointer}
+.btn.alt{background:#fff;color:var(--g);border:1px solid var(--g)}
+.btn:hover{filter:brightness(1.08)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{background:var(--soft);color:var(--g);font-weight:700;font-size:14px}
+.num{direction:ltr;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+.frac{font-weight:700;color:var(--g)}
+.tbl{overflow-x:auto}
+.chip{display:inline-block;background:#fbefd0;color:#6d4a0a;border:1px solid #ecd08a;border-radius:999px;padding:1px 12px;font-size:13.5px;margin:2px 3px;font-weight:600}
+.chip.g{background:var(--soft);color:var(--g);border-color:#bcd5c6}
+.bar{display:flex;height:26px;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin:10px 0}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;color:var(--mute)}
+.legend b{display:inline-block;width:11px;height:11px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px}
+.note{background:#fff7e0;border:1px solid #ecd9a0;border-radius:12px;padding:10px 14px;font-size:14.5px}
+.err{background:#fde9e3;border:1px solid #f0b9a8;color:var(--warn);border-radius:12px;padding:10px 14px;font-weight:600}
+ol.steps{padding-inline-start:22px;margin:6px 0}ol.steps li{margin:6px 0}
+.blocked li{margin:3px 0;color:var(--mute)}
+.ex{display:flex;flex-wrap:wrap;gap:8px}
+.ex button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:7px 14px;font:inherit;cursor:pointer;font-size:14.5px}
+.ex button:hover{border-color:var(--g);color:var(--g)}
+details{margin-top:10px}summary{cursor:pointer;font-weight:700;color:var(--g)}
+.small{font-size:13.5px;color:var(--mute)}
+ul.refs li{margin:5px 0}
+.k{font-family:'Amiri',serif}
+td.who b{display:block}
+.inst{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:0 auto 18px;max-width:820px;text-align:right}
+.inst .lg{width:92px;height:92px;border-radius:50%;background:#fff;padding:4px;box-shadow:0 2px 10px rgba(0,0,0,.25);flex:none}
+.inst .tx{font-size:14.5px;line-height:1.7;color:#fdf7e6}.inst .tx b{display:block;font-size:16.5px;color:#fff}
+.inst .tx small{display:block;opacity:.85;font-size:13.5px}
+
+:root{color-scheme:light}
+button,input,select,textarea{font-family:inherit;color:var(--ink)}
+button{-webkit-appearance:none;appearance:none}
+.seg button.on,.mode.on b,nav button.on,.btn:not(.alt){color:#fff}
+.mode.on b{color:var(--g)}
+.btn.alt{color:var(--g)}
+:focus-visible{outline:3px solid rgba(181,131,42,.55);outline-offset:2px}
+input:focus,select:focus{border-color:var(--g2);box-shadow:0 0 0 3px rgba(47,122,91,.15);outline:0}
+h2::before{content:"";display:inline-block;width:5px;height:22px;background:var(--gold);border-radius:3px;margin-inline-end:10px;vertical-align:-3px}
+.card{box-shadow:0 2px 10px rgba(60,45,10,.05);border-radius:18px}
+tbody tr:nth-child(even) td{background:#faf6ec}
+td.frac,.frac{font-size:17px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15;vertical-align:middle;font-weight:700}
+.fr b{display:block;padding:0 4px;font-size:15px}.fr b:first-child{border-bottom:2px solid currentColor}
+nav{box-shadow:0 2px 8px rgba(0,0,0,.05)}
+nav button{transition:.15s}nav button:hover:not(.on){background:var(--soft);color:var(--g)}
+.hv{transition:.15s}.hv:hover{border-color:var(--g2)}
+.btn{box-shadow:0 2px 6px rgba(31,90,67,.25);transition:.15s}.btn.alt{box-shadow:none}
+.btn:active{transform:translateY(1px)}
+.ex button{color:var(--ink);background:#fff}.ex button:hover{background:var(--soft);color:var(--g)}
+.mode{color:var(--ink)}
+/* الدروس */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.lcard{position:relative;text-align:right;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px;font:inherit;color:var(--ink);transition:.15s}
+.lcard:hover{border-color:var(--g2);transform:translateY(-2px);box-shadow:0 6px 16px rgba(31,90,67,.12)}
+.lcard b{font-size:16.5px;color:var(--g);padding-inline-end:38px}
+.lcard .ln{position:absolute;top:12px;inset-inline-end:12px;width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.bar2{display:block;height:6px;border-radius:4px;background:#eadfc6;overflow:hidden;margin-top:6px}.bar2 i{display:block;height:100%;background:var(--g2)}
+.exc{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0;background:#fffefa}
+.exc .q{font-weight:600;margin-bottom:8px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.opt{border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:9px 12px;font:inherit;text-align:right;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--g2);background:var(--soft)}
+.opt.okc{background:#e3f3e8;border-color:#4a9a6a}.opt.badc{background:#fde9e3;border-color:#d27a63}
+.crow{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.crow label{font-size:14.5px}
+.crow input{margin-top:3px;text-align:left}
+.verdict{font-weight:700;padding:8px 12px;border-radius:10px;margin-top:10px}
+.verdict.ok{background:#e3f3e8;color:#1c6b3d}.verdict.bad{background:#fde9e3;color:var(--warn)}
+.fbl{list-style:none;padding:0;margin:8px 0}.fbl li{padding:7px 10px;border-radius:10px;margin:4px 0}
+.fbl li.ok{background:#f0f8f2}.fbl li.bad{background:#fff3ee}
+@media print{nav,.btn,.ex,header .basmala{display:none!important}.tab{display:block!important}.card{box-shadow:none;break-inside:avoid}}
+@media(max-width:560px){.inst .tx{text-align:center}.inst{justify-content:center}h2{font-size:23px}.lgrid{grid-template-columns:1fr}}
+.edu h4{margin:14px 0 4px;color:var(--gold);font-size:16px}.edu p{margin:4px 0}.edu{line-height:1.9}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
+@media(max-width:560px){.card{padding:14px}th,td{padding:7px 5px;font-size:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="inst">
+    <img class="lg" alt="شعار جامعة البويرة" src="data:image/png;base64,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">
+    <div class="tx"><small>وزارة التعليم العالي والبحث العلمي</small><b>جامعة البويرة – آكلي محند أولحاج</b><small>كلية العلوم الإنسانية – قسم الشريعة</small><small>مقياس المواريث – السنة الثالثة شريعة – 2026/2027</small><small>تحت إشراف الدكتورة حدة سعدي</small></div>
+  </div>
+  <div class="basmala">بسم الله الرحمن الرحيم</div>
+  <h1>حاسبة المواريث على المذهب المالكي</h1>
+  <p>أدخل الورثة والتركة فيظهر نصيب كل وارث مع بيان سبب الفرض أو التعصيب أو الحجب، وخطوات الحساب، وما تفرّد به المذهب من مسائل.</p>
+</header>
+<nav id="nav">
+  <button data-t="calc" class="on">الحاسبة</button>
+  <button data-t="learn">الدروس والتمارين</button>
+  <button data-t="arham">ذوو الأرحام</button>
+  <button data-t="takh">التخارج</button>
+  <button data-t="rules">قواعد المذهب</button>
+  <button data-t="ex">مسائل مشهورة</button>
+  <button data-t="refs">المراجع والتنبيهات</button>
+</nav>
+<main>
+
+<section id="calc" class="tab on">
+  <div class="card">
+    <h2>١. اختر الصيغة</h2>
+    <div class="modes" id="modes"></div>
+  </div>
+
+  <div class="card">
+    <h2>٢. الورثة</h2>
+    <div class="row"><b>المتوفّى:</b>
+      <div class="seg" id="gender"><button data-g="m" class="on">ذكر</button><button data-g="f">أنثى</button></div>
+      <span class="small">يحدّد الزوجين: زوجات للمتوفى الذكر، وزوج للمتوفاة الأنثى.</span></div>
+    <div id="heirs"></div>
+  </div>
+
+  <div class="card">
+    <h2>٣. التركة (اختياري)</h2>
+    <div class="grid">
+      <div class="fld"><label>إجمالي التركة</label><input type="number" id="estate" min="0" step="any" placeholder="مثال: 1200000"></div>
+      <div class="fld"><label>تجهيز الميت ودفنه</label><input type="number" id="funeral" min="0" step="any" placeholder="0"></div>
+      <div class="fld"><label>الديون</label><input type="number" id="debts" min="0" step="any" placeholder="0"></div>
+      <div class="fld"><label>وصية لغير وارث</label><input type="number" id="bequest" min="0" step="any" placeholder="0"></div>
+    </div>
+    <p class="small">الترتيب الشرعي: التجهيز ثم الديون ثم الوصية في حدود الثلث ثم الميراث. وإن لم تُدخل مبلغاً ظهرت الأنصبة كسوراً فقط.</p>
+    <div class="row" style="margin-top:8px"><button class="btn" id="go">احسب الأنصبة</button><button class="btn alt" id="reset">مسح</button></div>
+  </div>
+
+  <div class="card">
+    <details id="tzBox"><summary>٤. التنزيل (الوصية الواجبة للأحفاد) — اختياري</summary>
+      <p class="small">إذا مات أحد أبناء المتوفى أو بناته قبله (أو معه) وترك أولاداً لا يرثون جدّهم، يُنزَّلون منزلة أصلهم في حدود الثلث (المواد 169 إلى 172 من قانون الأسرة الجزائري). فعّله مع الصيغة الثالثة غالباً.</p>
+      <label class="row"><input type="checkbox" id="tzOn"> <b>طبّق التنزيل في هذه المسألة</b></label>
+      <div class="grid" style="margin-top:8px">
+        <div class="fld"><label>الأصل المتوفى قبل المورّث</label><select id="tzType" style="font:inherit;padding:7px;border:1px solid var(--line);border-radius:10px;width:100%"><option value="son">ابن</option><option value="daughter">بنت</option></select></div>
+        <div class="fld"><label>عدد الأحفاد الذكور</label><input type="number" id="tzM" min="0" value="0"></div>
+        <div class="fld"><label>عدد الحفيدات الإناث</label><input type="number" id="tzF" min="0" value="0"></div>
+      </div>
+      <p class="small" style="margin-bottom:2px">إن تحقق أحد هذه الأمور سقط التنزيل:</p>
+      <label class="small"><input type="checkbox" id="tzC1"> الأحفاد يرثون جدّهم فعلاً بأي طريق.</label><br>
+      <label class="small"><input type="checkbox" id="tzC2"> أعطاهم الجدّ مثل نصيب أصلهم بوصية أو هبة (ولو أعطاهم أقل لزم إتمام الفرق).</label><br>
+      <label class="small"><input type="checkbox" id="tzC3"> ورثوا من أبيهم أو أمهم ما لا يقل عن نصيب أصلهم من أبيه.</label>
+    </details>
+  </div>
+
+  <div id="out"></div>
+</section>
+
+<section id="learn" class="tab"><div id="lessonView"></div></section>
+
+<section id="arham" class="tab">
+  <div class="card">
+    <h2>حاسبة ذوي الأرحام (المادة 168)</h2>
+    <p class="small">الأصل في المذهب المالكي أنهم لا يرثون وأن المال لبيت المال، لكن المشرّع الجزائري ورّثهم عند عدم وجود صاحب فرض (غير الزوجين) ولا عاصب، آخذاً بمذهب أهل التنزيل. فاستعمل هذه الحاسبة فقط إذا لم يكن في المسألة إلا الزوج أو الزوجة وأقارب من هذه الأصناف. وهي مبسّطة كما سيُبيَّن في النتيجة.</p>
+    <div class="row"><b>أحد الزوجين:</b><div class="seg" id="arSp"><button data-s="" class="on">لا يوجد</button><button data-s="husband">زوج</button><button data-s="wife">زوجة</button></div></div>
+    <div id="arBody"></div>
+    <div class="grid" style="margin-top:10px"><div class="fld"><label>المبلغ الموروث (اختياري)</label><input type="number" id="arMoney" min="0" step="any" placeholder="مثال: 600000"></div></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="arGo">احسب</button></div>
+  </div>
+  <div id="arOut"></div>
+</section>
+
+<section id="takh" class="tab">
+  <div class="card">
+    <h2>التخارج</h2>
+    <p class="small">التخارج: أن يتصالح الورثة على أن يخرج أحدهم من التركة مقابل شيء معلوم. احسب أولاً مسألة الميراث في تبويب «الحاسبة» ثم عُد إلى هنا لاختيار الوارث الخارج وصورة التخارج.</p>
+    <div id="tkBody"></div>
+  </div>
+  <div id="tkOut"></div>
+</section>
+
+<section id="rules" class="tab">
+  <div class="card">
+    <h2>الحقوق المتعلقة بالتركة</h2>
+    <ol class="steps"><li>تجهيز الميت ودفنه بالمعروف.</li><li>قضاء الديون.</li><li>الوصية لغير وارث في حدود <b>ثلث ما بقي</b>، وما زاد عليه يتوقف على إجازة الورثة.</li><li>قسمة الباقي على الورثة.</li></ol>
+    <p class="small">هذا هو الترتيب المقرر في كتب الفرائض، وبه يحسب الموقع المبلغ القابل للقسمة.</p>
+  </div>
+  <div class="card">
+    <h2>أسباب الإرث وموانعه</h2>
+    <p><b>الأسباب:</b> النكاح الصحيح (الزوجية)، والنسب (القرابة)، والولاء (العتق).</p>
+    <p><b>الموانع:</b> القتل، والرق، واختلاف الدين. وفي الأصل يشترط تحقق حياة الوارث بعد موت المورّث، وتحقق جهة الإرث.</p>
+    <p class="small">يفترض الموقع أنك أدخلت الورثة المستحقين فعلاً بعد النظر في الموانع، فهو لا يتحقق من وجودها.</p>
+  </div>
+  <div class="card">
+    <h2>الفروض المقدّرة ومن يرثها</h2>
+    <div class="tbl"><table>
+      <tr><th>الفرض</th><th>أصحابه وحالاتهم</th></tr>
+      <tr><td class="num frac">1/2</td><td>الزوج بلا فرع وارث، البنت الواحدة، بنت الابن عند عدم البنت، الأخت الشقيقة أو لأب المنفردة.</td></tr>
+      <tr><td class="num frac">1/4</td><td>الزوج مع فرع وارث، الزوجة أو الزوجات بلا فرع وارث.</td></tr>
+      <tr><td class="num frac">1/8</td><td>الزوجة أو الزوجات مع فرع وارث.</td></tr>
+      <tr><td class="num frac">2/3</td><td>البنتان فأكثر، بنات الابن، الشقيقتان فأكثر، الأختان لأب فأكثر.</td></tr>
+      <tr><td class="num frac">1/3</td><td>الأم بلا فرع وارث ولا جمع من الإخوة، الإخوة لأم اثنان فأكثر.</td></tr>
+      <tr><td class="num frac">1/6</td><td>الأب والجد مع الفرع، الأم مع الفرع أو جمع الإخوة، الجدة، بنت الابن مع بنت صلبية، الأخت لأب مع شقيقة، الأخ لأم المنفرد.</td></tr>
+    </table></div>
+  </div>
+  <div class="card">
+    <h2>اختيارات المذهب المالكي التي يطبّقها الموقع</h2>
+    <ul class="refs">
+      <li><b>الجد مع الإخوة:</b> يأخذ المالكية بمذهب زيد بن ثابت؛ فلا يحجب الجدُّ الإخوةَ الأشقاء ولا لأب، ويُعطى الأحظّ له من ثلاثة: المقاسمة كأخ، أو ثلث الباقي، أو سدس جميع المال. وإذا اجتمع أشقاء وإخوة لأب عُدّ الأشقاء الإخوةَ لأب على الجد (المعادّة).</li>
+      <li><b>الإخوة لأم مع الجد:</b> يسقطون به كما يسقطون بالأب والفرع الوارث.</li>
+      <li><b>الجدات:</b> لا يرث إلا جدتان، أم الأم وأم الأب (ومن يرتبط بهما بإناث على التفصيل المعروف)، والقُربى تحجب البُعدى، وتحجب الأمُّ الجداتِ كلهنّ.</li>
+      <li><b>المشتركة:</b> زوج وأم أو جدة وإخوة لأم وأشقاء. يشرَّك الأشقاء مع الإخوة لأم في الثلث، فيقسمونه بالتساوي للذكر والأنثى، خلافاً للحنفية والحنابلة الذين يُسقطونهم.</li>
+      <li><b>الأكدرية:</b> زوج وأم وجد وأخت. تُفرض للأخت النصف استثناءً فتعول المسألة من 6 إلى 9، ثم يقتسم الجد والأخت نصيبيهما للذكر مثل حظ الأنثيين، وتصحّ من 27.</li>
+      <li><b>العمريتان:</b> زوج أو زوجة مع الأبوين: للأم ثلث الباقي بعد فرض الزوج لا ثلث التركة.</li>
+      <li><b>العول:</b> إذا زادت الفروض على الواحد دخل النقص على جميع أصحاب الفروض بنسبة سهامهم.</li>
+      <li><b>الردّ وذوو الأرحام:</b> الأصل في المذهب أنه لا ردّ على أصحاب الفروض ولا توريث لذوي الأرحام، فيذهب الفاضل إلى بيت المال إن كان منتظماً. وأفتى المتأخرون بالردّ ثم بتوريث ذوي الأرحام عند فساد بيت المال. وقد جعلنا ذلك اختياراً في الصيغة.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>قانون الأسرة الجزائري</h2>
+    <p>القسم الثالث من قانون الأسرة (المواد 126 إلى 183) مبني على المذهب المالكي مع بعض الاختيارات الخاصة. وللموقع فيه ثلاث وحدات:</p>
+    <ul class="refs">
+      <li><b>الردّ (المادة 167):</b> ما بقي بعد الفروض ولا عاصب يُردّ على أصحاب الفروض غير الزوجين، وعلى أحد الزوجين إن لم يوجد غيره.</li>
+      <li><b>ذوو الأرحام (المادة 168):</b> إذا لم يوجد صاحب فرض ولا عاصب آلت التركة إلى ذوي الأرحام الأقربِ درجةً فالأقرب على طريقة أهل التنزيل، وللزوجين فرضهما أولاً ثم الباقي لهم. تجد حاسبتها في تبويب «ذوو الأرحام».</li>
+      <li><b>التنزيل (المواد 169 إلى 172):</b> وهو وصية واجبة للأحفاد الذين مات أصلهم قبل المورّث، فيأخذون نصيب أصلهم لو بقي حيّاً بشرط ألا يتجاوز ذلك ثلث التركة، وألا يكونوا وارثين للجدّ، وألا يكون الجدّ قد أعطاهم ما يعادل نصيب أصلهم، ويُقسَّم بينهم للذكر مثل حظ الأنثيين. وهو مقدَّم على الوصية الاختيارية. يُفعَّل في الحاسبة من خانة «٤. التنزيل».</li>
+    </ul>
+    <p class="small">فسّر الشرّاح لفظ «الأحفاد» في المادة 169 على أكثر من وجه: هل يشمل أولاد البنت أم أولاد الابن فقط؟ لذلك جعل الموقع نوع الأصل (ابن أو بنت) خياراً لك.</p>
+  </div>
+  <div class="card">
+    <h2>التخارج</h2>
+    <p>هو اتفاق الورثة على خروج أحدهم من القسمة مقابل مال أو عين. وله صور يحسبها الموقع:</p>
+    <ul class="refs">
+      <li><b>يأخذ من التركة نفسها:</b> فيُقسَّم الباقي بين الباقين بنسبة أنصبتهم الأصلية بعضها إلى بعض.</li>
+      <li><b>يشتري نصيبه وارثٌ واحد:</b> فيحلّ محلّه ويضمّ نصيبه إلى نصيبه.</li>
+      <li><b>يشتريه جميع الباقين من مالهم:</b> فيقتسمون نصيبه والثمن بنسبة أنصبتهم.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="ex" class="tab">
+  <div class="card">
+    <h2>مسائل مشهورة</h2>
+    <p class="small">اضغط على المسألة لتُحمَّل في الحاسبة مع الصيغة المناسبة.</p>
+    <div class="ex" id="exlist"></div>
+  </div>
+</section>
+
+<section id="refs" class="tab">
+  <div class="card">
+    <h2>مصادر هذا العمل</h2>
+    <p><b>ملفاتك في مجلد المواريث:</b> «المواريث»، «مدخل إلى علم المواريث»، «أركان الميراث وأسبابه وشروطه»، «الوارثون والوارثات وطرق الميراث»، «حالات أصحاب الفروض»، المحاضرة الثالثة في المواريث، «التنزيل في قانون الأسرة الجزائري»، «التخارج». استُخرج منها ترتيب الحقوق، والفروض، وشروط التنزيل.</p>
+    <p><b>كتب المذهب المالكي التي تُراجَع للتحقق:</b></p>
+    <ul class="refs">
+      <li>مختصر خليل بن إسحاق، باب الفرائض، وشروحه: الشرح الكبير للدردير مع حاشية الدسوقي، ومنح الجليل لعليش.</li>
+      <li>الرسالة لابن أبي زيد القيرواني، وشرحها الفواكه الدواني للنفراوي.</li>
+      <li>بداية المجتهد ونهاية المقتصد لابن رشد الحفيد، لمواضع الخلاف بين المذاهب.</li>
+      <li>الكافي في فقه أهل المدينة لابن عبد البر، والقوانين الفقهية لابن جزي.</li>
+      <li>قانون الأسرة الجزائري (القانون 84-11 المعدّل بالأمر 05-02)، الكتاب الثالث في الميراث.</li>
+    </ul>
+    <p><b>مراجع جامعية اعتُمد عليها في التنزيل وذوي الأرحام:</b></p>
+    <ul class="refs">
+      <li><a href="https://elearning.univ-guelma.dz/mod/resource/view.php?id=3905" target="_blank" rel="noopener">محاضرة التنزيل (الوصية الواجبة)، جامعة قالمة</a></li>
+      <li><a href="https://elearning.univ-guelma.dz/mod/resource/view.php?id=3911" target="_blank" rel="noopener">محاضرة ذوي الأرحام، جامعة قالمة</a></li>
+      <li><a href="https://journals.univ-batna.dz/index.php/arsd/article/view/3075" target="_blank" rel="noopener">ذوو الأرحام وإشكالات توريثهم في قانون الأسرة الجزائري، المجلة الجزائرية للأمن والتنمية</a></li>
+      <li><a href="https://www.mohamah.net/law/?p=26621" target="_blank" rel="noopener">التنزيل على ضوء قانون الأسرة الجزائري</a></li>
+    </ul>
+    <p class="small">اطّلعتُ على ملخصات المذهب وشروحه المتاحة على الشبكة وعلى نصوص ملفاتك، ولم أنسخ نصوص هذه الكتب، فالإحالة عليها للتوثيق والمراجعة لا لأن الصفحة تنقل منها.</p>
+  </div>
+  <div class="card">
+    <h2>تنبيهات مهمة</h2>
+    <div class="note">
+      <ul style="margin:0;padding-inline-start:20px">
+        <li>الموقع أداة مساعدة للحساب والتعلّم، وليس فتوى ولا حكماً قضائياً. وعند وجود تركة حقيقية يُرجَع إلى المفتي أو القاضي أو الموثّق.</li>
+        <li>لا يحسب الموقع: الحمل، المفقود، الخنثى، الغرقى والهدمى، المناسخات، ولا يتحقق من موانع الإرث. وحاسبتا التنزيل وذوي الأرحام مبسّطتان (انظر ملاحظاتهما)، ويقتصر التنزيل على أصل واحد ميّت مع أولاده.</li>
+        <li>يمثّل الموقع الابنَ وابنَ الابن وأبناء الإخوة والأعمام بالعدد، ويقسم الباقي بينهم للذكر مثل حظ الأنثيين حيث ثبت ذلك.</li>
+        <li>اختلفت المذاهب في بعض هذه المسائل، والحساب هنا على المذهب المالكي فقط. وقد يختلف عن آلات حساب تعتمد غير هذا المذهب.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<footer>حاسبة المواريث — المذهب المالكي. الحساب بكسور دقيقة بلا تقريب.<br>جامعة البويرة – كلية العلوم الإنسانية – قسم الشريعة، مقياس المواريث، تحت إشراف الدكتورة حدة سعدي.</footer>
+
+<script>
+/* محرك حساب المواريث — المذهب المالكي (ثلاث صيغ) — حسابات كسرية دقيقة */
+(function (root) {
+'use strict';
+const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) { [a, b] = [b, a % b]; } return a; };
+class Fr {
+  constructor(n, d = 1n) { n = BigInt(n); d = BigInt(d); if (d < 0n) { n = -n; d = -d; } const g = gcd(n, d) || 1n; this.n = n / g; this.d = d / g; }
+  static of(x) { return x instanceof Fr ? x : new Fr(x); }
+  add(o) { o = Fr.of(o); return new Fr(this.n * o.d + o.n * this.d, this.d * o.d); }
+  sub(o) { o = Fr.of(o); return new Fr(this.n * o.d - o.n * this.d, this.d * o.d); }
+  mul(o) { o = Fr.of(o); return new Fr(this.n * o.n, this.d * o.d); }
+  div(o) { o = Fr.of(o); return new Fr(this.n * o.d, this.d * o.n); }
+  cmp(o) { o = Fr.of(o); const l = this.n * o.d, r = o.n * this.d; return l < r ? -1 : l > r ? 1 : 0; }
+  lt(o) { return this.cmp(o) < 0; } gt(o) { return this.cmp(o) > 0; } eq(o) { return this.cmp(o) === 0; }
+  isZero() { return this.n === 0n; }
+  num() { return Number(this.n) / Number(this.d); }
+  str() { return this.d === 1n ? String(this.n) : this.n + '/' + this.d; }
+}
+const fr = (n, d = 1) => new Fr(n, d);
+const ZERO = fr(0), ONE = fr(1);
+const maxF = (...a) => a.reduce((m, x) => (x.gt(m) ? x : m));
+
+const NAMES = {
+  husband: ['الزوج', 'الزوج'], wives: ['الزوجة', 'الزوجات'],
+  father: ['الأب', 'الأب'], mother: ['الأم', 'الأم'], gf: ['الجد (أبو الأب)', 'الجد (أبو الأب)'],
+  gm_m: ['أم الأم', 'أم الأم'], gm_p: ['أم الأب', 'أم الأب'], gm_mm: ['أم أم الأم', 'أم أم الأم'], gm_pm: ['أم أم الأب', 'أم أم الأب'],
+  sons: ['الابن', 'الأبناء'], daughters: ['البنت', 'البنات'], gsons: ['ابن الابن', 'أبناء الابن'], gdaughters: ['بنت الابن', 'بنات الابن'],
+  fb: ['الأخ الشقيق', 'الإخوة الأشقاء'], fs: ['الأخت الشقيقة', 'الأخوات الشقيقات'],
+  pb: ['الأخ لأب', 'الإخوة لأب'], ps: ['الأخت لأب', 'الأخوات لأب'],
+  mb: ['الأخ لأم', 'الإخوة لأم'], ms: ['الأخت لأم', 'الأخوات لأم'],
+  nfb: ['ابن الأخ الشقيق', 'أبناء الأخ الشقيق'], npb: ['ابن الأخ لأب', 'أبناء الأخ لأب'],
+  ufb: ['العم الشقيق', 'الأعمام الأشقاء'], upb: ['العم لأب', 'الأعمام لأب'],
+  cfb: ['ابن العم الشقيق', 'أبناء العم الشقيق'], cpb: ['ابن العم لأب', 'أبناء العم لأب'],
+  mawla: ['المعتِق (الولاء)', 'المعتِق (الولاء)']
+};
+const KEYS = Object.keys(NAMES);
+const DEF = {}; KEYS.forEach(k => DEF[k] = 0);
+const nm = (k, c) => NAMES[k][c > 1 ? 1 : 0];
+
+function solve(input, mode) {
+  mode = mode || 'A';
+  const n = Object.assign({}, DEF);
+  KEYS.forEach(k => { const v = Number(input && input[k]); n[k] = isFinite(v) && v > 0 ? Math.floor(v) : 0; });
+  const out = { mode, steps: [], notes: [], heirs: [], blocked: [], errors: [], special: [], bayt: ZERO, base: null, awl: null, radd: null };
+  if (n.husband > 1) n.husband = 1;
+  if (n.wives > 4) n.wives = 4;
+  if (n.father > 1) n.father = 1; if (n.mother > 1) n.mother = 1; if (n.gf > 1) n.gf = 1; if (n.mawla > 1) n.mawla = 1;
+  if (mode === 'C') n.mawla = 0;
+  if (n.husband && n.wives) { out.errors.push('لا يجتمع زوج وزوجة في تركة واحدة: اختر أحدهما.'); return out; }
+  const total = KEYS.reduce((s, k) => s + n[k], 0);
+  if (total === 0) { out.errors.push('لم تُدخل أي وارث.'); return out; }
+
+  const S = out.steps;
+  const res = {}; // key -> {share:Fr, kind, why}
+  const give = (k, share, kind, why) => {
+    if (share.isZero() || n[k] === 0) return;
+    if (res[k]) { res[k].share = res[k].share.add(share); res[k].kind = res[k].kind === kind ? kind : 'فرض وتعصيب'; res[k].why += ' + ' + why; }
+    else res[k] = { share, kind, why };
+  };
+  const sum = () => Object.values(res).reduce((s, r) => s.add(r.share), ZERO);
+
+  // ---------- الفرع الوارث ----------
+  let gsons = n.gsons, gdaughters = n.gdaughters;
+  if (n.sons > 0) { gsons = 0; gdaughters = 0; }
+  else if (gdaughters > 0 && gsons === 0 && n.daughters >= 2) { gdaughters = 0; }
+  const maleDesc = n.sons > 0 || gsons > 0;
+  const femaleDesc = n.daughters > 0 || gdaughters > 0;
+  const desc = maleDesc || femaleDesc;
+  const sibAll = n.fb + n.fs + n.pb + n.ps + n.mb + n.ms;
+  const father = n.father > 0;
+  const gfActive = n.gf > 0 && !father;
+  const fullOrPat = n.fb + n.fs + n.pb + n.ps;
+  const jadd = gfActive && !maleDesc && fullOrPat > 0;
+
+  // ---------- المسائل الخاصة: الأكدرية ----------
+  const onlyKeys = ks => KEYS.every(k => ks.includes(k) ? true : n[k] === 0);
+  const akd = n.husband === 1 && n.mother === 1 && n.gf === 1 && ((n.fs === 1 && n.pb === 0 && n.ps === 0 && n.fb === 0) || (n.ps === 1 && n.fs === 0 && n.fb === 0 && n.pb === 0)) && onlyKeys(['husband', 'mother', 'gf', 'fs', 'ps']);
+  if (akd) {
+    const sisKey = n.fs === 1 ? 'fs' : 'ps';
+    S.push('هذه المسألة الأكدرية: زوج وأم وجد وأخت واحدة (شقيقة أو لأب). تُفرض لها النصف استثناءً، فيكون للزوج 1/2 وللأم 1/3 وللجد 1/6 وللأخت 1/2، فتعول المسألة من 6 إلى 9.');
+    S.push('ثم يجمع الجد نصيبه (1) مع نصيب الأخت (3) = 4 أسهم، ويقتسمانها «للذكر مثل حظ الأنثيين»: للجد 8/27 وللأخت 4/27، وتصحّ المسألة من 27.');
+    res.husband = { share: fr(9, 27), kind: 'فرض', why: '3/9 بعد العول (النصف)' };
+    res.mother = { share: fr(6, 27), kind: 'فرض', why: '2/9 بعد العول (الثلث)' };
+    res.gf = { share: fr(8, 27), kind: 'فرض وتعصيب', why: 'يقاسم الأخت: له ضعف نصيبها من مجموع سهميهما' };
+    res[sisKey] = { share: fr(4, 27), kind: 'فرض وتعصيب', why: 'تُفرض لها استثناءً ثم تُقاسَم الجدَّ' };
+    out.special.push('الأكدرية');
+    out.awl = { from: 6, to: 9 };
+    finalize(); return out;
+  }
+
+  // ---------- الجدات (المذهب المالكي: جدتان فقط، والقربى تحجب البعدى) ----------
+  const gmRes = [];
+  if (n.mother > 0) { ['gm_m', 'gm_p', 'gm_mm', 'gm_pm'].forEach(k => { if (n[k]) out.blocked.push({ key: k, reason: 'محجوبة بالأم' }); }); }
+  else {
+    const cand = [];
+    if (n.gm_m) cand.push(['gm_m', 1]); if (n.gm_mm && !n.gm_m) cand.push(['gm_mm', 2]);
+    if (n.gm_p) { if (father) out.blocked.push({ key: 'gm_p', reason: 'محجوبة بالأب' }); else cand.push(['gm_p', 1]); }
+    if (n.gm_pm && !n.gm_p) { if (father) out.blocked.push({ key: 'gm_pm', reason: 'محجوبة بالأب' }); else cand.push(['gm_pm', 2]); }
+    if (n.gm_mm && n.gm_m) out.blocked.push({ key: 'gm_mm', reason: 'محجوبة بالجدة القربى من جهتها (أم الأم)' });
+    if (n.gm_pm && n.gm_p) out.blocked.push({ key: 'gm_pm', reason: 'محجوبة بالجدة القربى من جهتها (أم الأب)' });
+    if (cand.length) {
+      const mn = Math.min(...cand.map(c => c[1]));
+      cand.forEach(c => { if (c[1] > mn) out.blocked.push({ key: c[0], reason: 'محجوبة بجدة أقرب منها' }); else gmRes.push(c[0]); });
+    }
+  }
+
+  // ---------- أصحاب الفروض ----------
+  const spouseShare = n.husband ? (desc ? fr(1, 4) : fr(1, 2)) : n.wives ? (desc ? fr(1, 8) : fr(1, 4)) : ZERO;
+  if (n.husband) give('husband', spouseShare, 'فرض', desc ? 'الربع لوجود الفرع الوارث' : 'النصف لعدم الفرع الوارث');
+  if (n.wives) give('wives', spouseShare, 'فرض', (desc ? 'الثمن' : 'الربع') + (desc ? ' لوجود الفرع الوارث' : ' لعدم الفرع الوارث') + (n.wives > 1 ? ' يُقسم بينهنّ بالتساوي' : ''));
+
+  // الأم
+  let umariyya = false;
+  if (n.mother) {
+    if (desc) give('mother', fr(1, 6), 'فرض', 'السدس لوجود الفرع الوارث');
+    else if (sibAll >= 2) give('mother', fr(1, 6), 'فرض', 'السدس لوجود جمع من الإخوة (اثنين فأكثر)');
+    else if ((n.husband || n.wives) && father) {
+      umariyya = true;
+      give('mother', ONE.sub(spouseShare).div(3), 'فرض', 'ثلث الباقي بعد فرض الزوج (العمريّة)');
+    } else give('mother', fr(1, 3), 'فرض', 'الثلث لعدم الفرع الوارث وعدم جمع الإخوة');
+  }
+  if (umariyya) { out.special.push(n.husband ? 'العمريّة الأولى (زوج وأبوان)' : 'العمريّة الثانية (زوجة وأبوان)'); S.push('مسألة العمريّة: للأم ثلث ما بقي بعد فرض الزوج/الزوجة وليس ثلث التركة كلها، قضى بذلك عمر رضي الله عنه ووافقه الجمهور.'); }
+
+  if (gmRes.length) {
+    const each = fr(1, 6).div(gmRes.length);
+    gmRes.forEach(k => give(k, each, 'فرض', gmRes.length > 1 ? 'السدس تشترك فيه الجدتان بالتساوي' : 'السدس لعدم الأم'));
+    if (gmRes.length === 1 && false) {}
+  }
+
+  // الأب والجد (غير مقاسمة الإخوة)
+  const asParent = (k, label) => {
+    if (maleDesc) give(k, fr(1, 6), 'فرض', 'السدس لوجود الفرع الوارث المذكر');
+    else if (femaleDesc) give(k, fr(1, 6), 'فرض', 'السدس لوجود الفرع الوارث المؤنث، ثم يأخذ الباقي تعصيباً');
+  };
+  if (father) asParent('father');
+  if (gfActive && !jadd) asParent('gf');
+
+  // البنات وبنات الابن
+  if (n.sons === 0) {
+    if (n.daughters > 0) {
+      if (n.daughters === 1) give('daughters', fr(1, 2), 'فرض', 'النصف للبنت الواحدة');
+      else give('daughters', fr(2, 3), 'فرض', 'الثلثان للبنتين فأكثر يُقسمان بالتساوي');
+    }
+    if (gsons === 0 && gdaughters > 0) {
+      if (n.daughters === 0) {
+        if (gdaughters === 1) give('gdaughters', fr(1, 2), 'فرض', 'النصف لبنت الابن الواحدة (تقوم مقام البنت)');
+        else give('gdaughters', fr(2, 3), 'فرض', 'الثلثان لبنات الابن');
+      } else if (n.daughters === 1) give('gdaughters', fr(1, 6), 'فرض', 'السدس تكملة للثلثين مع البنت الصلبية');
+    }
+  }
+
+  // الإخوة لأم
+  const maternalBlocked = desc || father || gfActive;
+  const mTot = n.mb + n.ms;
+  if (mTot > 0 && !maternalBlocked) {
+    const tot = mTot === 1 ? fr(1, 6) : fr(1, 3);
+    const why = mTot === 1 ? 'السدس للواحد منفرداً' : 'الثلث للاثنين فأكثر، يقتسمونه بالتساوي (الذكر كالأنثى)';
+    give('mb', tot.mul(n.mb).div(mTot), 'فرض', why);
+    give('ms', tot.mul(n.ms).div(mTot), 'فرض', why);
+  } else if (mTot > 0) {
+    const r = desc ? 'محجوبون بالفرع الوارث' : father ? 'محجوبون بالأب' : 'محجوبون بالجد (عند المالكية)';
+    if (n.mb) out.blocked.push({ key: 'mb', reason: r }); if (n.ms) out.blocked.push({ key: 'ms', reason: r });
+  }
+
+  // ---------- الإخوة الأشقاء ولأب (غير مسألة الجد) ----------
+  const sibsAllowed = !maleDesc && !father && !jadd;
+  const asabaSis = femaleDesc; // الأخوات عصبة مع الغير
+  if (sibsAllowed) {
+    if (n.fb === 0 && n.fs > 0 && !asabaSis) {
+      if (n.fs === 1) give('fs', fr(1, 2), 'فرض', 'النصف للأخت الشقيقة المنفردة');
+      else give('fs', fr(2, 3), 'فرض', 'الثلثان للشقيقتين فأكثر');
+    }
+    const pBlocked = n.fb > 0 || (n.fs > 0 && asabaSis);
+    if (!pBlocked && n.pb === 0 && n.ps > 0 && !asabaSis) {
+      if (n.fs === 0) { if (n.ps === 1) give('ps', fr(1, 2), 'فرض', 'النصف للأخت لأب المنفردة'); else give('ps', fr(2, 3), 'فرض', 'الثلثان للأختين لأب فأكثر'); }
+      else if (n.fs === 1) give('ps', fr(1, 6), 'فرض', 'السدس تكملة للثلثين مع الأخت الشقيقة');
+      // fs>=2 : محجوبات
+    }
+  }
+
+  // ---------- مسألة الجد مع الإخوة (زيد بن ثابت — المالكية) ----------
+  let jaddInfo = null;
+  if (jadd) {
+    const F = sum();
+    const R = ONE.sub(F);
+    const units = 2 * n.fb + n.fs + 2 * n.pb + n.ps;
+    const A = R.gt(ZERO) ? R.mul(2).div(2 + units) : ZERO;
+    const B = R.gt(ZERO) ? R.div(3) : ZERO;
+    const C = fr(1, 6);
+    const best = maxF(A, B, C);
+    let gfShare, how;
+    if (A.cmp(best) === 0 && A.cmp(B) >= 0 && A.cmp(C) >= 0) { how = 'المقاسمة'; gfShare = A; }
+    else if (B.cmp(C) >= 0) { how = 'ثلث الباقي'; gfShare = B; }
+    else { how = 'سدس جميع المال'; gfShare = C; }
+    S.push('الجد مع الإخوة (مذهب زيد بن ثابت الذي أخذ به المالكية): لا يحجب الجد الإخوة الأشقاء ولا لأب، ويُعطى الأحظّ له من ثلاثة: المقاسمة كأخ، أو ثلث الباقي بعد الفروض، أو سدس جميع المال.');
+    S.push('بعد الفروض: الباقي = ' + R.str() + ' من التركة. المقاسمة = ' + A.str() + '، ثلث الباقي = ' + B.str() + '، سدس المال = ' + C.str() + ' ← الأحظّ للجد: ' + how + ' (' + gfShare.str() + ').');
+    out.special.push('الجد مع الإخوة');
+    jaddInfo = { how };
+    give('gf', gfShare, how === 'المقاسمة' ? 'فرض وتعصيب' : 'فرض وتعصيب', 'الأحظّ له: ' + how);
+    let rem2 = R.sub(gfShare); if (rem2.lt(ZERO)) rem2 = ZERO;
+    const fullG = n.fb + n.fs > 0, patG = n.pb + n.ps > 0;
+    let fullShare = ZERO, patShare = ZERO;
+    if (how === 'المقاسمة') {
+      fullShare = R.mul(2 * n.fb + n.fs).div(2 + units);
+      patShare = R.mul(2 * n.pb + n.ps).div(2 + units);
+      if (fullG && patG) {
+        // المعادّة: عدّ الأشقاء الإخوةَ لأب على الجد ثم يأخذ الأشقاء نصيبهم
+        S.push('المعادّة: يَعُدّ الإخوةُ الأشقاء الإخوةَ لأب على الجد ليمنعوه كثرة الميراث، ثم يرجع نصيب الإخوة لأب إلى الأشقاء.');
+        out.special.push('المعادّة');
+        if (n.fb === 0 && n.fs === 1) {
+          const cap = fr(1, 2); let fs = fullShare.add(patShare); if (fs.gt(cap)) fs = cap;
+          S.push('الشقيقة الواحدة تستكمل فرضها (النصف) من نصيب الفريقين، والباقي للإخوة لأب.');
+          patShare = fullShare.add(patShare).sub(fs); fullShare = fs;
+        } else { fullShare = fullShare.add(patShare); patShare = ZERO; }
+      }
+    } else {
+      // لا معادّة: الباقي للأشقاء (ولأب إن لم يوجد أشقاء)
+      if (fullG) { fullShare = rem2; patShare = ZERO; }
+      else patShare = rem2;
+    }
+    // سقف الأخوات المنفردات: لا يزدن على فرضهنّ
+    const capSis = (sisCount, brCount, share) => {
+      if (brCount > 0) return { s: share, ex: ZERO };
+      const cap = sisCount === 1 ? fr(1, 2) : fr(2, 3);
+      return share.gt(cap) ? { s: cap, ex: share.sub(cap) } : { s: share, ex: ZERO };
+    };
+    if (fullG && how !== 'المقاسمة') { const c = capSis(n.fs, n.fb, fullShare); fullShare = c.s; if (!c.ex.isZero()) { if (patG) patShare = patShare.add(c.ex); else gfShare = gfShare.add(c.ex), res.gf.share = res.gf.share.add(c.ex); } }
+    if (fullShare.gt(ZERO)) {
+      const u = 2 * n.fb + n.fs;
+      give('fb', fullShare.mul(2 * n.fb).div(u), 'تعصيب', 'يقاسم الجدَّ بحسب الأحظّ');
+      give('fs', fullShare.mul(n.fs).div(u), 'تعصيب', 'تعصيباً بالأخ أو مع الجد، للذكر مثل حظ الأنثيين');
+    }
+    if (patShare.gt(ZERO)) {
+      const u = 2 * n.pb + n.ps;
+      give('pb', patShare.mul(2 * n.pb).div(u), 'تعصيب', 'الإخوة لأب');
+      give('ps', patShare.mul(n.ps).div(u), 'تعصيب', 'الأخوات لأب');
+    }
+    ['fb', 'fs', 'pb', 'ps'].forEach(k => { if (n[k] && !res[k]) out.blocked.push({ key: k, reason: k[0] === 'p' && fullG ? 'سقط بالأشقاء بعد المعادّة' : 'لم يبق له شيء بعد نصيب الجد' }); });
+  }
+
+  // ---------- العول / المشتركة ----------
+  let Ssum = sum();
+  // المشتركة
+  if (!jadd && !desc && !father && !gfActive && n.fb > 0 && mTot >= 2 && Ssum.eq(ONE) && !res.fb) {
+    const heads = n.fb + n.fs + n.mb + n.ms;
+    const third = fr(1, 3);
+    ['mb', 'ms'].forEach(k => delete res[k]);
+    give('mb', third.mul(n.mb).div(heads), 'فرض', 'شريك في الثلث (المشتركة)');
+    give('ms', third.mul(n.ms).div(heads), 'فرض', 'شريك في الثلث (المشتركة)');
+    give('fb', third.mul(n.fb).div(heads), 'تشريك', 'شُرِّك مع الإخوة لأم في الثلث لأن الفروض استغرقت التركة');
+    give('fs', third.mul(n.fs).div(heads), 'تشريك', 'شُرِّكت مع الإخوة لأم في الثلث');
+    S.push('المسألة المشتركة (الحماريّة/الحجريّة): زوج وأم أو جدة وإخوة لأم (اثنان فأكثر) وإخوة أشقاء. استغرقت الفروض التركة، فعند المالكية يُشرَّك الأشقاء مع الإخوة لأم في الثلث ويقسمونه بالتساوي للذكر والأنثى، بخلاف الحنابلة والحنفية الذين يُسقطونهم.');
+    out.special.push('المشتركة');
+    ['fb', 'fs'].forEach(k => { if (n[k] && !res[k]) out.blocked.push({ key: k, reason: 'غير مشارك' }); });
+    if (n.pb || n.ps) { if (n.pb) out.blocked.push({ key: 'pb', reason: 'محجوبون بالأخ الشقيق' }); if (n.ps) out.blocked.push({ key: 'ps', reason: 'محجوبات بالأخ الشقيق' }); }
+    Ssum = sum();
+  }
+
+  // ---------- العصبات بالنفس / مع الغير ----------
+  let R = ONE.sub(Ssum);
+  let asabaTaken = false;
+  if (!out.special.includes('المشتركة')) {
+    const groups = [];
+    if (n.sons > 0) groups.push({ m: { sons: 2, daughters: 1 }, why: 'تعصيباً: للذكر مثل حظ الأنثيين' });
+    else if (gsons > 0) groups.push({ m: { gsons: 2, gdaughters: 1 }, why: 'تعصيباً: للذكر مثل حظ الأنثيين' });
+    if (father && !maleDesc) groups.push({ m: { father: 1 }, why: 'تعصيباً بالنفس' });
+    if (gfActive && !jadd && !maleDesc) groups.push({ m: { gf: 1 }, why: 'تعصيباً بالنفس (الجد كالأب عند عدم الإخوة)' });
+    if (sibsAllowed) {
+      if (n.fb > 0) groups.push({ m: { fb: 2, fs: 1 }, why: 'تعصيباً (الشقيق)' });
+      else if (n.fs > 0 && asabaSis) groups.push({ m: { fs: 1 }, why: 'تعصيباً مع الغير (مع البنات/بنات الابن)' });
+      const pBlocked = n.fb > 0 || (n.fs > 0 && asabaSis);
+      if (!pBlocked) {
+        if (n.pb > 0) groups.push({ m: { pb: 2, ps: 1 }, why: 'تعصيباً (الأخ لأب)' });
+        else if (n.ps > 0 && asabaSis && n.fs === 0) groups.push({ m: { ps: 1 }, why: 'تعصيباً مع الغير (مع البنات/بنات الابن)' });
+      }
+    }
+    if (!maleDesc && !father && !(gfActive)) {
+      [['nfb'], ['npb'], ['ufb'], ['upb'], ['cfb'], ['cpb'], ['mawla']].forEach(a => groups.push({ m: { [a[0]]: 1 }, why: a[0] === 'mawla' ? 'تعصيباً بالولاء' : 'تعصيباً بالنفس' }));
+    }
+    if (gfActive && !jadd) { /* الجد يحجب أبناء الإخوة ومن بعدهم */ }
+    for (const g of groups) {
+      const ks = Object.keys(g.m).filter(k => n[k] > 0 && (k !== 'gdaughters' || gdaughters > 0));
+      if (!ks.length) continue;
+      if (R.gt(ZERO)) {
+        const u = ks.reduce((s, k) => s + g.m[k] * (k === 'gdaughters' ? gdaughters : n[k]), 0);
+        ks.forEach(k => give(k, R.mul(g.m[k] * (k === 'gdaughters' ? gdaughters : n[k])).div(u), 'تعصيب', g.why));
+        asabaTaken = true;
+      }
+      break;
+    }
+  }
+
+  // ---------- العول أو الباقي (الرد) ----------
+  Ssum = sum();
+  if (Ssum.gt(ONE)) {
+    // عول
+    const parts = Object.values(res).map(r => r.share);
+    let L = 1n; parts.forEach(p => { L = (L * p.d) / gcd(L, p.d); });
+    const orig = Number(L), tot = Number(parts.reduce((s, p) => s.add(p), ZERO).mul(L).n / parts.reduce((s, p) => s.add(p), ZERO).mul(L).d);
+    out.awl = { from: orig, to: tot };
+    S.push('العول: مجموع الفروض (' + Ssum.str() + ') أكثر من الواحد الصحيح، فتعول المسألة ويدخل النقص على جميع أصحاب الفروض بنسبة سهامهم. المالكية والجمهور على القول بالعول.');
+    Object.keys(res).forEach(k => { res[k].share = res[k].share.div(Ssum); res[k].why += ' (بعد العول)'; });
+    out.special.push('العول');
+    // أخوات مع الجد لا يُحجب شيء عدا ما سبق
+  } else if (Ssum.lt(ONE)) {
+    const rem = ONE.sub(Ssum);
+    const nonSpouse = Object.keys(res).filter(k => !['husband', 'wives', 'father', 'gf'].includes(k) && res[k].kind === 'فرض');
+    if (mode === 'A') {
+      out.bayt = rem;
+      S.push('بقي ' + rem.str() + ' من التركة ولا عاصب. أصل المذهب المالكي: لا ردّ على أصحاب الفروض ولا توريث لذوي الأرحام، فيُصرف الباقي لبيت المال (الخزينة العامة) إن كان منتظماً.');
+    } else if (nonSpouse.length) {
+      const T = nonSpouse.reduce((s, k) => s.add(res[k].share), ZERO);
+      const target = ONE.sub(spouseShare);
+      nonSpouse.forEach(k => { res[k].share = res[k].share.mul(target).div(T); res[k].why += ' (بعد الردّ)'; });
+      out.radd = { remain: rem };
+      out.special.push('الردّ');
+      S.push('الردّ: بقي ' + rem.str() + ' من التركة ولا عاصب، فيُردّ على أصحاب الفروض غير الزوجين بنسبة فروضهم' + (mode === 'C' ? ' (المادة 167 من قانون الأسرة الجزائري)' : ' (فتوى المتأخرين من المالكية عند عدم انتظام بيت المال)') + '.');
+    } else if (spouseShare.gt(ZERO) && mode === 'C') {
+      const k = n.husband ? 'husband' : 'wives';
+      res[k].share = ONE; res[k].why += ' + الردّ على الزوج/الزوجة عند عدم غيره (المادة 167، الفقرة الثانية)';
+      out.radd = { remain: rem }; out.special.push('الردّ على أحد الزوجين');
+      S.push('لا عاصب ولا صاحب فرض نسبي ولا ذو رحم، فيُردّ الباقي على أحد الزوجين (المادة 167، الفقرة 2).');
+    } else {
+      out.bayt = rem; out.special.push('ذوو الأرحام');
+      S.push('بقي ' + rem.str() + ' من التركة ولا عاصب ولا صاحب فرض يُردّ عليه. تؤول التركة إلى ذوي الأرحام (المادة 168 من قانون الأسرة الجزائري، وفتوى المتأخرين) وهو ما لا يحسبه هذا الموقع؛ فإن لم يوجدوا فللخزينة العمومية/بيت المال.');
+    }
+  }
+  finalize();
+  return out;
+
+  function reasonFor(k) {
+    if (['gsons', 'gdaughters'].includes(k)) return n.sons > 0 ? 'محجوب بالابن' : 'محجوبات باستيفاء البنتين للثلثين، ولا معصِّب لهنّ';
+    if (k === 'gf') return 'محجوب بالأب';
+    if (['fb', 'fs', 'pb', 'ps'].includes(k)) {
+      if (maleDesc) return 'محجوب بالفرع الوارث المذكر';
+      if (father) return 'محجوب بالأب';
+      if ((k === 'pb' || k === 'ps')) { if (n.fb > 0) return 'محجوب بالأخ الشقيق'; if (n.fs > 0 && asabaSis) return 'محجوب بالأخت الشقيقة العاصبة مع البنات'; if (n.fs >= 2) return 'محجوبة باستيفاء الشقيقتين للثلثين'; }
+      return 'لم يبق له شيء بعد الفروض';
+    }
+    if (['nfb', 'npb', 'ufb', 'upb', 'cfb', 'cpb', 'mawla'].includes(k)) {
+      if (asabaTaken || maleDesc || father || gfActive || n.fb + n.pb > 0 || (n.fs > 0 && femaleDesc)) return 'محجوب بمن هو أقرب منه من العصبة';
+      return 'لم يبق له شيء بعد الفروض';
+    }
+    return 'لم يبق له شيء بعد الفروض';
+  }
+  function finalize() {
+    const seen = new Set(out.blocked.map(b => b.key));
+    KEYS.forEach(k => {
+      if (n[k] > 0 && res[k]) {
+        out.heirs.push({ key: k, label: nm(k, n[k]), count: n[k], share: res[k].share, per: res[k].share.div(n[k]), kind: res[k].kind, why: res[k].why });
+      } else if (n[k] > 0 && !seen.has(k)) {
+        if (k === 'wives' || k === 'husband') return;
+        out.blocked.push({ key: k, reason: reasonFor(k) });
+      }
+    });
+    out.blocked.forEach(b => { b.label = nm(b.key, n[b.key]); b.count = n[b.key]; });
+    // أصل المسألة
+    let L = 1n; out.heirs.forEach(h => { L = (L * h.per.d) / gcd(L, h.per.d); out.heirs.forEach(()=>{}); });
+    out.heirs.forEach(h => { L = (L * h.share.d) / gcd(L, h.share.d); });
+    if (!out.bayt.isZero()) L = (L * out.bayt.d) / gcd(L, out.bayt.d);
+    out.base = Number(L);
+    out.heirs.forEach(h => { h.units = Number(h.share.mul(L).n / h.share.mul(L).d); h.unitsPer = h.share.div(h.count).mul(L); });
+    out.check = out.heirs.reduce((s, h) => s.add(h.share), ZERO).add(out.bayt);
+    if (!out.check.eq(ONE)) out.errors.push('تنبيه برمجي: مجموع الأنصبة لا يساوي الواحد (' + out.check.str() + ')');
+    if (!out.heirs.length && out.bayt.isZero()) out.errors.push('لا وارث يستحق.');
+    if (!out.heirs.length && !out.bayt.isZero()) S.push('لا وارث يستحق شيئاً؛ التركة كلها للباقي المذكور.');
+  }
+}
+
+
+/* ============ التنزيل (المواد 169-172 من قانون الأسرة الجزائري) ============ */
+function solveTanzil(input, mode, tz) {
+  const out = { applicable: false, reason: '', errors: [] };
+  const m = Math.max(0, Math.floor(Number(tz.males) || 0)), f = Math.max(0, Math.floor(Number(tz.females) || 0));
+  if (m + f === 0) { out.errors.push('أدخل عدد الأحفاد المنزَّلين.'); return out; }
+  const type = tz.type === 'daughter' ? 'daughter' : 'son';
+  if (tz.exclude) { out.reason = tz.exclude; return out; }
+  if (type === 'son' && !(Number(input.sons) > 0)) {
+    out.reason = 'لا ابن حيّ للمتوفى، فأبناء الابن المتوفى يرثون بأنفسهم تعصيباً أو فرضاً (فروع وارثون) ولا يلزم التنزيل. أدخلهم في خانة «أبناء الابن» و«بنات الابن».'; return out;
+  }
+  const h = Object.assign({}, input);
+  if (type === 'son') h.sons = (Number(h.sons) || 0) + 1; else h.daughters = (Number(h.daughters) || 0) + 1;
+  const hyp = solve(h, mode);
+  if (hyp.errors.length && !hyp.heirs.length) { out.errors = hyp.errors; return out; }
+  const key = type === 'son' ? 'sons' : 'daughters';
+  const hh = hyp.heirs.find(x => x.key === key);
+  const fShare = hh ? hh.per : ZERO;
+  const cap = fr(1, 3);
+  const capped = fShare.gt(cap);
+  const tzs = capped ? cap : fShare;
+  const u = 2 * m + f;
+  const groups = [];
+  if (m) groups.push({ label: m > 1 ? 'أبناء المنزَّل' : 'ابن المنزَّل', count: m, share: tzs.mul(2 * m).div(u), per: tzs.mul(2).div(u) });
+  if (f) groups.push({ label: f > 1 ? 'بنات المنزَّل' : 'بنت المنزَّل', count: f, share: tzs.mul(f).div(u), per: tzs.div(u) });
+  const actual = solve(input, mode);
+  return { applicable: true, type, hyp, fShare, capped, tz: tzs, groups, actual, factor: ONE.sub(tzs), errors: [], reason: '' };
+}
+
+/* ============ ذوو الأرحام (المادة 168) — تبسيط على مذهب أهل التنزيل ============ */
+function solveArham(o) {
+  const out = { heirs: [], steps: [], errors: [], notes: [] };
+  const spouse = o.spouse === 'husband' ? fr(1, 2) : o.spouse === 'wife' ? fr(1, 4) : ZERO;
+  const spouseLabel = o.spouse === 'husband' ? 'الزوج' : o.spouse === 'wife' ? 'الزوجة' : null;
+  if (spouseLabel) out.heirs.push({ label: spouseLabel, count: 1, share: spouse, per: spouse, why: (o.spouse === 'husband' ? 'النصف' : 'الربع') + ' فرضاً: ذوو الأرحام ليسوا فرعاً وارثاً فلا يحجبون الزوج/الزوجة عن النصف/الربع' });
+  const R = ONE.sub(spouse);
+  const cnt = a => (a || []).reduce((s, x) => s + (Number(x.m) || 0) + (Number(x.f) || 0), 0);
+  const pos = v => Math.max(0, Math.floor(Number(v) || 0));
+  const c1 = (o.c1 || []).map(x => ({ m: pos(x.m), f: pos(x.f) })).filter(x => x.m + x.f > 0);
+  const c2 = { mgf: pos(o.c2 && o.c2.mgf), gmfm: pos(o.c2 && o.c2.gmfm) };
+  const c3 = (o.c3 || []).map(x => ({ type: x.type, m: pos(x.m), f: pos(x.f) })).filter(x => x.m + x.f > 0);
+  const c4 = { pm: pos(o.c4 && o.c4.pm), pf: pos(o.c4 && o.c4.pf), mm: pos(o.c4 && o.c4.mm), mf: pos(o.c4 && o.c4.mf) };
+  const any1 = c1.length > 0, any2 = c2.mgf + c2.gmfm > 0, any3 = c3.length > 0, any4 = c4.pm + c4.pf + c4.mm + c4.mf > 0;
+  if (!any1 && !any2 && !any3 && !any4) { out.errors.push('لم تُدخل أي قريب من ذوي الأرحام.'); return out; }
+  if (spouseLabel) out.steps.push('نصيب ' + spouseLabel + ' ' + spouse.str() + ' ثم يُعطى ما بقي (' + R.str() + ') لذوي الأرحام، ويُعامل الباقي كأنه ردّ (المادة 168).');
+  const split = (label, total, m, f, why, equal) => {
+    if (!(m + f)) return;
+    const u = equal ? m + f : 2 * m + f;
+    if (m) out.heirs.push({ label: label[0], count: m, share: total.mul(equal ? m : 2 * m).div(u), per: total.mul(equal ? 1 : 2).div(u), why });
+    if (f) out.heirs.push({ label: label[1], count: f, share: total.mul(f).div(u), per: total.div(u), why });
+  };
+  if (any1) {
+    out.steps.push('الصنف الأول: أولاد البنات وأولاد بنات الابن. هم الأقدمون في الاستحقاق فيحجبون كل من بعدهم من الأصناف (المادة 168).');
+    const F = c1.length;
+    out.steps.push('نُنزِّل كل فرع منزلة أصله (البنت): عدد الأصول المنزَّلة ' + F + '، فيأخذ كل أصل ' + R.div(F).str() + ' من الباقي ثم يقسم فرعه نصيبه للذكر مثل حظ الأنثيين.');
+    c1.forEach((x, i) => split(['ابن البنت' + (F > 1 ? ' (الفرع ' + (i + 1) + ')' : ''), 'بنت البنت' + (F > 1 ? ' (الفرع ' + (i + 1) + ')' : '')], R.div(F), x.m, x.f, 'ينزَّل منزلة أمه (البنت) فيأخذ نصيبها'));
+  } else if (any2) {
+    out.steps.push('الصنف الثاني: الأجداد والجدات الرحميون (أبو الأم، وأم أبي الأم). لا يوجد أحد من الصنف الأول، فيرثون ويحجبون الأصناف الأبعد.');
+    const m = c2.mgf, f = c2.gmfm;
+    split(['أبو الأم', 'أم أبي الأم'], R, m, f, 'جدّ/جدة رحميّان: للذكر مثل حظ الأنثيين عند الاجتماع، ويستغرق المنفرد الباقي');
+  } else if (any3) {
+    out.steps.push('الصنف الثالث: أولاد الأخوات وبنات الإخوة. لا يوجد أحد من الصنفين الأولين.');
+    const cn = {}; c3.forEach(x => cn[x.type] = (cn[x.type] || 0) + 1);
+    const hyp = solve(cn, 'C');
+    out.steps.push('نُنزِّل كل فرع منزلة أصله (' + c3.map(x => nm(x.type, 1)).join('، ') + ') ونحسب نصيب الأصول كأنها حيّة: ' + hyp.heirs.map(h => h.label + ' ' + h.share.str()).join('، ') + (hyp.radd ? ' (بعد الردّ)' : '') + '.');
+    c3.forEach((x, i) => {
+      const hh = hyp.heirs.find(q => q.key === x.type);
+      const per = hh ? hh.per : ZERO;
+      const equal = x.type === 'ms' || x.type === 'mb';
+      split(['ابن ' + nm(x.type, 1) + ' (الفرع ' + (i + 1) + ')'.replace(/ابن /, ''), 'بنت ' + nm(x.type, 1) + ' (الفرع ' + (i + 1) + ')'], per.mul(R), x.m, x.f, equal ? 'ينزَّل منزلة أصله من جهة الأم: يقتسمون بالتساوي' : 'ينزَّل منزلة أصله: للذكر مثل حظ الأنثيين');
+    });
+  } else {
+    out.steps.push('الصنف الرابع: العمات والأعمام لأم والأخوال والخالات. لا يوجد أحد من الأصناف السابقة.');
+    const p = c4.pm + c4.pf, q = c4.mm + c4.mf;
+    let pT = ZERO, mT = ZERO;
+    if (p && q) { pT = R.mul(2).div(3); mT = R.div(3); out.steps.push('اجتمعت القرابة الأبوية والأمّيّة: ثلثا الباقي للقرابة الأبوية (تنزَّل منزلة الأب) وثلثه للأمّيّة (تنزَّل منزلة الأم).'); }
+    else if (p) pT = R; else mT = R;
+    split(['العم لأم', 'العمة'], pT, c4.pm, c4.pf, 'قرابة أبوية: للذكر مثل حظ الأنثيين');
+    split(['الخال', 'الخالة'], mT, c4.mm, c4.mf, 'قرابة أمّيّة: يقتسمون بالتساوي', true);
+  }
+  out.notes.push('هذا حساب مبسَّط على مذهب أهل التنزيل (الأقرب درجة فالأقرب، وتنزيل كل فرع منزلة أصله)، ولا يغني عن النظر في تفاصيل الدرجات المتفاوتة وقوة القرابة.');
+  const tot = out.heirs.reduce((s, h) => s.add(h.share), ZERO);
+  if (!tot.eq(ONE)) out.errors.push('تنبيه برمجي: مجموع الأنصبة ' + tot.str());
+  return out;
+}
+
+/* ============ التخارج ============ */
+// heirs: [{key,label,count,share,per}] — exit: {key,k}  mode: 'estate' (يأخذ مبلغاً من التركة) | 'payer' (يشتري نصيبه وارث أو جميع الورثة من مالهم)
+function takharuj(heirs, ex) {
+  const h = heirs.find(x => x.key === ex.key);
+  if (!h) return { errors: ['اختر الوارث الخارج.'] };
+  const k = Math.max(1, Math.min(h.count, Math.floor(ex.k || 1)));
+  const exitShare = h.per.mul(k);
+  const rows = [];
+  heirs.forEach(x => {
+    if (x.key === ex.key) { const remain = x.count - k; if (remain > 0) rows.push({ key: x.key, label: x.label, count: remain, share: x.per.mul(remain), per: x.per }); }
+    else rows.push({ key: x.key, label: x.label, count: x.count, share: x.share, per: x.per });
+  });
+  const T = rows.reduce((s, r) => s.add(r.share), ZERO);
+  const res = { errors: [], exitShare, k, label: h.label, rows: [] };
+  if (ex.mode === 'estate') {
+    // الباقي بعد ما أخذه الخارج يُقسم على الباقين بنسبة أنصبتهم الأصلية
+    res.rows = rows.map(r => ({ ...r, newShare: r.share.div(T), newPer: r.per.div(T) }));
+    res.note = 'يأخذ الخارج ما اتُّفق عليه من التركة نفسها، ويُقسم الباقي على الورثة الباقين بنسبة أنصبتهم الأصلية بعضها إلى بعض.';
+  } else if (ex.mode === 'payer') {
+    const payer = ex.payer;
+    if (payer === 'all') {
+      res.rows = rows.map(r => ({ ...r, newShare: r.share.add(r.share.div(T).mul(exitShare)), newPer: r.per.add(r.per.div(T).mul(exitShare).div(r.count)) }));
+      res.note = 'يشتري الورثة الباقون نصيب الخارج من أموالهم الخاصة ويقتسمونه بنسبة أنصبتهم الأصلية. المبلغ المدفوع يوزَّع عليهم بنفس النسبة.';
+    } else {
+      const p = rows.find(r => r.key === payer);
+      if (!p) { res.errors.push('اختر وارثاً غير الخارج ليدفع.'); return res; }
+      res.rows = rows.map(r => r.key === payer ? { ...r, newShare: r.share.add(exitShare), newPer: r.count === 1 ? r.per.add(exitShare) : r.per.add(exitShare.div(r.count)) } : { ...r, newShare: r.share, newPer: r.per });
+      res.note = 'يدفع الوارث المختار للخارج من ماله الخاص، فيحلّ محلّه في نصيبه فيضمّه إلى نصيبه، وبقية الورثة لا يتأثرون.';
+      res.payer = p.label;
+    }
+  }
+  return res;
+}
+
+root.MawarithEngine = { solve, solveTanzil, solveArham, takharuj, Fr, fr, NAMES, KEYS };
+if (typeof module !== 'undefined') module.exports = root.MawarithEngine;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function(){
+const E=window.MawarithEngine;
+const MODES=[
+ {id:'A',t:'أصل المذهب المالكي',d:'لا ردّ على أصحاب الفروض، والفاضل لبيت المال.'},
+ {id:'B',t:'المفتى به عند المتأخرين',d:'ردّ الفاضل على أصحاب الفروض غير الزوجين.'},
+ {id:'C',t:'قانون الأسرة الجزائري',d:'الردّ (المادة 167) بلا ولاء، ويُفعَّل معه التنزيل وذوو الأرحام.'}];
+const GROUPS=[
+ ['الزوجان',[['husband','الزوج',1],['wives','الزوجات',4]]],
+ ['الأصول',[['father','الأب',1],['mother','الأم',1],['gf','الجد (أبو الأب)',1],['gm_m','أم الأم',1],['gm_p','أم الأب',1],['gm_mm','أم أم الأم',1],['gm_pm','أم أم الأب',1]]],
+ ['الفروع',[['sons','الأبناء',30],['daughters','البنات',30],['gsons','أبناء الابن',30],['gdaughters','بنات الابن',30]]],
+ ['الإخوة والأخوات',[['fb','الإخوة الأشقاء',30],['fs','الأخوات الشقيقات',30],['pb','الإخوة لأب',30],['ps','الأخوات لأب',30],['mb','الإخوة لأم',30],['ms','الأخوات لأم',30]]],
+ ['العصبات الأبعد',[['nfb','أبناء الأخ الشقيق',30],['npb','أبناء الأخ لأب',30],['ufb','الأعمام الأشقاء',30],['upb','الأعمام لأب',30],['cfb','أبناء العم الشقيق',30],['cpb','أبناء العم لأب',30],['mawla','المعتِق (الولاء)',1]]]];
+let mode='A',gender='m',last=null;
+const val={};E.KEYS.forEach(k=>val[k]=0);
+const $=s=>document.querySelector(s);
+const TABS=['calc','learn','arham','takh','rules','ex','refs'];
+
+function tab(t){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id===t));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));try{history.replaceState(null,'','#'+t)}catch(e){}
+  if(t==='takh')drawTakh();if(t==='learn'&&curL<0&&!chal)renderLessonList();}
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(b){tab(b.dataset.t);window.scrollTo({top:0,behavior:'smooth'})}};
+const h0=(location.hash||'').slice(1);if(TABS.includes(h0))tab(h0);
+
+function drawModes(){$('#modes').innerHTML=MODES.map(m=>`<button class="mode ${m.id===mode?'on':''}" data-m="${m.id}"><b>${m.t}</b><span>${m.d}</span></button>`).join('')}
+$('#modes').onclick=e=>{const b=e.target.closest('.mode');if(!b)return;mode=b.dataset.m;if(mode==='C')val.mawla=0;drawModes();drawHeirs()};
+$('#gender').onclick=e=>{const b=e.target.closest('button');if(!b)return;gender=b.dataset.g;setGender();drawHeirs()};
+function setGender(){document.querySelectorAll('#gender button').forEach(b=>b.classList.toggle('on',b.dataset.g===gender));if(gender==='m')val.husband=0;else val.wives=0}
+
+function drawHeirs(){
+  const openFar=[...document.querySelectorAll('#heirs details')].map(x=>x.open);
+  let html='';
+  GROUPS.forEach(([title,items])=>{
+    const its=items.filter(([k])=>!(k==='husband'&&gender==='m')&&!(k==='wives'&&gender==='f')&&!(k==='mawla'&&mode==='C'));
+    const far=title==='العصبات الأبعد';
+    const body=its.map(([k,l,mx])=>`<div class="hv ${val[k]?'has':''}"><label>${l}</label><div class="step"><button data-k="${k}" data-d="-1" aria-label="إنقاص">−</button><output>${val[k]}</output><button data-k="${k}" data-d="1" data-mx="${mx}" aria-label="زيادة">+</button></div></div>`).join('');
+    const open=far&&(its.some(([k])=>val[k])||openFar[0])?' open':'';
+    html+=far?`<details class="grp"${open}><summary>${title}</summary><div class="grid" style="margin-top:8px">${body}</div></details>`:`<div class="grp"><div class="t">${title}</div><div class="grid">${body}</div></div>`;
+  });
+  $('#heirs').innerHTML=html;
+}
+$('#heirs').onclick=e=>{const b=e.target.closest('button[data-k]');if(!b)return;const k=b.dataset.k,d=+b.dataset.d;
+  const cap=+(document.querySelector(`button[data-k="${k}"][data-mx]`).dataset.mx);
+  val[k]=Math.max(0,Math.min(cap,val[k]+d));drawHeirs()};
+
+const fmtMoney=x=>{try{return x.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}catch(e){return x.toFixed(2)}};
+const pct=f=>(f.num()*100).toFixed(2).replace(/\.?0+$/,'')+'%';
+const COLORS=['#1f5a43','#b5832a','#3d7cae','#a64b3c','#6e5aa8','#4a9a8a','#c1773b','#7a8b3a','#8a5a7a','#556b8d','#9b7b3a','#3c6f6f'];
+const money=(f,net)=>net==null?null:fmtMoney(Number(f.n)*net/Number(f.d));
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const F=f=>f.d===1n?String(f.n):`<span class="fr"><b>${f.n}</b><b>${f.d}</b></span>`;
+const unitsOf=(f,base)=>Number(f.mul(base).n/f.mul(base).d);
+
+// ---------- أدلة مختصرة ----------
+function dalil(key,kind){
+  const a=[];
+  if(['husband','wives'].includes(key))a.push('الزوجية: ﴿وَلَكُمْ نِصْفُ مَا تَرَكَ أَزْوَاجُكُمْ…﴾ و﴿وَلَهُنَّ الرُّبُعُ…﴾ (النساء: 12)');
+  if(['sons','daughters'].includes(key))a.push('﴿يُوصِيكُمُ اللَّهُ فِي أَوْلَادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الْأُنثَيَيْنِ…﴾ (النساء: 11)');
+  if(['father','mother'].includes(key))a.push('﴿وَلِأَبَوَيْهِ لِكُلِّ وَاحِدٍ مِّنْهُمَا السُّدُسُ…﴾ (النساء: 11)');
+  if(['mb','ms'].includes(key))a.push('﴿وَإِن كَانَ رَجُلٌ يُورَثُ كَلَالَةً… فَلِكُلِّ وَاحِدٍ مِّنْهُمَا السُّدُسُ…﴾ (النساء: 12)');
+  if(['fb','fs','pb','ps'].includes(key))a.push('﴿يَسْتَفْتُونَكَ قُلِ اللَّهُ يُفْتِيكُمْ فِي الْكَلَالَةِ…﴾ (النساء: 176)');
+  if(['gm_m','gm_p','gm_mm','gm_pm'].includes(key))a.push('السنّة: أن النبي ﷺ أعطى الجدة السدس');
+  if(key==='gf')a.push('الجدّ كالأب في الإرث بالإجماع، واختُلف في حجبه الإخوة فأخذ المالكية بقول زيد بن ثابت');
+  if(['gsons','gdaughters'].includes(key))a.push('أبناء الابن وبناته كالأبناء والبنات عند عدمهم (الفرع الوارث)');
+  if(kind&&kind.includes('تعصيب'))a.push('التعصيب: «أَلْحِقُوا الفَرَائِضَ بِأَهْلِهَا، فَمَا بَقِيَ فَهُوَ لِأَوْلَى رَجُلٍ ذَكَرٍ» (متفق عليه)');
+  return a;
+}
+
+// ---------- الشرح التعليمي ----------
+function explain(r,ctx){
+  let o=`<h3>شرح النتيجة خطوة خطوة</h3><div class="edu">`;
+  const present=r.heirs.map(h=>h.count>1?`${h.label} (${h.count})`:h.label);
+  o+=`<h4>١. من الذي يرث ومن الذي لا يرث؟</h4><p>الورثة الذين لهم نصيب في هذه المسألة: ${present.join('، ')}. `;
+  if(r.blocked.length)o+=`وأما ${r.blocked.map(b=>b.label).join('، ')} فلا شيء لهم. والسبب أن القريب الأقرب أو الأقوى يحجب من هو أبعد منه، ويُسمّى هذا الحجب.</p><ul class="blocked">${r.blocked.map(b=>`<li><b>${b.label}</b>: ${b.reason}.</li>`).join('')}</ul>`;
+  else o+=`ولم يُحجب أحد ممن أدخلتهم.</p>`;
+  const fur=r.heirs.filter(h=>h.kind==='فرض'),asb=r.heirs.filter(h=>h.kind!=='فرض');
+  o+=`<h4>٢. ما نوع كل نصيب؟</h4><p>الميراث نوعان: <b>فرض</b> وهو نصيب مقدَّر بنص (النصف والربع والثمن والثلثان والثلث والسدس)، و<b>تعصيب</b> وهو أخذ ما بقي بعد أصحاب الفروض أو أخذ المال كله عند الانفراد. `;
+  o+=(fur.length?`في مسألتك أصحاب الفروض: ${fur.map(h=>h.label).join('، ')}. `:'لا يوجد أصحاب فروض صرفاً. ')+(asb.length?`وأصحاب التعصيب أو من جمعوا الفرض والتعصيب: ${asb.map(h=>h.label).join('، ')}.`:'ولا عاصب في المسألة.')+`</p>`;
+  o+=`<h4>٣. لماذا أخذ كل وارث هذا النصيب؟</h4><ol class="steps">`;
+  r.heirs.forEach(h=>{
+    const d=dalil(h.key,h.kind);
+    o+=`<li><b>${h.label}</b> ${h.count>1?`(${h.count} أشخاص): الجميع معاً <span class="frac">${h.share.str()}</span> ونصيب الفرد <span class="frac">${h.per.str()}</span>`:`: <span class="frac">${h.share.str()}</span>`}. ${esc(h.why)}.${d.length?`<div class="small">الأصل: ${d.join('؛ ')}.</div>`:''}</li>`;
+  });
+  o+=`</ol>`;
+  o+=`<h4>٤. أصل المسألة وتصحيحها</h4><p>أصل المسألة هو أصغر عدد تنقسم عليه كل الأنصبة قسمة صحيحة، ويُسمّى المضاعف المشترك الأصغر لمقامات الأنصبة. هنا أصل المسألة <b>${r.base}</b>. فكل وارث يأخذ من هذه السهام: <i>نصيبه × ${r.base}</i>:</p><ul>`;
+  r.heirs.forEach(h=>{o+=`<li>${h.label}: ${h.share.str()} × ${r.base} = <b>${h.units}</b> سهماً${h.count>1?` (لكل فرد ${h.unitsPer.str()})`:''}</li>`});
+  if(!r.bayt.isZero())o+=`<li>الباقي غير الموزَّع: ${r.bayt.str()} × ${r.base} = <b>${unitsOf(r.bayt,r.base)}</b> سهماً</li>`;
+  o+=`</ul><p>مجموع السهام = ${r.heirs.reduce((s,h)=>s+h.units,0)+unitsOf(r.bayt,r.base)} وهو يساوي أصل المسألة (${r.base})، فالقسمة سليمة.</p>`;
+  if(r.awl)o+=`<p><b>العول:</b> كانت الفروض تحتاج إلى ${r.awl.from} سهماً لكن المسألة لا تحتمل إلا ما فيها من مال، فجُعل أصل المسألة ${r.awl.to} ودخل النقص على الجميع بنسبة سهامهم. فالزوج مثلاً لا ينال نصفه كاملاً من التركة بل ما يناسب سهمه من ${r.awl.to}.</p>`;
+  o+=`<h4>٥. التحقق</h4><p>مجموع الأنصبة ${r.check.str()} (أي الواحد الصحيح) فلا زيادة ولا نقص.</p>`;
+  if(ctx&&ctx.net!=null)o+=`<h4>٦. من النصيب إلى المبلغ</h4><p>مبلغ كل وارث = نصيبه من التركة × المبلغ الموروث (${fmtMoney(ctx.net)}). مثال: ${r.heirs[0].label}: ${r.heirs[0].share.str()} × ${fmtMoney(ctx.net)} = ${money(r.heirs[0].share,ctx.net)}.</p>`;
+  return o+`</div>`;
+}
+
+// ---------- الحساب ----------
+function run(){
+  const input={};E.KEYS.forEach(k=>input[k]=val[k]);
+  if(gender==='m')input.husband=0;else input.wives=0;
+  const r=E.solve(input,mode);
+  const estate=parseFloat($('#estate').value),funeral=parseFloat($('#funeral').value)||0,debts=parseFloat($('#debts').value)||0,beq=parseFloat($('#bequest').value)||0;
+  let T=null;
+  if($('#tzOn').checked){
+    const ex=[['#tzC1','الأحفاد يرثون جدّهم فعلاً، فلا تنزيل (المادة 171).'],['#tzC2','الجدّ أعطاهم مثل نصيب أصلهم، فلا تنزيل (المادة 172).'],['#tzC3','الأحفاد ورثوا من أصلهم ما يغني، فلا تنزيل (المادة 172).']].find(x=>$(x[0]).checked);
+    T=E.solveTanzil(input,mode,{type:$('#tzType').value,males:$('#tzM').value,females:$('#tzF').value,exclude:ex?ex[1]:null});
+  }
+  const tza=T&&T.applicable?T:null;
+  let net=null,after=null,tzAmt=0,pre='';
+  if(isFinite(estate)&&estate>0){
+    after=estate-funeral-debts;
+    if(after<0){pre+=`<div class="err">التجهيز والديون تزيد على التركة، فلا شيء للورثة.</div>`;after=0}
+    tzAmt=tza?after*tza.tz.num():0;
+    let b=beq;const third=Math.max(0,after/3-tzAmt);
+    if(b>third){pre+=`<div class="note">الوصية (${fmtMoney(b)}) أكثر مما يتسع له الثلث${tza?' بعد التنزيل':''} (${fmtMoney(third)}). النافذ بلا إجازة هو ${fmtMoney(third)}، وما زاد يتوقف على إجازة الورثة البالغين الراشدين، فحُسبت على المتاح.</div>`;b=third}
+    net=after-tzAmt-b;
+    pre+=`<div class="card"><h3 style="margin-top:0">من التركة إلى المبلغ الموروث</h3><div class="tbl"><table>
+      <tr><td>إجمالي التركة</td><td class="num">${fmtMoney(estate)}</td></tr>
+      <tr><td>− التجهيز والدفن</td><td class="num">${fmtMoney(funeral)}</td></tr>
+      <tr><td>− الديون</td><td class="num">${fmtMoney(debts)}</td></tr>
+      ${tza?`<tr><td>− التنزيل (وصية واجبة، ${tza.tz.str()} من التركة)</td><td class="num">${fmtMoney(tzAmt)}</td></tr>`:''}
+      <tr><td>− الوصية الاختيارية النافذة</td><td class="num">${fmtMoney(b)}</td></tr>
+      <tr><th>الموروث بين الورثة</th><th class="num">${fmtMoney(net)}</th></tr></table></div>
+      <p class="small" style="margin-bottom:0">الترتيب: التجهيز، ثم الديون، ثم التنزيل إن وُجد، ثم الوصية الاختيارية في بقية الثلث، ثم الميراث.</p></div>`;
+  }
+  let o=pre;
+  if(T&&!T.applicable){o+=T.errors.length?`<div class="err">${T.errors.join('<br>')}</div>`:`<div class="note">${esc(T.reason)}</div>`}
+  if(r.errors.length&&!r.heirs.length){o+=`<div class="err">${r.errors.join('<br>')}</div>`;$('#out').innerHTML=o;last=null;return}
+  last={r,net,mode};
+  const fac=tza?tza.factor:null;
+  o+=`<div class="card"><h2>النتيجة</h2>`;
+  const chips=r.special.map(s=>`<span class="chip">${s}</span>`).join('')+(tza?'<span class="chip">التنزيل</span>':'');
+  if(chips)o+=`<div>${chips}</div>`;
+  o+=`<p class="small" style="margin:6px 0">أصل المسألة: <b>${r.base}</b> سهماً${r.awl?` (عالت من ${r.awl.from} إلى ${r.awl.to})`:''}.${tza?' والأنصبة التالية من الباقي بعد التنزيل.':''}</p>`;
+  if(r.errors.length)o+=`<div class="err">${r.errors.join('<br>')}</div>`;
+  const parts=r.heirs.map((hh,i)=>({l:hh.label,f:fac?hh.share.mul(fac):hh.share,c:COLORS[i%COLORS.length]}));
+  if(tza)tza.groups.forEach(g=>parts.push({l:g.label+' (تنزيل)',f:g.share,c:'#d4a64a'}));
+  if(!r.bayt.isZero())parts.push({l:mode==='A'?'الباقي (بيت المال)':'الباقي (غير موزَّع)',f:fac?r.bayt.mul(fac):r.bayt,c:'#b9b19b'});
+  o+=`<div class="bar">${parts.map(p=>`<i title="${p.l}" style="width:${p.f.num()*100}%;background:${p.c}"></i>`).join('')}</div><div class="legend">${parts.map(p=>`<span><b style="background:${p.c}"></b>${p.l} ${pct(p.f)}</span>`).join('')}</div>`;
+  o+=`<div class="tbl" style="margin-top:12px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>%</th><th>السهام من ${r.base}</th>${tza?'<th>من أصل التركة</th>':''}${net!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>الحالة والسبب</th></tr>`;
+  r.heirs.forEach(hh=>{
+    o+=`<tr><td class="who"><b>${hh.label}</b></td><td class="num">${hh.count}</td><td class="num frac">${F(hh.share)}</td><td class="num">${pct(hh.share)}</td><td class="num">${hh.units}</td>${tza?`<td class="num">${F(hh.share.mul(fac))}</td>`:''}${net!=null?`<td class="num">${money(hh.share,net)}</td><td class="num">${hh.count>1?money(hh.per,net):'—'}</td>`:''}<td><span class="chip g">${hh.kind}</span> <span class="small">${esc(hh.why)}</span></td></tr>`;
+  });
+  if(!r.bayt.isZero())o+=`<tr><td class="who"><b>${mode==='A'?'بيت المال':'الباقي'}</b></td><td class="num">—</td><td class="num frac">${F(r.bayt)}</td><td class="num">${pct(r.bayt)}</td><td class="num">${unitsOf(r.bayt,r.base)}</td>${tza?`<td class="num">${r.bayt.mul(fac).str()}</td>`:''}${net!=null?`<td class="num">${money(r.bayt,net)}</td><td class="num">—</td>`:''}<td class="small">لا عاصب ولا ردّ في هذه الصيغة.</td></tr>`;
+  o+=`</table></div>`;
+  if(!r.bayt.isZero()&&mode==='C')o+=`<div class="note" style="margin-top:8px">بقي جزء من التركة لا يرثه أحد ممن أدخلتَ. في القانون الجزائري يؤول إلى ذوي الأرحام (المادة 168): استعمل تبويب «ذوو الأرحام» إن وُجدوا.</div>`;
+  o+=`</div>`;
+  if(tza){
+    o+=`<div class="card"><h2>التنزيل: كيف حُسب؟</h2><ol class="steps">
+      <li>نفترض أن ${tza.type==='son'?'الابن':'البنت'} المتوفى قبل أبيه كان حيّاً، فتصير المسألة: ${tza.hyp.heirs.map(x=>x.label+' '+x.share.str()).join('، ')}.</li>
+      <li>نصيب ذلك الأصل لو بقي حيّاً = <b>${tza.fShare.str()}</b> من التركة (المادة 170).</li>
+      <li>سقف التنزيل ثلث التركة (1/3). ${tza.capped?`النصيب أكبر من الثلث فيُقتصر على <b>1/3</b>، والزيادة لا تنفذ إلا بإجازة الورثة.`:`النصيب لا يتجاوز الثلث فيؤخذ كاملاً: <b>${tza.tz.str()}</b>.`}</li>
+      <li>يُخرج التنزيل أولاً قبل الوصية الاختيارية وقبل قسمة الميراث، ثم يُقسَّم الباقي (${tza.factor.str()} من التركة) على الورثة الموجودين بالأنصبة المبيّنة في الجدول أعلاه.</li>
+      <li>يقتسم الأحفاد نصيب أصلهم قسمة ميراث للذكر مثل حظ الأنثيين.</li></ol>
+      <div class="tbl"><table><tr><th>المنزَّل</th><th>العدد</th><th>من التركة</th><th>%</th>${after!=null?'<th>المبلغ</th><th>نصيب الفرد</th>':''}</tr>
+      ${tza.groups.map(g=>`<tr><td><b>${g.label}</b></td><td class="num">${g.count}</td><td class="num frac">${F(g.share)}</td><td class="num">${pct(g.share)}</td>${after!=null?`<td class="num">${money(g.share,after)}</td><td class="num">${g.count>1?money(g.per,after):'—'}</td>`:''}</tr>`).join('')}</table></div>
+      <div class="note" style="margin-top:8px">ملاحظة: يُحسب هنا التنزيل من التركة بعد التجهيز والديون، ثم تُقسَّم بقية التركة على الورثة الباقين بأنصبتهم. بعض الشروح تحسب النتيجة بصورة أخرى، فراجع المحكمة أو الموثّق عند التطبيق.</div></div>`;
+  }
+  if(r.steps.length){o+=`<div class="card"><h3 style="margin-top:0">المسائل الخاصة في هذه التركة</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol></div>`}
+  o+=`<div class="card">${explain(r,{net})}</div>`;
+  if(mode==='C')o+=`<div class="note">ذكّرنا بأن الصيغة الجزائرية هنا تحسب الردّ، وتحسب التنزيل إن فعّلته، وذوي الأرحام في تبويب مستقل.</div>`;
+  $('#out').innerHTML=o;
+  $('#out').scrollIntoView({behavior:'smooth',block:'start'});
+}
+$('#go').onclick=run;
+$('#reset').onclick=()=>{E.KEYS.forEach(k=>val[k]=0);['estate','funeral','debts','bequest'].forEach(i=>$('#'+i).value='');$('#tzOn').checked=false;$('#out').innerHTML='';last=null;drawHeirs()};
+
+// ---------- ذوو الأرحام ----------
+const ar={spouse:'',c1:[{m:0,f:0}],c2:{mgf:0,gmfm:0},c3:[{type:'fs',m:0,f:0}],c4:{pm:0,pf:0,mm:0,mf:0}};
+const ANC=[['fs','أخت شقيقة'],['ps','أخت لأب'],['ms','أخت لأم'],['fb','أخ شقيق'],['pb','أخ لأب'],['mb','أخ لأم']];
+const numIn=(path,v)=>`<input type="number" min="0" value="${v}" data-p="${path}" style="width:80px">`;
+function drawAr(){
+  let o=`<div class="grp"><div class="t">الصنف الأول: أولاد البنات وأولاد بنات الابن (وإن نزلوا)</div><p class="small">كل فرع هو أولاد بنت واحدة متوفاة.</p>`;
+  ar.c1.forEach((x,i)=>o+=`<div class="row" style="margin:4px 0">فرع ${i+1}: ذكور ${numIn('c1.'+i+'.m',x.m)} إناث ${numIn('c1.'+i+'.f',x.f)} <button class="btn alt" data-del="c1.${i}" style="padding:4px 12px">حذف</button></div>`);
+  o+=`<button class="btn alt" data-add="c1" style="padding:5px 14px">+ فرع</button></div>`;
+  o+=`<div class="grp"><div class="t">الصنف الثاني: الأجداد والجدات الرحميون</div><div class="row">أبو الأم ${numIn('c2.mgf',ar.c2.mgf)} أم أبي الأم ${numIn('c2.gmfm',ar.c2.gmfm)}</div></div>`;
+  o+=`<div class="grp"><div class="t">الصنف الثالث: أولاد الأخوات وبنات الإخوة</div><p class="small">كل فرع هو أولاد أخت أو أخ واحد ميّت، فاختر الأصل.</p>`;
+  ar.c3.forEach((x,i)=>o+=`<div class="row" style="margin:4px 0">فرع ${i+1}: أولاد <select data-p="c3.${i}.type" style="font:inherit;padding:5px;border:1px solid var(--line);border-radius:8px">${ANC.map(a=>`<option value="${a[0]}"${a[0]===x.type?' selected':''}>${a[1]}</option>`).join('')}</select> ذكور ${numIn('c3.'+i+'.m',x.m)} إناث ${numIn('c3.'+i+'.f',x.f)} <button class="btn alt" data-del="c3.${i}" style="padding:4px 12px">حذف</button></div>`);
+  o+=`<button class="btn alt" data-add="c3" style="padding:5px 14px">+ فرع</button></div>`;
+  o+=`<div class="grp"><div class="t">الصنف الرابع: الأعمام لأم والعمات والأخوال والخالات</div><div class="row">أعمام لأم ${numIn('c4.pm',ar.c4.pm)} عمات ${numIn('c4.pf',ar.c4.pf)} أخوال ${numIn('c4.mm',ar.c4.mm)} خالات ${numIn('c4.mf',ar.c4.mf)}</div></div>`;
+  $('#arBody').innerHTML=o;
+}
+function setPath(p,v){const a=p.split('.');let o=ar;for(let i=0;i<a.length-1;i++)o=o[a[i]];o[a[a.length-1]]=v}
+$('#arBody').addEventListener('input',e=>{const p=e.target.dataset.p;if(!p)return;setPath(p,e.target.tagName==='SELECT'?e.target.value:Math.max(0,parseInt(e.target.value)||0))});
+$('#arBody').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.add){ar[b.dataset.add].push(b.dataset.add==='c1'?{m:0,f:0}:{type:'fs',m:0,f:0});drawAr()}
+  if(b.dataset.del){const [c,i]=b.dataset.del.split('.');ar[c].splice(+i,1);drawAr()}});
+$('#arSp').onclick=e=>{const b=e.target.closest('button');if(!b)return;ar.spouse=b.dataset.s;document.querySelectorAll('#arSp button').forEach(x=>x.classList.toggle('on',x===b))};
+$('#arGo').onclick=()=>{
+  const r=E.solveArham(ar);const M=parseFloat($('#arMoney').value);const net=isFinite(M)&&M>0?M:null;
+  if(r.errors.length&&!r.heirs.length){$('#arOut').innerHTML=`<div class="err">${r.errors.join('<br>')}</div>`;return}
+  let o=`<div class="card"><h2>نتيجة ذوي الأرحام</h2><div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>%</th>${net?'<th>المبلغ</th><th>نصيب الفرد</th>':''}<th>السبب</th></tr>`;
+  r.heirs.forEach(h=>{o+=`<tr><td><b>${h.label}</b></td><td class="num">${h.count}</td><td class="num frac">${F(h.share)}</td><td class="num">${pct(h.share)}</td>${net?`<td class="num">${money(h.share,net)}</td><td class="num">${h.count>1?money(h.per,net):'—'}</td>`:''}<td class="small">${esc(h.why)}</td></tr>`});
+  o+=`</table></div></div><div class="card"><h3 style="margin-top:0">شرح الخطوات</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>${r.notes.map(n=>`<div class="note" style="margin-top:8px">${esc(n)}</div>`).join('')}${r.errors.length?`<div class="err">${r.errors.join('<br>')}</div>`:''}<p class="small">القاعدة: الأقرب درجةً يحجب الأبعد، وكل ذي رحم يأخذ نصيب من يُدلي به إلى الميت لو كان حيّاً. وقد سُمّي هذا مذهب أهل التنزيل.</p></div>`;
+  $('#arOut').innerHTML=o;$('#arOut').scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+// ---------- التخارج ----------
+let tkSel={key:'',k:1,mode:'estate',payer:'all'};
+function drawTakh(){
+  if(!last){$('#tkBody').innerHTML=`<div class="note">احسب مسألة في تبويب «الحاسبة» أولاً، ثم عُد هنا.</div>`;$('#tkOut').innerHTML='';return}
+  const hs=last.r.heirs;if(!hs.find(h=>h.key===tkSel.key))tkSel.key=hs[0].key;
+  const cur=hs.find(h=>h.key===tkSel.key);
+  const opt=(v,l,s)=>`<option value="${v}"${s?' selected':''}>${l}</option>`;
+  $('#tkBody').innerHTML=`<div class="grid">
+   <div class="fld"><label>الوارث الخارج</label><select id="tkKey" style="font:inherit;padding:7px;border:1px solid var(--line);border-radius:10px;width:100%">${hs.map(h=>opt(h.key,h.label,h.key===tkSel.key)).join('')}</select></div>
+   <div class="fld"><label>كم شخصاً منهم يخرج؟ (حتى ${cur.count})</label><input type="number" id="tkK" min="1" max="${cur.count}" value="${Math.min(tkSel.k,cur.count)}"></div>
+   <div class="fld"><label>صورة التخارج</label><select id="tkMode" style="font:inherit;padding:7px;border:1px solid var(--line);border-radius:10px;width:100%">${opt('estate','يأخذ مبلغاً من التركة نفسها',tkSel.mode==='estate')}${opt('payer','يشتري نصيبه وارث أو جميع الورثة من مالهم',tkSel.mode==='payer')}</select></div>
+   <div class="fld" id="tkPayerBox" style="display:${tkSel.mode==='payer'?'block':'none'}"><label>من يدفع؟</label><select id="tkPayer" style="font:inherit;padding:7px;border:1px solid var(--line);border-radius:10px;width:100%">${opt('all','جميع الورثة الباقين',tkSel.payer==='all')}${hs.filter(h=>h.key!==tkSel.key).map(h=>opt(h.key,h.label,h.key===tkSel.payer)).join('')}</select></div>
+   <div class="fld"><label>المبلغ القابل للقسمة (اختياري)</label><input type="number" id="tkEstate" min="0" step="any" value="${last.net||''}"></div>
+   <div class="fld"><label>ما يُدفع أو يأخذه الخارج (اختياري)</label><input type="number" id="tkX" min="0" step="any" placeholder="0"></div></div>
+   <div class="row" style="margin-top:10px"><button class="btn" id="tkGo">احسب التخارج</button></div>`;
+  $('#tkKey').onchange=e=>{tkSel.key=e.target.value;tkSel.k=1;drawTakh()};
+  $('#tkMode').onchange=e=>{tkSel.mode=e.target.value;drawTakh()};
+  $('#tkGo').onclick=runTakh;
+  $('#tkOut').innerHTML='';
+}
+function runTakh(){
+  tkSel.k=parseInt($('#tkK').value)||1;if($('#tkPayer'))tkSel.payer=$('#tkPayer').value;
+  const hs=last.r.heirs.map(h=>({key:h.key,label:h.label,count:h.count,share:h.share,per:h.per}));
+  const res=E.takharuj(hs,{key:tkSel.key,k:tkSel.k,mode:tkSel.mode,payer:tkSel.payer});
+  if(res.errors.length){$('#tkOut').innerHTML=`<div class="err">${res.errors.join('<br>')}</div>`;return}
+  const M=parseFloat($('#tkEstate').value);const X=parseFloat($('#tkX').value)||0;const hasM=isFinite(M)&&M>0;
+  const T=res.rows.reduce((s,r)=>s.add(r.share),E.fr(0));
+  let o=`<div class="card"><h2>نتيجة التخارج</h2><p>الخارج: <b>${res.k>1?res.k+' من ':''}${res.label}</b> ونصيبه الأصلي <span class="frac">${res.exitShare.str()}</span> (${pct(res.exitShare)}) من التركة.</p><p>${res.note}</p>`;
+  o+=`<div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب الأصلي</th><th>بعد التخارج</th><th>%</th>${hasM?'<th>يستلم</th><th>يدفع</th><th>الصافي</th>':''}</tr>`;
+  const pool=tkSel.mode==='estate'?M-X:M;
+  res.rows.forEach(r=>{
+    let pay=0;
+    if(tkSel.mode==='payer')pay=tkSel.payer==='all'?X*r.share.num()/T.num():(r.key===tkSel.payer?X:0);
+    const got=hasM?Number(r.newShare.n)*pool/Number(r.newShare.d):0;
+    o+=`<tr><td><b>${r.label}</b></td><td class="num">${r.count}</td><td class="num frac">${F(r.share)}</td><td class="num frac">${F(r.newShare)}</td><td class="num">${pct(r.newShare)}</td>${hasM?`<td class="num">${fmtMoney(got)}</td><td class="num">${pay?fmtMoney(pay):'—'}</td><td class="num">${fmtMoney(got-pay)}</td>`:''}</tr>`;
+  });
+  o+=`</table></div>`;
+  if(hasM)o+=`<p class="small">الخارج يتلقّى ${fmtMoney(X)} ${tkSel.mode==='estate'?'من التركة':'من الدافعين'}، وكان نصيبه الأصلي ${money(res.exitShare,M)}.${X<Number(res.exitShare.n)*M/Number(res.exitShare.d)?' فهو يتنازل عن الفرق برضاه.':''}</p>`;
+  o+=`<div class="note">التخارج عقد صلح يلزم فيه رضا الخارج وبلوغه ورشده، وصحة المقابل شرعاً، ويُوثَّق عند الموثّق. هذا الحساب لتوضيح الأنصبة فقط.</div></div>`;
+  $('#tkOut').innerHTML=o;$('#tkOut').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ---------- أمثلة ----------
+const EX=[
+ ['العمرية الأولى: زوج وأبوان',{husband:1,father:1,mother:1},'A'],
+ ['العمرية الثانية: زوجة وأبوان',{wives:1,father:1,mother:1},'A'],
+ ['الأكدرية',{husband:1,mother:1,gf:1,fs:1},'A'],
+ ['المشتركة',{husband:1,mother:1,mb:2,fb:1},'A'],
+ ['العول: زوج وشقيقتان وأم',{husband:1,fs:2,mother:1},'A'],
+ ['المنبرية: زوجة وبنتان وأبوان',{wives:1,daughters:2,father:1,mother:1},'A'],
+ ['جد وخمسة إخوة وجدة',{gf:1,fb:5,gm_m:1},'A'],
+ ['جد وأخ شقيق وأخ لأب (المعادّة)',{gf:1,fb:1,pb:1},'A'],
+ ['بنت وبنت ابن وأخ',{daughters:1,gdaughters:1,fb:1},'A'],
+ ['بنت وأم: بين الأصل والردّ',{daughters:1,mother:1},'B'],
+ ['زوج وبنت في القانون الجزائري',{husband:1,daughters:1},'C'],
+ ['التنزيل: ثلاثة أبناء وأبوان وبنت لابن ميت',{sons:3,father:1,mother:1},'C',{tz:{type:'son',m:0,f:1}}]];
+$('#exlist').innerHTML=EX.map((e,i)=>`<button data-i="${i}">${e[0]}</button>`).join('');
+$('#exlist').onclick=e=>{const b=e.target.closest('button');if(!b)return;const x=EX[+b.dataset.i];
+  E.KEYS.forEach(k=>val[k]=0);Object.assign(val,x[1]);
+  gender=x[1].husband?'f':'m';mode=x[2];
+  $('#tzOn').checked=!!x[3];if(x[3]){$('#tzType').value=x[3].tz.type;$('#tzM').value=x[3].tz.m;$('#tzF').value=x[3].tz.f;$('#tzBox').open=true}
+  document.querySelectorAll('#gender button').forEach(bb=>bb.classList.toggle('on',bb.dataset.g===gender));
+  drawModes();drawHeirs();tab('calc');run()};
+
+// ================== الدروس التفاعلية ==================
+const LESSONS=[
+{t:'الحقوق المتعلقة بالتركة وأسباب الإرث',s:'الترتيب الشرعي، والأسباب والموانع',
+ b:`<p>قبل أن نقسم التركة بين الورثة تتعلق بها حقوق مرتبة:</p>
+ <ol><li><b>تجهيز الميت ودفنه</b> بالمعروف.</li><li><b>قضاء الديون.</b></li><li><b>الوصية</b> لغير وارث في حدود <b>ثلث ما بقي</b>، وما زاد يتوقف على إجازة الورثة.</li><li><b>الميراث</b> بين الورثة.</li></ol>
+ <p><b>أسباب الإرث ثلاثة:</b> النكاح الصحيح، والنسب، والولاء (العتق). <b>وموانعه:</b> القتل العمد العدوان، والرق، واختلاف الدين.</p>
+ <div class="note">قاعدة: لا يُقسَّم شيء على الورثة قبل أداء الحقوق السابقة. فإن كانت التركة 100000 والديون 20000 والتجهيز 5000 فالباقي للوصية والميراث هو 75000.</div>`,
+ e:[
+ {t:'mcq',q:'ما أول ما يُخرَج من التركة؟',o:['الوصية','تجهيز الميت ودفنه','الديون','نصيب الورثة'],a:1,w:'يبدأ بالتجهيز، ثم الديون، ثم الوصية، ثم الميراث.'},
+ {t:'mcq',q:'تركة 90000 لا ديون ولا تجهيز، وأوصى الميت لغير وارث بـ 50000. كم ينفذ بلا إجازة الورثة؟',o:['50000','45000','30000','90000'],a:2,w:'الوصية النافذة بلا إجازة هي ثلث الباقي: 90000 ÷ 3 = 30000.'},
+ {t:'mcq',q:'أي هذه ليس من أسباب الإرث؟',o:['النكاح الصحيح','النسب','الجوار','الولاء'],a:2,w:'الأسباب: النكاح والنسب والولاء. الجوار والصداقة لا تورّث.'},
+ {t:'mcq',q:'أي هذه من موانع الإرث؟',o:['القتل العمد العدوان','الفقر','البعد في السكن','كون الوارث أنثى'],a:0,w:'القتل العمد العدوان مانع من الإرث، والفقر والبعد والأنوثة ليست موانع.'}]},
+
+{t:'أصحاب الفروض',s:'النصف والربع والثمن والثلثان والثلث والسدس',
+ b:`<p>الفروض المقدّرة في القرآن ستة: <b>1/2</b> و<b>1/4</b> و<b>1/8</b> و<b>2/3</b> و<b>1/3</b> و<b>1/6</b>.</p>
+ <ul><li><b>الزوج:</b> 1/2 بلا فرع وارث، و1/4 مع الفرع الوارث.</li><li><b>الزوجة أو الزوجات:</b> 1/4 بلا فرع وارث، و1/8 معه، يشتركن فيه.</li><li><b>الأم:</b> 1/6 مع الفرع الوارث أو جمع من الإخوة، وإلا 1/3.</li><li><b>البنت:</b> 1/2 للواحدة، و2/3 للاثنتين فأكثر (ما لم يوجد ابن يعصّبهنّ).</li><li><b>الأب:</b> 1/6 مع الابن، و1/6 مع البنت ثم الباقي تعصيباً.</li></ul>
+ <p><b>فكرة مهمة:</b> «الفرع الوارث» هو الأبناء والبنات وأبناء الابن وبناته. وجوده ينقل الزوج من النصف إلى الربع، والزوجة من الربع إلى الثمن.</p>`,
+ e:[
+ {t:'calc',h:{wives:1,sons:1},m:'A'},
+ {t:'calc',h:{husband:1,mother:1,fb:1},m:'A',base:1},
+ {t:'mcq',q:'توفي رجل عن زوجة وبنت وأب وأم. كم نصيب الزوجة؟',o:['1/4','1/8','1/6','1/3'],a:1,w:'وُجد فرع وارث (البنت) فتنزل الزوجة من الربع إلى الثمن.'},
+ {t:'calc',h:{husband:1,daughters:1},m:'A'}]},
+
+{t:'الحجب',s:'من يمنع من؟ حجب الحرمان وحجب النقصان',
+ b:`<p><b>الحجب</b> أن يمنع وارثٌ وارثاً آخر من الميراث كله (<b>حجب حرمان</b>) أو من بعضه (<b>حجب نقصان</b>).</p>
+ <ul><li>الابن يحجب ابن الابن.</li><li>الأب يحجب الجد، ويحجب الإخوة كلهم.</li><li>الابن والأب (والجد) يحجبون الإخوة لأم.</li><li>الأم تحجب كل الجدات، والجدة القريبة تحجب البعيدة.</li><li>الفرع الوارث ينقص نصيب الزوجين والأم (نقصان).</li></ul>
+ <div class="note">الأشخاص الذين يُدلون إلى الميت بواسطة وارث يُحجبون بتلك الواسطة (غالباً)، فابن الابن يرث بواسطة الابن، فإذا وُجد الابن حجبه.</div>`,
+ e:[
+ {t:'calc',h:{sons:1,gsons:1,father:1},m:'A'},
+ {t:'calc',h:{father:1,fb:2,mb:1},m:'A',note:'لاحظ أن الإخوة محجوبون بالأب وأن الأم هنا لا تأخذ الثلث الكامل لوجود جمع من الإخوة.'},
+ {t:'mcq',q:'من يحجب الجدة أم الأم؟',o:['الأب','الأم','الأخ','الزوج'],a:1,w:'الأم تحجب الجدات كلهنّ. أما الأب فيحجب أم الأب فقط.'},
+ {t:'mcq',q:'الأخ لأم يسقط بوجود:',o:['الأخ الشقيق','الجد (أبو الأب)','الجدة','الزوج'],a:1,w:'الإخوة لأم يسقطون بالفرع الوارث والأب والجد (عند المالكية).'}]},
+
+{t:'التعصيب',s:'بالنفس، بالغير، ومع الغير',
+ b:`<p><b>العاصب</b> من يأخذ ما بقي بعد أصحاب الفروض، أو المال كله إن انفرد. وهو ثلاثة أنواع:</p>
+ <ul><li><b>بالنفس:</b> الابن، ابن الابن، الأب، الجد، الأخ الشقيق، الأخ لأب، العم... ويأخذ بنفسه.</li><li><b>بالغير:</b> البنت مع الابن، والأخت الشقيقة مع الأخ الشقيق، يُقسم لهما «للذكر مثل حظ الأنثيين».</li><li><b>مع الغير:</b> الأخوات الشقيقات أو لأب مع البنات أو بنات الابن.</li></ul>
+ <p>ترتيب العصبة: جهة البنوة، ثم الأبوة، ثم الأخوة، ثم بنو الإخوة، ثم العمومة، ثم الولاء.</p>`,
+ e:[
+ {t:'calc',h:{sons:2,daughters:1},m:'A'},
+ {t:'calc',h:{daughters:1,fs:1},m:'A',note:'الأخت الشقيقة هنا عاصبة مع الغير (مع البنت).'},
+ {t:'calc',h:{fb:1,fs:1,mother:1},m:'A'},
+ {t:'mcq',q:'بنتان وأخ شقيق. ما نصيب الأخ؟',o:['النصف','الثلث','لا شيء','الربع'],a:1,w:'للبنتين الثلثان فرضاً، والباقي وهو الثلث للأخ الشقيق تعصيباً.'}]},
+
+{t:'أصل المسألة والعول',s:'السهام والمضاعف المشترك الأصغر',
+ b:`<p><b>أصل المسألة</b> هو أصغر عدد صحيح يخرج منه نصيب كل وارث عدداً صحيحاً من السهام. نحسبه من مقامات الفروض (المضاعف المشترك الأصغر).</p>
+ <p>مثال: زوج وأم وابن. للزوج 1/4 وللأم 1/6، وللابن الباقي. المقامان 4 و6 ← أصل المسألة 12. للزوج 3 سهام، وللأم 2، وللابن 7.</p>
+ <p><b>العول:</b> إذا زادت الفروض على الواحد (مثلاً 3/6 + 4/6 + 1/6 = 8/6) جُعل أصل المسألة هو مجموع السهام (8) ودخل النقص على الجميع بنسبة سهامهم.</p>
+ <div class="note">أصل المسألة هو الذي نقيس به السهام، وليس هو العدد الذي نكتب به الكسر دائماً. كلاهما يصل إلى النتيجة نفسها.</div>`,
+ e:[
+ {t:'calc',h:{husband:1,mother:1,sons:1},m:'A',base:1},
+ {t:'calc',h:{husband:1,fs:2,mother:1},m:'A',base:1,note:'مسألة عائلة: الفروض 3/6 + 4/6 + 1/6.'},
+ {t:'calc',h:{wives:1,daughters:2,father:1,mother:1},m:'A',base:1,note:'المنبرية: عالت من 24 إلى 27.'},
+ {t:'mcq',q:'متى تعول المسألة؟',o:['إذا نقصت الفروض عن الواحد','إذا زادت الفروض على الواحد','إذا وُجد عاصب','إذا لم يوجد وارث'],a:1,w:'العول يكون عند زيادة مجموع الفروض على الواحد الصحيح.'}]},
+
+{t:'الجد والإخوة (مذهب زيد)',s:'ما يختاره المالكية: الأحظّ للجد',
+ b:`<p>إذا اجتمع الجد (أبو الأب) مع الإخوة الأشقاء أو لأب، فالمالكية على مذهب <b>زيد بن ثابت</b>: لا يحجب الجد الإخوة، ويأخذ <b>الأحظّ</b> له من ثلاثة:</p>
+ <ol><li>المقاسمة كأنه أخ.</li><li>ثلث الباقي بعد الفروض.</li><li>سدس جميع المال.</li></ol>
+ <p>مثال: جد وأخوان شقيقان. المقاسمة = 1/3، وثلث الباقي = 1/3، والسدس = 1/6. فله 1/3.</p>
+ <p>ومثال: جد وخمسة إخوة وجدة. للجدة 1/6، ويبقى 5/6. المقاسمة = 5/6 ÷ 7 × 2 = 5/21، وثلث الباقي = 5/18، والأكبر 5/18.</p>
+ <div class="note">إذا اجتمع الجد مع إخوة أشقاء وإخوة لأب فإنّ الأشقاء <b>يعدّون</b> الإخوة لأب على الجد (المعادّة) ليقلّ نصيبه، ثم يعود نصيب الإخوة لأب إلى الأشقاء.</div>`,
+ e:[
+ {t:'calc',h:{gf:1,fb:2},m:'A'},
+ {t:'calc',h:{gf:1,fb:5,gm_m:1},m:'A'},
+ {t:'calc',h:{husband:1,gf:1,fb:1},m:'A'},
+ {t:'calc',h:{gf:1,fb:1,pb:1},m:'A',note:'المعادّة: الأخ لأب يُعدّ على الجد ثم يسقط.'}]},
+
+{t:'المسائل الخاصة المشهورة',s:'العمريتان، الأكدرية، المشتركة',
+ b:`<ul><li><b>العمريتان:</b> زوج أو زوجة مع الأبوين. تأخذ الأم <b>ثلث الباقي</b> بعد فرض الزوج/الزوجة، لا ثلث التركة كلها.</li>
+ <li><b>الأكدرية:</b> زوج وأم وجد وأخت. تعول المسألة من 6 إلى 9 ثم يقتسم الجد والأخت نصيبيهما للذكر مثل حظ الأنثيين فتصحّ من 27.</li>
+ <li><b>المشتركة:</b> زوج وأم وإخوة لأم وأخ شقيق. استغرقت الفروض التركة، فعند المالكية يُشرَّك الأخ الشقيق مع الإخوة لأم في ثلثهم.</li></ul>`,
+ e:[
+ {t:'calc',h:{husband:1,father:1,mother:1},m:'A'},
+ {t:'calc',h:{wives:1,father:1,mother:1},m:'A'},
+ {t:'calc',h:{husband:1,mother:1,gf:1,fs:1},m:'A',base:1},
+ {t:'calc',h:{husband:1,mother:1,mb:2,fb:1},m:'A'}]},
+
+{t:'الردّ وذوو الأرحام والتنزيل والتخارج',s:'ما تفرّد به القانون الجزائري',
+ b:`<ul><li><b>الردّ:</b> المالكية الأولون: لا ردّ، والباقي لبيت المال. والقانون الجزائري (المادة 167) يردّ على أصحاب الفروض غير الزوجين.</li>
+ <li><b>ذوو الأرحام (المادة 168):</b> عند عدم الفرض والعصبة يرثون على طريقة أهل التنزيل.</li>
+ <li><b>التنزيل (169 إلى 172):</b> وصية واجبة لأحفاد مات أصلهم قبل المورّث، بنصيب أصلهم في حدود الثلث.</li>
+ <li><b>التخارج:</b> أن يخرج وارث من القسمة مقابل مال، ثم يُعاد توزيع الأنصبة.</li></ul>`,
+ e:[
+ {t:'calc',h:{daughters:1,mother:1},m:'B',note:'صيغة المتأخرين: يُردّ الباقي.'},
+ {t:'calc',h:{husband:1,daughters:1},m:'C',note:'في القانون الجزائري يُردّ على البنت دون الزوج.'},
+ {t:'mcq',q:'أقصى مقدار للتنزيل من التركة هو:',o:['النصف','الثلث','الربع','السدس'],a:1,w:'المادة 170: بمقدار حصة أصلهم لو بقي حيّاً على ألا يتجاوز ثلث التركة.'},
+ {t:'mcq',q:'في التخارج إن خرج وارث وأخذ مبلغاً من التركة نفسها، فإن الباقين يقتسمون الباقي:',o:['بالتساوي','بنسبة أنصبتهم الأصلية','للأكبر سناً','لبيت المال'],a:1,w:'يُقسَّم الباقي على الباقين بنسبة أنصبتهم الأصلية بعضها إلى بعض.'}]}
+];
+
+const PROG={};
+try{Object.assign(PROG,JSON.parse(localStorage.getItem('mw_prog')||'{}'))}catch(e){}
+const saveProg=()=>{try{localStorage.setItem('mw_prog',JSON.stringify(PROG))}catch(e){}};
+const AD='٠١٢٣٤٥٦٧٨٩';
+function parseFr(s){s=(s||'').trim().replace(/[٠-٩]/g,d=>AD.indexOf(d)).replace(/\s+/g,'').replace('÷','/');if(!s)return null;let m=s.match(/^(\d+)\/(\d+)$/);if(m&&+m[2]>0)return E.fr(+m[1],+m[2]);if(/^\d+$/.test(s))return E.fr(+s);return null}
+function calcRows(h,m){
+  const r=E.solve(h,m),rows=[];
+  Object.keys(h).filter(k=>h[k]>0).forEach(k=>{
+    const he=r.heirs.find(x=>x.key===k),bl=r.blocked.find(x=>x.key===k);
+    const cnt=he?he.count:(bl?bl.count:h[k]);
+    rows.push({key:k,label:he?he.label:(bl?bl.label:E.NAMES[k][h[k]>1?1:0]),count:cnt,exp:he?he.share:E.fr(0),why:he?he.why:(bl?bl.reason:'لا شيء له')});
+  });
+  if(!r.bayt.isZero())rows.push({key:'bayt',label:m==='A'?'بيت المال (الباقي)':'الباقي',count:0,exp:r.bayt,why:'ما بقي بعد الفروض ولا عاصب'});
+  return {r,rows};
+}
+const LC=['A','B','C'];
+let curL=-1,chal=null;
+const exKey=(l,i)=>l+'-'+i;
+function renderLessonList(){
+  const done=l=>LESSONS[l].e.filter((_,i)=>PROG[exKey(l,i)]).length;
+  const tot=PROG._t||0,ok=PROG._c||0;
+  let o=`<div class="card"><h2>الدروس التفاعلية</h2><p>ثمانية دروس قصيرة، في كل درس شرح وتمارين تصحَّح فوراً. حلّ التمارين بنفسك ثم قارن مع الحل المفصّل.</p>
+  <div class="row"><span class="chip g">إجابات صحيحة: ${ok}</span><span class="chip">محاولات: ${tot}</span><button class="btn alt" id="lsReset" style="padding:4px 14px">تصفير التقدّم</button><button class="btn" id="chalBtn">تحدٍّ عشوائي</button></div></div>
+  <div class="lgrid">${LESSONS.map((x,i)=>`<button class="lcard" data-l="${i}"><span class="ln">${i+1}</span><b>${x.t}</b><span class="small">${x.s}</span><span class="bar2"><i style="width:${done(i)/x.e.length*100}%"></i></span><span class="small">${done(i)} من ${x.e.length} تمارين</span></button>`).join('')}</div>`;
+  $('#lessonView').innerHTML=o;
+}
+function exHtml(l,i,ex){
+  const id=exKey(l,i);
+  if(ex.t==='mcq')return `<div class="exc" data-ex="${id}"><div class="q"><span class="chip">سؤال</span> ${ex.q}</div><div class="opts">${ex.o.map((x,j)=>`<button class="opt" data-mcq="${l},${i},${j}">${x}</button>`).join('')}</div><div class="fb" id="fb-${id}"></div></div>`;
+  const {rows}=calcRows(ex.h,ex.m);
+  return `<div class="exc" data-ex="${id}"><div class="q"><span class="chip">تمرين حساب</span> الصيغة: <b>${MODES[LC.indexOf(ex.m)].t}</b>. أدخل نصيب كل وارث ككسر من التركة (مثل 1/6)، واكتب 0 لمن لا شيء له.${ex.note?`<div class="small">${ex.note}</div>`:''}</div>
+   <div class="crow">${rows.map(r=>`<label>${r.label}${r.count>1?` (${r.count})`:''}<span class="small"> — نصيب الجميع</span><input data-k="${r.key}" placeholder="مثال 1/6" inputmode="text" dir="ltr"></label>`).join('')}${ex.base?`<label>أصل المسألة (عدد السهام)<input data-k="_base" placeholder="مثال 12" inputmode="numeric" dir="ltr"></label>`:''}</div>
+   <div class="row" style="margin-top:8px"><button class="btn" data-chk="${l},${i}">تحقّق</button><button class="btn alt" data-sol="${l},${i}">الحل المفصّل</button><button class="btn alt" data-open="${l},${i}">افتح في الحاسبة</button></div><div class="fb" id="fb-${id}"></div><div id="sol-${id}"></div></div>`;
+}
+function openLesson(l){
+  curL=l;const x=LESSONS[l];
+  $('#lessonView').innerHTML=`<div class="row" style="margin-bottom:8px"><button class="btn alt" id="lsBack">← كل الدروس</button><button class="btn" id="chalBtn">تحدٍّ عشوائي</button></div>
+  <div class="card"><h2>الدرس ${l+1}: ${x.t}</h2><div class="edu">${x.b}</div></div>
+  <div class="card"><h2>التمارين</h2>${x.e.map((e,i)=>exHtml(l,i,e)).join('')}
+  <div class="row" style="justify-content:space-between;margin-top:12px">${l>0?`<button class="btn alt" data-l="${l-1}">← الدرس السابق</button>`:'<span></span>'}${l<LESSONS.length-1?`<button class="btn" data-l="${l+1}">الدرس التالي →</button>`:'<span></span>'}</div></div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function count(ok,id){PROG._t=(PROG._t||0)+1;if(ok){if(!PROG[id])PROG._c=(PROG._c||0)+1;PROG[id]=true}saveProg()}
+function checkCalc(h,m,box,id,withBase){
+  const {r,rows}=calcRows(h,m);let allOk=true,out='';
+  rows.forEach(row=>{
+    const inp=box.querySelector(`input[data-k="${row.key}"]`);const v=parseFr(inp.value);
+    const ok=v&&v.eq(row.exp);if(!ok)allOk=false;
+    out+=`<li class="${ok?'ok':'bad'}"><b>${row.label}</b>: ${ok?'صحيح ✓':(v?`ليس ${v.str()}`:'اكتب كسراً مثل 1/6')} ${ok?'':`— الصواب <b>${row.exp.str()}</b>`}<div class="small">${esc(row.why)}</div></li>`;
+  });
+  if(withBase){const b=box.querySelector('input[data-k="_base"]');const ok=b&&parseInt(b.value.replace(/[٠-٩]/g,d=>AD.indexOf(d)))===r.base;if(!ok)allOk=false;out+=`<li class="${ok?'ok':'bad'}"><b>أصل المسألة</b>: ${ok?'صحيح ✓':`الصواب <b>${r.base}</b>`}</li>`}
+  count(allOk,id);
+  return `<div class="verdict ${allOk?'ok':'bad'}">${allOk?'أحسنت! إجابتك صحيحة.':'راجع الإجابات المشار إليها ثم حاول مرة أخرى.'}</div><ul class="fbl">${out}</ul>`;
+}
+const POOL=[['husband','wives'],'father','mother','gf','gm_m','gm_p','sons','daughters','gsons','gdaughters','fb','fs','pb','ps','mb','ms','ufb'];
+function randomProblem(){
+  for(let t=0;t<200;t++){
+    const h={};const n=2+Math.floor(Math.random()*3);
+    if(Math.random()<.55){if(Math.random()<.5)h.wives=1+Math.floor(Math.random()*2);else h.husband=1}
+    while(Object.keys(h).length<n){const k=POOL[1+Math.floor(Math.random()*(POOL.length-1))];h[k]=['sons','daughters','fb','fs','pb','ps','mb','ms','gsons','gdaughters'].includes(k)?1+Math.floor(Math.random()*3):1}
+    const r=E.solve(h,'A');
+    if(r.errors.length||r.heirs.length<2||r.heirs.length>5)continue;
+    if(h.husband&&h.wives)continue;
+    return h;
+  }
+  return {husband:1,mother:1,sons:1};
+}
+function openChallenge(){
+  const h=randomProblem();chal={h,m:'A'};
+  $('#lessonView').innerHTML=`<div class="row" style="margin-bottom:8px"><button class="btn alt" id="lsBack">← كل الدروس</button><button class="btn" id="chalBtn">مسألة أخرى</button></div>
+  <div class="card"><h2>التحدّي العشوائي</h2><p class="small">مسألة جديدة في كل مرة. أصل المذهب المالكي. استعمل ما تعلمته، واكتب 0 لمن يُحجب. حاول أولاً قبل أن تضغط «الحل المفصّل».</p>${exHtml('c',0,{t:'calc',h,m:'A',base:1})}</div>`;
+}
+$('#lessonView').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.l!==undefined&&b.classList.contains('lcard')||(b.dataset.l!==undefined&&!b.classList.contains('lcard')))return openLesson(+b.dataset.l);
+  if(b.id==='lsBack'){curL=-1;chal=null;return renderLessonList()}
+  if(b.id==='chalBtn')return openChallenge();
+  if(b.id==='lsReset'){Object.keys(PROG).forEach(k=>delete PROG[k]);saveProg();return renderLessonList()}
+  if(b.dataset.mcq){const [l,i,j]=b.dataset.mcq.split(',').map(Number);const ex=LESSONS[l].e[i];const id=exKey(l,i);const ok=j===ex.a;
+    b.parentNode.querySelectorAll('.opt').forEach((x,k)=>{x.classList.remove('okc','badc');if(k===ex.a&&ok||k===j&&!ok)x.classList.add(ok?'okc':'badc')});
+    $('#fb-'+id).innerHTML=`<div class="verdict ${ok?'ok':'bad'}">${ok?'إجابة صحيحة ✓':'ليست هذه الإجابة، حاول مرة أخرى.'}</div>${ok?`<div class="small">${ex.w}</div>`:''}`;count(ok,id);return}
+  if(b.dataset.chk){const [l,i]=b.dataset.chk.split(',');const ex=l==='c'?{h:chal.h,m:'A',base:1}:LESSONS[+l].e[+i];const id=exKey(l,i);const box=b.closest('.exc');
+    $('#fb-'+id).innerHTML=checkCalc(ex.h,ex.m,box,id,!!ex.base);return}
+  if(b.dataset.sol){const [l,i]=b.dataset.sol.split(',');const ex=l==='c'?{h:chal.h,m:'A'}:LESSONS[+l].e[+i];const id=exKey(l,i);
+    const input=Object.assign({},ex.h);const r=E.solve(input,ex.m);const net=null;
+    const sc=$('#sol-'+id);sc.innerHTML=`<div class="card" style="margin-top:10px">${explain(r,{net})}${r.steps.length?`<h3>مسائل خاصة</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`:''}</div>`;return}
+  if(b.dataset.open){const [l,i]=b.dataset.open.split(',');const ex=l==='c'?{h:chal.h,m:'A'}:LESSONS[+l].e[+i];loadCalc(ex.h,ex.m);return}
+});
+function loadCalc(h,m){E.KEYS.forEach(k=>val[k]=0);Object.assign(val,h);gender=h.husband?'f':'m';mode=m;
+  $('#tzOn').checked=false;document.querySelectorAll('#gender button').forEach(bb=>bb.classList.toggle('on',bb.dataset.g===gender));drawModes();drawHeirs();tab('calc');run()}
+
+setGender();drawModes();drawHeirs();drawAr();
+})();
+
+</script>
+</body>
+</html>

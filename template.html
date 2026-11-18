@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبة المواريث — على المذهب المالكي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f2e8;--card:#fffdf8;--ink:#23201a;--mute:#6b6455;--g:#1f5a43;--g2:#2f7a5b;--gold:#b5832a;--line:#e3d9c4;--warn:#9a3b1f;--soft:#eef4ef}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Cairo',system-ui,sans-serif;line-height:1.75;font-size:16px}
+header{background:linear-gradient(135deg,#17443a,#1f5a43 60%,#2c6e55);color:#fdf7e6;padding:34px 18px 26px;text-align:center;position:relative;overflow:hidden}
+header:before{content:"";position:absolute;inset:0;opacity:.07;background-image:radial-gradient(#fff 1px,transparent 1.5px);background-size:18px 18px}
+header h1{font-family:'Amiri',serif;font-size:clamp(28px,5vw,44px);margin:0 0 6px;position:relative}
+header p{margin:0;opacity:.9;position:relative;max-width:760px;margin-inline:auto}
+.basmala{font-family:'Amiri',serif;color:#e8c777;font-size:20px;margin-bottom:6px;position:relative}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:6px 10px;justify-content:center}
+nav button{border:0;background:none;font:inherit;font-weight:600;padding:8px 16px;border-radius:999px;color:var(--mute);cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--g);color:#fff}
+main{max-width:1060px;margin:0 auto;padding:20px 14px 60px}
+section.tab{display:none}section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+h2{font-family:'Amiri',serif;font-size:26px;color:var(--g);margin:0 0 10px}
+h3{font-size:17px;margin:16px 0 6px;color:var(--g)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.seg button{border:0;background:#fff;font:inherit;padding:8px 18px;cursor:pointer;font-weight:600;color:var(--mute)}
+.seg button.on{background:var(--g);color:#fff}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.mode{border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;background:#fff;cursor:pointer;text-align:right;font:inherit}
+.mode b{display:block;color:var(--g)}.mode span{font-size:13.5px;color:var(--mute)}
+.mode.on{border-color:var(--g);background:var(--soft);box-shadow:0 0 0 2px rgba(31,90,67,.12)}
+.grp{margin-top:14px}.grp>div.t{font-weight:700;color:var(--gold);font-size:14px;letter-spacing:.3px;margin-bottom:6px;border-bottom:1px dashed var(--line);padding-bottom:3px}
+.hv{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 10px}
+.hv.has{border-color:var(--g2);background:var(--soft)}
+.hv label{font-size:15px}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;font-size:18px;line-height:1;cursor:pointer;color:var(--g)}
+.step button:hover{background:var(--g);color:#fff}
+.step output{min-width:22px;text-align:center;font-weight:700}
+input[type=number]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:10px;width:100%;background:#fff;direction:ltr;text-align:right}
+.fld label{display:block;font-size:13.5px;color:var(--mute)}
+.btn{background:var(--g);color:#fff;border:0;border-radius:12px;padding:11px 26px;font:inherit;font-weight:700;cursor:pointer}
+.btn.alt{background:#fff;color:var(--g);border:1px solid var(--g)}
+.btn:hover{filter:brightness(1.08)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+th{background:var(--soft);color:var(--g);font-weight:700;font-size:14px}
+.num{direction:ltr;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+.frac{font-weight:700;color:var(--g)}
+.tbl{overflow-x:auto}
+.chip{display:inline-block;background:#fbefd0;color:#6d4a0a;border:1px solid #ecd08a;border-radius:999px;padding:1px 12px;font-size:13.5px;margin:2px 3px;font-weight:600}
+.chip.g{background:var(--soft);color:var(--g);border-color:#bcd5c6}
+.bar{display:flex;height:26px;border-radius:9px;overflow:hidden;border:1px solid var(--line);margin:10px 0}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;color:var(--mute)}
+.legend b{display:inline-block;width:11px;height:11px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px}
+.note{background:#fff7e0;border:1px solid #ecd9a0;border-radius:12px;padding:10px 14px;font-size:14.5px}
+.err{background:#fde9e3;border:1px solid #f0b9a8;color:var(--warn);border-radius:12px;padding:10px 14px;font-weight:600}
+ol.steps{padding-inline-start:22px;margin:6px 0}ol.steps li{margin:6px 0}
+.blocked li{margin:3px 0;color:var(--mute)}
+.ex{display:flex;flex-wrap:wrap;gap:8px}
+.ex button{border:1px solid var(--line);background:#fff;border-radius:12px;padding:7px 14px;font:inherit;cursor:pointer;font-size:14.5px}
+.ex button:hover{border-color:var(--g);color:var(--g)}
+details{margin-top:10px}summary{cursor:pointer;font-weight:700;color:var(--g)}
+.small{font-size:13.5px;color:var(--mute)}
+ul.refs li{margin:5px 0}
+.k{font-family:'Amiri',serif}
+td.who b{display:block}
+.inst{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:0 auto 18px;max-width:820px;text-align:right}
+.inst .lg{width:92px;height:92px;border-radius:50%;background:#fff;padding:4px;box-shadow:0 2px 10px rgba(0,0,0,.25);flex:none}
+.inst .tx{font-size:14.5px;line-height:1.7;color:#fdf7e6}.inst .tx b{display:block;font-size:16.5px;color:#fff}
+.inst .tx small{display:block;opacity:.85;font-size:13.5px}
+
+:root{color-scheme:light}
+button,input,select,textarea{font-family:inherit;color:var(--ink)}
+button{-webkit-appearance:none;appearance:none}
+.seg button.on,.mode.on b,nav button.on,.btn:not(.alt){color:#fff}
+.mode.on b{color:var(--g)}
+.btn.alt{color:var(--g)}
+:focus-visible{outline:3px solid rgba(181,131,42,.55);outline-offset:2px}
+input:focus,select:focus{border-color:var(--g2);box-shadow:0 0 0 3px rgba(47,122,91,.15);outline:0}
+h2::before{content:"";display:inline-block;width:5px;height:22px;background:var(--gold);border-radius:3px;margin-inline-end:10px;vertical-align:-3px}
+.card{box-shadow:0 2px 10px rgba(60,45,10,.05);border-radius:18px}
+tbody tr:nth-child(even) td{background:#faf6ec}
+td.frac,.frac{font-size:17px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15;vertical-align:middle;font-weight:700}
+.fr b{display:block;padding:0 4px;font-size:15px}.fr b:first-child{border-bottom:2px solid currentColor}
+nav{box-shadow:0 2px 8px rgba(0,0,0,.05)}
+nav button{transition:.15s}nav button:hover:not(.on){background:var(--soft);color:var(--g)}
+.hv{transition:.15s}.hv:hover{border-color:var(--g2)}
+.btn{box-shadow:0 2px 6px rgba(31,90,67,.25);transition:.15s}.btn.alt{box-shadow:none}
+.btn:active{transform:translateY(1px)}
+.ex button{color:var(--ink);background:#fff}.ex button:hover{background:var(--soft);color:var(--g)}
+.mode{color:var(--ink)}
+/* الدروس */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.lcard{position:relative;text-align:right;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px;font:inherit;color:var(--ink);transition:.15s}
+.lcard:hover{border-color:var(--g2);transform:translateY(-2px);box-shadow:0 6px 16px rgba(31,90,67,.12)}
+.lcard b{font-size:16.5px;color:var(--g);padding-inline-end:38px}
+.lcard .ln{position:absolute;top:12px;inset-inline-end:12px;width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.bar2{display:block;height:6px;border-radius:4px;background:#eadfc6;overflow:hidden;margin-top:6px}.bar2 i{display:block;height:100%;background:var(--g2)}
+.exc{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0;background:#fffefa}
+.exc .q{font-weight:600;margin-bottom:8px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.opt{border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:9px 12px;font:inherit;text-align:right;cursor:pointer;color:var(--ink)}
+.opt:hover{border-color:var(--g2);background:var(--soft)}
+.opt.okc{background:#e3f3e8;border-color:#4a9a6a}.opt.badc{background:#fde9e3;border-color:#d27a63}
+.crow{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.crow label{font-size:14.5px}
+.crow input{margin-top:3px;text-align:left}
+.verdict{font-weight:700;padding:8px 12px;border-radius:10px;margin-top:10px}
+.verdict.ok{background:#e3f3e8;color:#1c6b3d}.verdict.bad{background:#fde9e3;color:var(--warn)}
+.fbl{list-style:none;padding:0;margin:8px 0}.fbl li{padding:7px 10px;border-radius:10px;margin:4px 0}
+.fbl li.ok{background:#f0f8f2}.fbl li.bad{background:#fff3ee}
+@media print{nav,.btn,.ex,header .basmala{display:none!important}.tab{display:block!important}.card{box-shadow:none;break-inside:avoid}}
+@media(max-width:560px){.inst .tx{text-align:center}.inst{justify-content:center}h2{font-size:23px}.lgrid{grid-template-columns:1fr}}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
+@media(max-width:560px){.card{padding:14px}th,td{padding:7px 5px;font-size:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="inst">
+    <img class="lg" alt="شعار جامعة البويرة" src="data:image/png;base64,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">
+    <div class="tx"><small>وزارة التعليم العالي والبحث العلمي</small><b>جامعة البويرة – آكلي محند أولحاج</b><small>كلية العلوم الإنسانية – قسم الشريعة</small><small>مقياس المواريث – السنة الثالثة شريعة – 2026/2027</small><small>تحت إشراف الدكتورة حدة سعدي</small></div>
+  </div>
+  <div class="basmala">بسم الله الرحمن الرحيم</div>
+  <h1>حاسبة المواريث على المذهب المالكي</h1>
+  <p>أدخل الورثة والتركة فيظهر نصيب كل وارث مع بيان سبب الفرض أو التعصيب أو الحجب، وخطوات الحساب، وما تفرّد به المذهب من مسائل.</p>
+</header>
+<nav id="nav">
+  <button data-t="calc" class="on">الحاسبة</button>
+  <button data-t="learn">الدروس والتمارين</button>
+  <button data-t="arham">ذوو الأرحام</button>
+  <button data-t="takh">التخارج</button>
+  <button data-t="rules">قواعد المذهب</button>
+  <button data-t="ex">مسائل مشهورة</button>
+  <button data-t="refs">المراجع والتنبيهات</button>
+</nav>
+<main>
+
+<section id="calc" class="tab on">
+  <div class="card">
+    <h2>١. اختر الصيغة</h2>
+    <div class="modes" id="modes"></div>
+  </div>
+
+  <div class="card">
+    <h2>٢. الورثة</h2>
+    <div class="row"><b>المتوفّى:</b>
+      <div class="seg" id="gender"><button data-g="m" class="on">ذكر</button><button data-g="f">أنثى</button></div>
+      <span class="small">يحدّد الزوجين: زوجات للمتوفى الذكر، وزوج للمتوفاة الأنثى.</span></div>
+    <div id="heirs"></div>
+  </div>
+
+  <div class="card">
+    <h2>٣. التركة (اختياري)</h2>
+    <div class="grid">
+      <div class="fld"><label>إجمالي التركة</label><input type="number" id="estate" min="0" step="any" placeholder="مثال: 1200000"></div>
+      <div class="fld"><label>تجهيز الميت ودفنه</label><input type="number" id="funeral" min="0" step="any" placeholder="0"></div>
+      <div class="fld"><label>الديون</label><input type="number" id="debts" min="0" step="any" placeholder="0"></div>
+      <div class="fld"><label>وصية لغير وارث</label><input type="number" id="bequest" min="0" step="any" placeholder="0"></div>
+    </div>
+    <p class="small">الترتيب الشرعي: التجهيز ثم الديون ثم الوصية في حدود الثلث ثم الميراث. وإن لم تُدخل مبلغاً ظهرت الأنصبة كسوراً فقط.</p>
+    <div class="row" style="margin-top:8px"><button class="btn" id="go">احسب الأنصبة</button><button class="btn alt" id="reset">مسح</button></div>
+  </div>
+
+  <div class="card">
+    <details id="tzBox"><summary>٤. التنزيل (الوصية الواجبة للأحفاد) — اختياري</summary>
+      <p class="small">إذا مات أحد أبناء المتوفى أو بناته قبله (أو معه) وترك أولاداً لا يرثون جدّهم، يُنزَّلون منزلة أصلهم في حدود الثلث (المواد 169 إلى 172 من قانون الأسرة الجزائري). فعّله مع الصيغة الثالثة غالباً.</p>
+      <label class="row"><input type="checkbox" id="tzOn"> <b>طبّق التنزيل في هذه المسألة</b></label>
+      <div class="grid" style="margin-top:8px">
+        <div class="fld"><label>الأصل المتوفى قبل المورّث</label><select id="tzType" style="font:inherit;padding:7px;border:1px solid var(--line);border-radius:10px;width:100%"><option value="son">ابن</option><option value="daughter">بنت</option></select></div>
+        <div class="fld"><label>عدد الأحفاد الذكور</label><input type="number" id="tzM" min="0" value="0"></div>
+        <div class="fld"><label>عدد الحفيدات الإناث</label><input type="number" id="tzF" min="0" value="0"></div>
+      </div>
+      <p class="small" style="margin-bottom:2px">إن تحقق أحد هذه الأمور سقط التنزيل:</p>
+      <label class="small"><input type="checkbox" id="tzC1"> الأحفاد يرثون جدّهم فعلاً بأي طريق.</label><br>
+      <label class="small"><input type="checkbox" id="tzC2"> أعطاهم الجدّ مثل نصيب أصلهم بوصية أو هبة (ولو أعطاهم أقل لزم إتمام الفرق).</label><br>
+      <label class="small"><input type="checkbox" id="tzC3"> ورثوا من أبيهم أو أمهم ما لا يقل عن نصيب أصلهم من أبيه.</label>
+    </details>
+  </div>
+
+  <div id="out"></div>
+</section>
+
+<section id="learn" class="tab"><div id="lessonView"></div></section>
+
+<section id="arham" class="tab">
+  <div class="card">
+    <h2>حاسبة ذوي الأرحام (المادة 168)</h2>
+    <p class="small">الأصل في المذهب المالكي أنهم لا يرثون وأن المال لبيت المال، لكن المشرّع الجزائري ورّثهم عند عدم وجود صاحب فرض (غير الزوجين) ولا عاصب، آخذاً بمذهب أهل التنزيل. فاستعمل هذه الحاسبة فقط إذا لم يكن في المسألة إلا الزوج أو الزوجة وأقارب من هذه الأصناف. وهي مبسّطة كما سيُبيَّن في النتيجة.</p>
+    <div class="row"><b>أحد الزوجين:</b><div class="seg" id="arSp"><button data-s="" class="on">لا يوجد</button><button data-s="husband">زوج</button><button data-s="wife">زوجة</button></div></div>
+    <div id="arBody"></div>
+    <div class="grid" style="margin-top:10px"><div class="fld"><label>المبلغ الموروث (اختياري)</label><input type="number" id="arMoney" min="0" step="any" placeholder="مثال: 600000"></div></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="arGo">احسب</button></div>
+  </div>
+  <div id="arOut"></div>
+</section>
+
+<section id="takh" class="tab">
+  <div class="card">
+    <h2>التخارج</h2>
+    <p class="small">التخارج: أن يتصالح الورثة على أن يخرج أحدهم من التركة مقابل شيء معلوم. احسب أولاً مسألة الميراث في تبويب «الحاسبة» ثم عُد إلى هنا لاختيار الوارث الخارج وصورة التخارج.</p>
+    <div id="tkBody"></div>
+  </div>
+  <div id="tkOut"></div>
+</section>
+
+<section id="rules" class="tab">
+  <div class="card">
+    <h2>الحقوق المتعلقة بالتركة</h2>
+    <ol class="steps"><li>تجهيز الميت ودفنه بالمعروف.</li><li>قضاء الديون.</li><li>الوصية لغير وارث في حدود <b>ثلث ما بقي</b>، وما زاد عليه يتوقف على إجازة الورثة.</li><li>قسمة الباقي على الورثة.</li></ol>
+    <p class="small">هذا هو الترتيب المقرر في كتب الفرائض، وبه يحسب الموقع المبلغ القابل للقسمة.</p>
+  </div>
+  <div class="card">
+    <h2>أسباب الإرث وموانعه</h2>
+    <p><b>الأسباب:</b> النكاح الصحيح (الزوجية)، والنسب (القرابة)، والولاء (العتق).</p>
+    <p><b>الموانع:</b> القتل، والرق، واختلاف الدين. وفي الأصل يشترط تحقق حياة الوارث بعد موت المورّث، وتحقق جهة الإرث.</p>
+    <p class="small">يفترض الموقع أنك أدخلت الورثة المستحقين فعلاً بعد النظر في الموانع، فهو لا يتحقق من وجودها.</p>
+  </div>
+  <div class="card">
+    <h2>الفروض المقدّرة ومن يرثها</h2>
+    <div class="tbl"><table>
+      <tr><th>الفرض</th><th>أصحابه وحالاتهم</th></tr>
+      <tr><td class="num frac">1/2</td><td>الزوج بلا فرع وارث، البنت الواحدة، بنت الابن عند عدم البنت، الأخت الشقيقة أو لأب المنفردة.</td></tr>
+      <tr><td class="num frac">1/4</td><td>الزوج مع فرع وارث، الزوجة أو الزوجات بلا فرع وارث.</td></tr>
+      <tr><td class="num frac">1/8</td><td>الزوجة أو الزوجات مع فرع وارث.</td></tr>
+      <tr><td class="num frac">2/3</td><td>البنتان فأكثر، بنات الابن، الشقيقتان فأكثر، الأختان لأب فأكثر.</td></tr>
+      <tr><td class="num frac">1/3</td><td>الأم بلا فرع وارث ولا جمع من الإخوة، الإخوة لأم اثنان فأكثر.</td></tr>
+      <tr><td class="num frac">1/6</td><td>الأب والجد مع الفرع، الأم مع الفرع أو جمع الإخوة، الجدة، بنت الابن مع بنت صلبية، الأخت لأب مع شقيقة، الأخ لأم المنفرد.</td></tr>
+    </table></div>
+  </div>
+  <div class="card">
+    <h2>اختيارات المذهب المالكي التي يطبّقها الموقع</h2>
+    <ul class="refs">
+      <li><b>الجد مع الإخوة:</b> يأخذ المالكية بمذهب زيد بن ثابت؛ فلا يحجب الجدُّ الإخوةَ الأشقاء ولا لأب، ويُعطى الأحظّ له من ثلاثة: المقاسمة كأخ، أو ثلث الباقي، أو سدس جميع المال. وإذا اجتمع أشقاء وإخوة لأب عُدّ الأشقاء الإخوةَ لأب على الجد (المعادّة).</li>
+      <li><b>الإخوة لأم مع الجد:</b> يسقطون به كما يسقطون بالأب والفرع الوارث.</li>
+      <li><b>الجدات:</b> لا يرث إلا جدتان، أم الأم وأم الأب (ومن يرتبط بهما بإناث على التفصيل المعروف)، والقُربى تحجب البُعدى، وتحجب الأمُّ الجداتِ كلهنّ.</li>
+      <li><b>المشتركة:</b> زوج وأم أو جدة وإخوة لأم وأشقاء. يشرَّك الأشقاء مع الإخوة لأم في الثلث، فيقسمونه بالتساوي للذكر والأنثى، خلافاً للحنفية والحنابلة الذين يُسقطونهم.</li>
+      <li><b>الأكدرية:</b> زوج وأم وجد وأخت. تُفرض للأخت النصف استثناءً فتعول المسألة من 6 إلى 9، ثم يقتسم الجد والأخت نصيبيهما للذكر مثل حظ الأنثيين، وتصحّ من 27.</li>
+      <li><b>العمريتان:</b> زوج أو زوجة مع الأبوين: للأم ثلث الباقي بعد فرض الزوج لا ثلث التركة.</li>
+      <li><b>العول:</b> إذا زادت الفروض على الواحد دخل النقص على جميع أصحاب الفروض بنسبة سهامهم.</li>
+      <li><b>الردّ وذوو الأرحام:</b> الأصل في المذهب أنه لا ردّ على أصحاب الفروض ولا توريث لذوي الأرحام، فيذهب الفاضل إلى بيت المال إن كان منتظماً. وأفتى المتأخرون بالردّ ثم بتوريث ذوي الأرحام عند فساد بيت المال. وقد جعلنا ذلك اختياراً في الصيغة.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>قانون الأسرة الجزائري</h2>
+    <p>القسم الثالث من قانون الأسرة (المواد 126 إلى 183) مبني على المذهب المالكي مع بعض الاختيارات الخاصة. وللموقع فيه ثلاث وحدات:</p>
+    <ul class="refs">
+      <li><b>الردّ (المادة 167):</b> ما بقي بعد الفروض ولا عاصب يُردّ على أصحاب الفروض غير الزوجين، وعلى أحد الزوجين إن لم يوجد غيره.</li>
+      <li><b>ذوو الأرحام (المادة 168):</b> إذا لم يوجد صاحب فرض ولا عاصب آلت التركة إلى ذوي الأرحام الأقربِ درجةً فالأقرب على طريقة أهل التنزيل، وللزوجين فرضهما أولاً ثم الباقي لهم. تجد حاسبتها في تبويب «ذوو الأرحام».</li>
+      <li><b>التنزيل (المواد 169 إلى 172):</b> وهو وصية واجبة للأحفاد الذين مات أصلهم قبل المورّث، فيأخذون نصيب أصلهم لو بقي حيّاً بشرط ألا يتجاوز ذلك ثلث التركة، وألا يكونوا وارثين للجدّ، وألا يكون الجدّ قد أعطاهم ما يعادل نصيب أصلهم، ويُقسَّم بينهم للذكر مثل حظ الأنثيين. وهو مقدَّم على الوصية الاختيارية. يُفعَّل في الحاسبة من خانة «٤. التنزيل».</li>
+    </ul>
+    <p class="small">فسّر الشرّاح لفظ «الأحفاد» في المادة 169 على أكثر من وجه: هل يشمل أولاد البنت أم أولاد الابن فقط؟ لذلك جعل الموقع نوع الأصل (ابن أو بنت) خياراً لك.</p>
+  </div>
+  <div class="card">
+    <h2>التخارج</h2>
+    <p>هو اتفاق الورثة على خروج أحدهم من القسمة مقابل مال أو عين. وله صور يحسبها الموقع:</p>
+    <ul class="refs">
+      <li><b>يأخذ من التركة نفسها:</b> فيُقسَّم الباقي بين الباقين بنسبة أنصبتهم الأصلية بعضها إلى بعض.</li>
+      <li><b>يشتري نصيبه وارثٌ واحد:</b> فيحلّ محلّه ويضمّ نصيبه إلى نصيبه.</li>
+      <li><b>يشتريه جميع الباقين من مالهم:</b> فيقتسمون نصيبه والثمن بنسبة أنصبتهم.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="ex" class="tab">
+  <div class="card">
+    <h2>مسائل مشهورة</h2>
+    <p class="small">اضغط على المسألة لتُحمَّل في الحاسبة مع الصيغة المناسبة.</p>
+    <div class="ex" id="exlist"></div>
+  </div>
+</section>
+
+<section id="refs" class="tab">
+  <div class="card">
+    <h2>مصادر هذا العمل</h2>
+    <p><b>ملفاتك في مجلد المواريث:</b> «المواريث»، «مدخل إلى علم المواريث»، «أركان الميراث وأسبابه وشروطه»، «الوارثون والوارثات وطرق الميراث»، «حالات أصحاب الفروض»، المحاضرة الثالثة في المواريث، «التنزيل في قانون الأسرة الجزائري»، «التخارج». استُخرج منها ترتيب الحقوق، والفروض، وشروط التنزيل.</p>
+    <p><b>كتب المذهب المالكي التي تُراجَع للتحقق:</b></p>
+    <ul class="refs">
+      <li>مختصر خليل بن إسحاق، باب الفرائض، وشروحه: الشرح الكبير للدردير مع حاشية الدسوقي، ومنح الجليل لعليش.</li>
+      <li>الرسالة لابن أبي زيد القيرواني، وشرحها الفواكه الدواني للنفراوي.</li>
+      <li>بداية المجتهد ونهاية المقتصد لابن رشد الحفيد، لمواضع الخلاف بين المذاهب.</li>
+      <li>الكافي في فقه أهل المدينة لابن عبد البر، والقوانين الفقهية لابن جزي.</li>
+      <li>قانون الأسرة الجزائري (القانون 84-11 المعدّل بالأمر 05-02)، الكتاب الثالث في الميراث.</li>
+    </ul>
+    <p><b>مراجع جامعية اعتُمد عليها في التنزيل وذوي الأرحام:</b></p>
+    <ul class="refs">
+      <li><a href="https://elearning.univ-guelma.dz/mod/resource/view.php?id=3905" target="_blank" rel="noopener">محاضرة التنزيل (الوصية الواجبة)، جامعة قالمة</a></li>
+      <li><a href="https://elearning.univ-guelma.dz/mod/resource/view.php?id=3911" target="_blank" rel="noopener">محاضرة ذوي الأرحام، جامعة قالمة</a></li>
+      <li><a href="https://journals.univ-batna.dz/index.php/arsd/article/view/3075" target="_blank" rel="noopener">ذوو الأرحام وإشكالات توريثهم في قانون الأسرة الجزائري، المجلة الجزائرية للأمن والتنمية</a></li>
+      <li><a href="https://www.mohamah.net/law/?p=26621" target="_blank" rel="noopener">التنزيل على ضوء قانون الأسرة الجزائري</a></li>
+    </ul>
+    <p class="small">اطّلعتُ على ملخصات المذهب وشروحه المتاحة على الشبكة وعلى نصوص ملفاتك، ولم أنسخ نصوص هذه الكتب، فالإحالة عليها للتوثيق والمراجعة لا لأن الصفحة تنقل منها.</p>
+  </div>
+  <div class="card">
+    <h2>تنبيهات مهمة</h2>
+    <div class="note">
+      <ul style="margin:0;padding-inline-start:20px">
+        <li>الموقع أداة مساعدة للحساب والتعلّم، وليس فتوى ولا حكماً قضائياً. وعند وجود تركة حقيقية يُرجَع إلى المفتي أو القاضي أو الموثّق.</li>
+        <li>لا يحسب الموقع: الحمل، المفقود، الخنثى، الغرقى والهدمى، المناسخات، ولا يتحقق من موانع الإرث. وحاسبتا التنزيل وذوي الأرحام مبسّطتان (انظر ملاحظاتهما)، ويقتصر التنزيل على أصل واحد ميّت مع أولاده.</li>
+        <li>يمثّل الموقع الابنَ وابنَ الابن وأبناء الإخوة والأعمام بالعدد، ويقسم الباقي بينهم للذكر مثل حظ الأنثيين حيث ثبت ذلك.</li>
+        <li>اختلفت المذاهب في بعض هذه المسائل، والحساب هنا على المذهب المالكي فقط. وقد يختلف عن آلات حساب تعتمد غير هذا المذهب.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<footer>حاسبة المواريث — المذهب المالكي. الحساب بكسور دقيقة بلا تقريب.<br>جامعة البويرة – كلية العلوم الإنسانية – قسم الشريعة، مقياس المواريث، تحت إشراف الدكتورة حدة سعدي.</footer>
+
+<script>
+/*ENGINE*/
+</script>
+<script>
+/*UI*/
+</script>
+</body>
+</html>
