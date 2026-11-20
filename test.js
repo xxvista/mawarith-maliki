@@ -74,3 +74,24 @@ const chk=(n,got,exp)=>console.log(got===exp?'PASS':'FAIL',n,got===exp?'':got+' 
   c('ردّ بلا زوج',{daughters:1,mother:1},'B','ردية',6,4);
   c('تصحيح ابنان+بنت',{sons:2,daughters:1},'A','عادلة',5,5);
 })();
+
+// ---- المناسخات المتعددة: مجموع سهام الأحياء = الجامعة، ومجموع الأنصبة = 1
+(function(){
+  const z={};E.KEYS.forEach(k=>z[k]=0);const P=o=>Object.assign({},z,o);
+  const r=E.munasakhaChain(P({wives:1,sons:1,daughters:1}),'A',[{deadId:'0:sons',p2:P({wives:1,daughters:1}),mode:'A'},{deadId:'0:daughters',p2:P({husband:1,sons:1}),mode:'A'}]);
+  const tot=r.rows.reduce((s,x)=>s.add(x.all),r.bayt);
+  const ok=!r.errors.length&&r.J===96&&tot.eq(E.fr(1));
+  console.log(ok?'PASS':'FAIL','مناسخات متعددة',r.errors.join('|'),r.J,tot.str());
+  let bad=0,n=0,seed=3;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
+  const pool=['sons','daughters','mother','father','wives','husband','fb','fs','mb'];
+  for(let i=0;i<2000;i++){
+    const rp=()=>{const o=P({});const k=1+Math.floor(rnd()*3);for(let j=0;j<k;j++){const key=pool[Math.floor(rnd()*pool.length)];o[key]=1+Math.floor(rnd()*(['father','mother','husband'].includes(key)?1:3))}if(o.husband)o.wives=0;return o};
+    const p1=rp();let rr=E.munasakhaChain(p1,'B',[]);if(rr.errors.length||!rr.rows.length)continue;
+    const steps=[];let cur=rr;
+    for(let s=0;s<2;s++){const cand=cur.rows;if(!cand.length)break;const d=cand[Math.floor(rnd()*cand.length)];steps.push({deadId:d.id,p2:rp(),mode:'B',links:{}});const t=E.munasakhaChain(p1,'B',steps);if(t.errors.length){steps.pop();break}cur=t}
+    n++;const t=E.munasakhaChain(p1,'B',steps);
+    const sum=t.rows.reduce((a,x)=>a.add(x.all),t.bayt);
+    if(t.errors.length||!sum.eq(E.fr(1)))bad++;
+  }
+  console.log(bad?'FAIL':'PASS','مناسخات عشوائية',n);
+})();

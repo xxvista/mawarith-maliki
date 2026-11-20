@@ -286,8 +286,13 @@ function runTakh(){
 
 
 // ---------- حالات خاصة: الحمل والمفقود والخنثى والمناسخات ----------
-const sp={tab:'haml',haml:{type:'child',maxN:2},maf:{key:''},kh:{type:'child'},mun:{dead:'',g2:'m',p2:{},links:{}}};
-E.KEYS.forEach(k=>sp.mun.p2[k]=0);
+const sp={tab:'haml',haml:{type:'child',maxN:2},maf:{key:''},kh:{type:'child'},mun:{steps:[]}};
+const MUN_ORD=['الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
+const newMunStep=()=>{const p2={};E.KEYS.forEach(k=>p2[k]=0);return{dead:'',g2:'m',p2,links:{}}};
+sp.mun.steps.push(newMunStep());
+const munEng=st=>{const p2=Object.assign({},st.p2);if(st.g2==='m')p2.husband=0;else p2.wives=0;return{deadId:st.dead,p2,mode,links:st.links}};
+const munRows=i=>{const r=E.munasakhaChain(curInput(),mode,sp.mun.steps.slice(0,i).map(munEng));return r.errors.length?null:r.rows};
+const munRowLbl=r=>`${r.label}${r.count>1?' ('+r.count+')':''} — ${r.stage?'من ورثة الميت الثاني':'من ورثة الميت الأول'}${r.stage>1?' (المسألة '+MUN_ORD[r.stage]+')':''}`;
 const SPT=[['haml','الحمل'],['mafqud','المفقود'],['kh','الخنثى'],['mun','المناسخات']];
 const selH=(id,opts,cur)=>`<select id="${id}" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:10px;width:100%;min-height:44px">${opts.map(([v,l])=>`<option value="${v}"${String(v)===String(cur)?' selected':''}>${l}</option>`).join('')}</select>`;
 const nmK=(k,c)=>E.NAMES[k][c>1?1:0];
@@ -300,9 +305,9 @@ function spHead(){
   <div class="fld" style="margin:10px 0"><label>المبلغ القابل للقسمة (اختياري)</label><input type="number" id="spMoney" min="0" step="any" placeholder="0"></div>`;
 }
 function spNet(){const M=parseFloat(($('#spMoney')||{}).value);return isFinite(M)&&M>0?M:null}
-function spPicker(){
-  const gr=GROUPS.filter(g=>g[0]!=='العصبات الأبعد').map(([t,its])=>`<div class="grp"><div class="t">${t}</div><div class="hgrid">${its.filter(([k])=>!(sp.mun.g2==='m'&&k==='husband')&&!(sp.mun.g2==='f'&&k==='wives')).map(([k,l,mx])=>`<div class="hv tile ${sp.mun.p2[k]?'has':''}"><label>${l}</label><div class="step"><button data-sk="${k}" data-d="-1" aria-label="إنقاص">−</button><output>${sp.mun.p2[k]}</output><button data-sk="${k}" data-d="1" aria-label="زيادة">+</button></div></div>`).join('')}</div></div>`).join('');
-  return gr;
+function spPicker(i){
+  const st=sp.mun.steps[i];
+  return GROUPS.filter(g=>g[0]!=='العصبات الأبعد').map(([t,its])=>`<div class="grp"><div class="t">${t}</div><div class="hgrid">${its.filter(([k])=>!(st.g2==='m'&&k==='husband')&&!(st.g2==='f'&&k==='wives')).map(([k,l,mx])=>`<div class="hv tile ${st.p2[k]?'has':''}"><label>${l}</label><div class="step"><button data-sk="${k}" data-i="${i}" data-d="-1" aria-label="إنقاص">−</button><output>${st.p2[k]}</output><button data-sk="${k}" data-i="${i}" data-d="1" aria-label="زيادة">+</button></div></div>`).join('')}</div></div>`).join('');
 }
 function drawSpec(){
   const t=sp.tab;
@@ -325,15 +330,22 @@ function drawSpec(){
     <p class="small">يضاف خنثى واحد إلى الورثة المدخلين في الحاسبة.</p>
     <div class="row" style="margin-top:10px"><button class="btn" id="spGo">احسب</button></div>`;
   }else{
-    if(!sp.mun.dead||!ks.includes(sp.mun.dead))sp.mun.dead=ks[0]||'';
-    const links=E.KEYS.filter(k=>sp.mun.p2[k]>0&&sp.mun.p2[k]===1);
-    const firsts=ks.filter(k=>k!==sp.mun.dead&&curInput()[k]===1);
-    b=`<p class="small">المناسخات: أن يموت وارث قبل قسمة التركة الأولى. الورثة الحاليون في الحاسبة هم ورثة <b>الميت الأول</b>. اختر من مات منهم، ثم أدخل ورثة <b>الميت الثاني</b>.</p>
-    <div class="grid"><div class="fld"><label>الوارث الذي مات (الميت الثاني)</label>${selH('mnDead',ks.map(k=>[k,nmK(k,1)]),sp.mun.dead)}</div>
-    <div class="fld"><label>الميت الثاني</label><div class="seg" id="mnG"><button data-g2="m" class="${sp.mun.g2==='m'?'on':''}">ذكر</button><button data-g2="f" class="${sp.mun.g2==='f'?'on':''}">أنثى</button></div></div></div>
-    <h3>ورثة الميت الثاني</h3>${spPicker()}
-    ${links.length&&firsts.length?`<h3>هل أحدهم من ورثة الميت الأول؟ (اختياري)</h3><p class="small">مثلاً: أم الميت الثاني هي زوجة الميت الأول. اربط بينهما ليُجمع نصيباها.</p>${links.map(k=>`<div class="fld" style="margin:6px 0"><label>${nmK(k,1)} في المسألة الثانية هو نفسه:</label>${selH('mnL_'+k,[['','شخص آخر'],...firsts.map(f=>[f,nmK(f,1)+' في المسألة الأولى'])],sp.mun.links[k]||'')}</div>`).join('')}`:''}
-    <div class="row" style="margin-top:10px"><button class="btn" id="spGo">احسب المناسخة</button></div>`;
+    b=`<div class="note"><b>الطريقة المبسّطة في أربع خطوات:</b><ol style="margin:6px 0 0"><li>نحلّ <b>المسألة الأولى</b> ونصحّحها (الورثة الحاليون في «الحاسبة»).</li><li>إذا مات أحد ورثتها قبل القسمة نحلّ <b>مسألته وحده</b> كأنه المتوفى الوحيد.</li><li>ننظر بين <b>سهامه</b> من المسألة الأولى و<b>مسألته</b>: انقسام أو توافق أو تباين.</li><li>نضرب السهام ونجمعها في <b>جامعة</b> واحدة، ثم نقسم عليها. وإن مات آخر كررنا الخطوات على ما سبق.</li></ol></div>`;
+    sp.mun.steps.forEach((st,i)=>{
+      const rows=munRows(i);
+      b+=`<div class="card" style="margin:12px 0"><h3 style="margin-top:0">الميت رقم ${i+2} (المسألة ${MUN_ORD[i+1]})</h3>`;
+      if(!rows||!rows.length){b+=`<div class="note">أدخل ورثة الميت السابق أولاً حتى تظهر قائمة الأحياء.</div></div>`;return}
+      if(!rows.some(r=>r.id===st.dead))st.dead=rows[0].id;
+      const dead=rows.find(r=>r.id===st.dead);
+      if(st.gAuto!==st.dead){st.gAuto=st.dead;st.g2=['wives','mother','daughters','gdaughters','gm_m','gm_p','gm_mm','gm_pm','fs','ps','ms'].includes(dead.key)?'f':'m';if(st.g2==='m')st.p2.husband=0;else st.p2.wives=0}
+      const cand=rows.filter(r=>r.id!==st.dead&&r.count===1);
+      const linkKeys=E.KEYS.filter(k=>st.p2[k]===1&&!(st.g2==='m'&&k==='husband')&&!(st.g2==='f'&&k==='wives'));
+      b+=`<div class="grid"><div class="fld"><label>الوارث الذي مات</label>${selH('mnDead_'+i,rows.map(r=>[r.id,munRowLbl(r)]),st.dead)}</div>
+      <div class="fld"><label>جنس الميت</label><div class="seg"><button data-g2="m" data-i="${i}" class="${st.g2==='m'?'on':''}">ذكر</button><button data-g2="f" data-i="${i}" class="${st.g2==='f'?'on':''}">أنثى</button></div></div></div>
+      <h4>ورثة ${dead.label}</h4>${spPicker(i)}
+      ${linkKeys.length&&cand.length?`<h4>هل أحدهم من الأحياء السابقين؟ (اختياري)</h4><p class="small">مثلاً أمه هي زوجة الميت الأول. اربطهما ليُجمع نصيباهما في سطر واحد.</p>${linkKeys.map(k=>`<div class="fld" style="margin:6px 0"><label>${nmK(k,1)} هنا هو نفسه:</label>${selH('mnL_'+i+'_'+k,[['','شخص آخر'],...cand.map(r=>[r.id,munRowLbl(r)])],st.links[k]||'')}</div>`).join('')}`:''}</div>`;
+    });
+    b+=`<div class="row" style="margin-top:10px">${sp.mun.steps.length<4?'<button class="btn alt" id="mnAdd">+ ميت آخر بعده</button>':''}${sp.mun.steps.length>1?'<button class="btn alt" id="mnDel">حذف آخر ميت</button>':''}<button class="btn" id="spGo">احسب المناسخة</button></div>`;
   }
   $('#spBody').innerHTML=spHead()+seg+b;
   $('#spOut').innerHTML='';
@@ -342,16 +354,18 @@ $('#spBody').addEventListener('click',e=>{
   const bt=e.target.closest('button');if(!bt)return;
   if(bt.dataset.sp){sp.tab=bt.dataset.sp;drawSpec();return}
   if(bt.id==='spEdit'){tab('calc');window.scrollTo({top:0,behavior:'smooth'});return}
-  if(bt.dataset.g2){sp.mun.g2=bt.dataset.g2;if(bt.dataset.g2==='m')sp.mun.p2.husband=0;else sp.mun.p2.wives=0;drawSpec();return}
-  if(bt.dataset.sk){const k=bt.dataset.sk,d=+bt.dataset.d;const mx=(GROUPS.flatMap(g=>g[1]).find(x=>x[0]===k)||[0,0,30])[2];sp.mun.p2[k]=Math.max(0,Math.min(mx,sp.mun.p2[k]+d));
-    if(!sp.mun.p2[k])delete sp.mun.links[k];const y=window.scrollY;drawSpec();window.scrollTo(0,y);return}
+  if(bt.id==='mnAdd'){sp.mun.steps.push(newMunStep());drawSpec();return}
+  if(bt.id==='mnDel'){sp.mun.steps.pop();drawSpec();return}
+  if(bt.dataset.g2){const st=sp.mun.steps[+bt.dataset.i];st.g2=bt.dataset.g2;if(st.g2==='m')st.p2.husband=0;else st.p2.wives=0;delete st.links.husband;delete st.links.wives;drawSpec();return}
+  if(bt.dataset.sk){const st=sp.mun.steps[+bt.dataset.i],k=bt.dataset.sk,d=+bt.dataset.d;const mx=(GROUPS.flatMap(g=>g[1]).find(x=>x[0]===k)||[0,0,30])[2];st.p2[k]=Math.max(0,Math.min(mx,st.p2[k]+d));
+    if(st.p2[k]!==1)delete st.links[k];const y=window.scrollY;drawSpec();window.scrollTo(0,y);return}
   if(bt.id==='spGo')runSpec();
 });
 $('#spBody').addEventListener('change',e=>{
   const id=e.target.id;if(!id)return;
   if(id==='hmType')sp.haml.type=e.target.value;else if(id==='hmMax')sp.haml.maxN=+e.target.value;else if(id==='mfKey')sp.maf.key=e.target.value;else if(id==='khType')sp.kh.type=e.target.value;
-  else if(id==='mnDead'){sp.mun.dead=e.target.value;sp.mun.links={};drawSpec()}
-  else if(id.startsWith('mnL_')){sp.mun.links[id.slice(4)]=e.target.value}
+  else if(id.startsWith('mnDead_')){const i=+id.slice(7);sp.mun.steps[i].dead=e.target.value;sp.mun.steps[i].links={};sp.mun.steps.length=i+1;drawSpec()}
+  else if(id.startsWith('mnL_')){const m=id.match(/^mnL_(\d+)_(.+)$/);sp.mun.steps[+m[1]].links[m[2]]=e.target.value}
 });
 const cell=(f,net)=>`<td class="num frac">${F(f)}</td><td class="num">${pct(f)}</td>${net!=null?`<td class="num">${money(f,net)}</td>`:''}`;
 function runSpec(){
@@ -388,19 +402,18 @@ function runSpec(){
     ${r.bayt.avg.isZero()?'':`<tr><td><b>بيت المال</b></td><td class="num frac">${F(r.bayt.male)}</td><td class="num frac">${F(r.bayt.female)}</td>${cell(r.bayt.avg,net)}</tr>`}</table></div>
     <div class="note">الطريقة: مسألة أولى يُفرض فيها الخنثى ذكراً، وثانية أنثى، ثم يُجمع نصيب كل وارث من المسألتين ويُقسَّم على اثنين. (وعند الحنفية يُعطى الأقل، وعند الشافعية اليقين مع الوقف.)</div></div>`;
   }else{
-    const p2={};E.KEYS.forEach(k=>p2[k]=sp.mun.p2[k]);if(sp.mun.g2==='m')p2.husband=0;else p2.wives=0;
-    const r=E.munasakha(inp,mode,sp.mun.dead,p2,mode,sp.mun.links);
+    const r=E.munasakhaChain(inp,mode,sp.mun.steps.map(munEng));
     if(r.errors.length){$('#spOut').innerHTML=`<div class="err">${r.errors.join('<br>')}</div>`;return}
-    const relTxt=r.relation==='انقسام'?`تنقسم سهامه (${r.d}) على مسألته (${r.T2}) انقساماً صحيحاً، فالجامعة هي المسألة الأولى (${r.T1}).`:r.relation==='توافق'?`سهامه (${r.d}) ومسألته (${r.T2}) متوافقان بالجزء 1/${r.g}، فوفق المسألة الثانية = ${r.f1}، والجامعة = ${r.T1} × ${r.f1} = ${r.J}.`:`سهامه (${r.d}) ومسألته (${r.T2}) متباينان، فتُضرب المسألة الثانية كاملة (${r.f1}) في الأولى: الجامعة = ${r.T1} × ${r.f1} = ${r.J}.`;
-    o=`<div class="card"><h2>نتيجة المناسخة</h2>
-    <ol class="steps"><li><b>المسألة الأولى:</b> تصحّ من ${r.T1}. الميت الثاني (${r.deadLabel}) له <b>${r.d}</b> سهماً، أي <span class="frac">${F(r.s1)}</span> من التركة.</li>
-    <li><b>المسألة الثانية:</b> تصحّ من ${r.T2}.</li>
-    <li><b>المقارنة (${r.relation}):</b> ${relTxt}</li>
-    <li>سهام كل وارث من الأولى × ${r.f1}، وسهام ورثة الثاني × ${r.f2}.</li></ol>
-    <div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>سهام الفرد من ${r.J}</th><th>نصيب الفرد</th><th>نصيب الجميع</th><th>النسبة</th>${net!=null?'<th>المبلغ للفرد</th>':''}<th>ملاحظة</th></tr>
-    ${r.rows.map(x=>{const per=x.per1.add(x.per2);return `<tr><td><b>${x.label}</b></td><td class="num">${x.count}</td><td class="num">${x.sihaam.str()}</td><td class="num frac">${F(per)}</td><td class="num frac">${F(per.mul(E.fr(x.count)))}</td><td class="num">${pct(per.mul(E.fr(x.count)))}</td>${net!=null?`<td class="num">${money(per,net)}</td>`:''}<td class="small">${x.notes.join('، ')}</td></tr>`}).join('')}</table></div>
-    ${r.bayt.isZero()?'':`<p class="small">الباقي لبيت المال: <span class="frac">${F(r.bayt)}</span></p>`}
-    <div class="note">الأحياء وقت القسمة هم وحدهم من يرث. تحقّق: مجموع السهام = ${r.J}.</div></div>`;
+    const stg=r.stages.map(s=>`<div class="card" style="margin:12px 0"><h3 style="margin-top:0">${s.title}${s.deadLabel?`: وفاة ${esc(s.deadLabel)}`:''}</h3>
+      ${s.n===1?`<p class="small">الورثة الحاليون في «الحاسبة». المسألة <b>${s.kind||''}</b>، أصلها ${s.asl}، وتصحّ من <b>${s.base}</b>.</p>`:`<ol class="steps">${s.text.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><p class="small">مسألة الميت: <b>${s.kind||''}</b>، أصلها ${s.asl}، وتصحّ من <b>${s.base}</b>.</p>`}
+      <div class="tbl"><table><tr><th>الوارث</th><th>العدد</th><th>سهام الفرد من ${s.base}</th></tr>${s.heirs.map(h=>`<tr><td><b>${h.label}</b></td><td class="num">${h.count}</td><td class="num">${h.u}</td></tr>`).join('')}</table></div></div>`).join('');
+    const last2=r.stages[r.stages.length-1];
+    o=`<div class="card"><h2>نتيجة المناسخة</h2><p class="small">الجامعة (المسألة التي تُقسم منها التركة كلها دفعة واحدة): <b>${r.J}</b> سهماً.</p>
+    <div class="tbl"><table><tr><th>الوارث الحيّ</th><th>العدد</th><th>سهام الفرد من ${r.J}</th><th>نصيب الفرد</th><th>نصيب الجميع</th><th>النسبة</th>${net!=null?'<th>المبلغ للفرد</th>':''}<th>ملاحظة</th></tr>
+    ${r.rows.map(x=>`<tr><td><b>${x.label}</b></td><td class="num">${x.count}</td><td class="num">${x.u}</td><td class="num frac">${F(x.per)}</td><td class="num frac">${F(x.all)}</td><td class="num">${pct(x.all)}</td>${net!=null?`<td class="num">${money(x.per,net)}</td>`:''}<td class="small">${x.notes.length?x.notes.join('، '):'من ورثة الميت الأول'}</td></tr>`).join('')}
+    <tr><th>المجموع</th><th></th><th class="num">${r.rows.reduce((a,x)=>a+x.u*x.count,0)+r.baytU}</th><th></th><th></th><th></th>${net!=null?'<th></th>':''}<th></th></tr></table></div>
+    ${r.baytU?`<p class="small">الباقي لبيت المال أو ذوي الأرحام: <span class="frac">${F(r.bayt)}</span> (${r.baytU} سهماً).</p>`:''}
+    <div class="note">الأحياء وقت القسمة هم وحدهم من يرث، ومجموع سهامهم يساوي الجامعة ${r.J}. ${last2.n>1?'وهذه سهام كل مرحلة بالتفصيل:':''}</div></div>${stg}`;
   }
   $('#spOut').innerHTML=o;$('#spOut').scrollIntoView({behavior:'smooth',block:'start'});
 }

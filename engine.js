@@ -818,6 +818,74 @@ function buildTable(r) {
   return T;
 }
 
-root.MawarithEngine = { buildTable, solve, solveTanzil, solveArham, takharuj, solveHaml, solveMafqud, solveKhuntha, munasakha, SPEC, Fr, fr, NAMES, KEYS };
+/* ============ المناسخات المتعددة (سلسلة وفيات) بطريقة السهام ============ */
+// steps: [{ deadId, p2, mode, links }]  deadId = معرّف صف الميت في نتيجة المرحلة السابقة (مثل '0:mother')
+function munasakhaChain(p1, m1, steps) {
+  const out = { errors: [], stages: [], rows: [], J: 0, baytU: 0 };
+  const r1 = solve(p1, m1);
+  if (r1.errors.length) { out.errors.push(...r1.errors.map(e => 'المسألة الأولى: ' + e)); return out; }
+  const tb = r => { try { return buildTable(r); } catch (e) { return null; } };
+  const smalls = r => r.heirs.map(h => ({ key: h.key, label: h.label, count: h.count, u: Number(h.unitsPer.n / h.unitsPer.d) }));
+  let J = r1.base;
+  let rows = r1.heirs.map(h => ({ id: '0:' + h.key, stage: 0, key: h.key, label: h.label, count: h.count, u: Number(h.unitsPer.n / h.unitsPer.d), notes: [] }));
+  let baytU = Number(r1.bayt.mul(fr(J)).n / r1.bayt.mul(fr(J)).d);
+  const t1 = tb(r1);
+  out.stages.push({ n: 1, title: 'المسألة الأولى', heirs: smalls(r1), base: J, kind: t1 ? t1.kind : '', asl: t1 ? t1.asl : J, baytU });
+  const ORD = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الخامسة'];
+  for (let i = 0; i < steps.length; i++) {
+    const st = steps[i], n = i + 2, nm2 = ORD[n - 1] || String(n);
+    const dead = rows.find(r => r.id === st.deadId);
+    if (!dead) { out.errors.push('اختر الميت في المسألة ' + nm2 + '.'); return out; }
+    const r2 = solve(st.p2, st.mode || m1);
+    if (r2.errors.length && !r2.heirs.length) { out.errors.push(...r2.errors.map(e => 'المسألة ' + nm2 + ': ' + e)); return out; }
+    if (!r2.heirs.length && r2.bayt.isZero()) { out.errors.push('أدخل ورثة الميت في المسألة ' + nm2 + '.'); return out; }
+    const d = dead.u, T2 = r2.base, g = gcdN(d, T2);
+    let relation, f1, f2;
+    if (d % T2 === 0) { relation = 'انقسام'; f1 = 1; f2 = d / T2; }
+    else if (g > 1) { relation = 'توافق'; f1 = T2 / g; f2 = d / g; }
+    else { relation = 'تباين'; f1 = T2; f2 = d; }
+    const before = rows.map(r => ({ ...r, notes: r.notes.slice() }));
+    const nr = [];
+    rows.forEach(r => {
+      if (r.id === dead.id) { if (r.count > 1) nr.push({ ...r, count: r.count - 1, u: r.u * f1, notes: r.notes.slice() }); }
+      else nr.push({ ...r, u: r.u * f1, notes: r.notes.slice() });
+    });
+    const links = st.links || {};
+    const t2 = tb(r2), deadLbl = dead.label + (dead.stage ? ' (من المسألة ' + ORD[dead.stage] + ')' : '');
+    r2.heirs.forEach(h => {
+      const pu = Number(h.unitsPer.n / h.unitsPer.d) * f2;
+      const tgt = links[h.key] ? nr.find(x => x.id === links[h.key] && x.count === 1 && h.count === 1) : null;
+      if (tgt) { tgt.u += pu; tgt.notes.push('وهو نفسه ' + h.label + ' في المسألة ' + nm2); }
+      else nr.push({ id: (n - 1) + ':' + h.key, stage: n - 1, key: h.key, label: h.label, count: h.count, u: pu, notes: ['من ورثة ' + dead.label + ' (المسألة ' + nm2 + ')'] });
+    });
+    const b2 = Number(r2.bayt.mul(fr(T2)).n / r2.bayt.mul(fr(T2)).d);
+    baytU = baytU * f1 + b2 * f2;
+    const Jn = J * f1;
+    const total = nr.reduce((s, r) => s + r.u * r.count, 0) + baytU;
+    if (total !== Jn) { out.errors.push('تنبيه برمجي: مجموع السهام (' + total + ') لا يساوي الجامعة (' + Jn + ')'); return out; }
+    const relTxt = relation === 'انقسام'
+      ? 'سهامه (' + d + ') تنقسم على مسألته (' + T2 + ') قسمة صحيحة، فلا نضرب في شيء: جزء سهم المسألة السابقة 1، والجامعة تبقى ' + J + '.'
+      : relation === 'توافق'
+        ? 'سهامه (' + d + ') ومسألته (' + T2 + ') متوافقان بالقاسم المشترك ' + g + '. نأخذ وفق مسألته (' + T2 + ' ÷ ' + g + ' = ' + f1 + ') ونضربه في المسألة السابقة: ' + J + ' × ' + f1 + ' = ' + Jn + '.'
+        : 'سهامه (' + d + ') ومسألته (' + T2 + ') متباينان (لا قاسم مشترك غير 1). نضرب كل مسألته (' + T2 + ') في المسألة السابقة: ' + J + ' × ' + T2 + ' = ' + Jn + '.';
+    out.stages.push({
+      n, title: 'المسألة ' + nm2, deadLabel: deadLbl, d, J, T2, relation, g, f1, f2, Jn,
+      heirs: smalls(r2), base: T2, kind: t2 ? t2.kind : '', asl: t2 ? t2.asl : T2, baytU2: b2,
+      text: [
+        'مات ' + deadLbl + ' قبل قسمة التركة. نصيبه من المسألة السابقة ' + d + ' سهماً من ' + J + '.',
+        'نحلّ مسألته وحدها كأنه المتوفى الوحيد: ورثته ' + (r2.heirs.map(h => h.label + (h.count > 1 ? ' (' + h.count + ')' : '')).join('، ') || 'لا أحد') + '، وتصحّ مسألته من ' + T2 + '.',
+        'ننظر بين سهامه (' + d + ') ومسألته (' + T2 + '): ' + relation + '.', relTxt,
+        'نضرب سهام الأحياء من المسألة السابقة في ' + f1 + '، ونضرب سهام ورثة الميت (من مسألته) في ' + f2 + ' (لأن سهامه صارت ' + d * f1 + ' = ' + T2 + ' × ' + f2 + ').',
+        'الجامعة الآن ' + Jn + '، ومجموع السهام ' + total + ' يساويها.'
+      ]
+    });
+    rows = nr; J = Jn;
+  }
+  out.rows = rows.map(r => ({ ...r, per: fr(r.u, J), all: fr(r.u * r.count, J) }));
+  out.J = J; out.baytU = baytU; out.bayt = fr(baytU, J);
+  return out;
+}
+
+root.MawarithEngine = { munasakhaChain, buildTable, solve, solveTanzil, solveArham, takharuj, solveHaml, solveMafqud, solveKhuntha, munasakha, SPEC, Fr, fr, NAMES, KEYS };
 if (typeof module !== 'undefined') module.exports = root.MawarithEngine;
 })(typeof window !== 'undefined' ? window : globalThis);
