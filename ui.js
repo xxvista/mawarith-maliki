@@ -112,6 +112,32 @@ function explain(r,ctx){
   return o+`</div>`;
 }
 
+
+// ---------- طريقة الجدول: أصل المسألة والسهام والعول والردّ والتصحيح ----------
+const AD2=['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+const ar2=n=>String(n).replace(/\d/g,d=>AD2[d]);
+function tableCard(r,tza){
+  let T;try{T=E.buildTable(r)}catch(e){T=null}
+  if(!T||!T.consistent)return '';
+  const mid=!!(T.awl||T.radd), fix=T.part>1, rest=T.restU>0, pp=T.blocks.some(b=>b.count>1);
+  const restL=T.restLabel||(mode==='A'?'بيت المال':'الباقي');
+  const kindTxt={'عادلة':'عادلة: السهام = الأصل','عائلة':'عائلة (عالت من '+T.asl+' إلى '+T.base1+')','ردية':'ردّية'+(T.radd&&T.radd.spouseOnly?' (على أحد الزوجين)':''),'ناقصة':'ناقصة: بقي للباقي بلا ردّ'}[T.kind];
+  let o=`<div class="card"><h2>حلّ المسألة بالجدول</h2><p class="small" style="margin:0 0 6px">أصل المسألة وسهام كل وارث، ثم العول أو الردّ إن وُجد، ثم التصحيح، وكل ذلك قبل الحساب الكسري والمبالغ.</p>`;
+  o+=`<div><span class="chip g">أصل المسألة: ${T.asl}</span><span class="chip">${kindTxt}</span>${fix?`<span class="chip">تصحّ من ${T.base2} (جزء السهم ${T.part})</span>`:`<span class="chip">تصحّ من ${T.base2}</span>`}</div>`;
+  if(tza)o+=`<p class="small">ملاحظة: الجدول يقسم ما يبقى من التركة بعد التنزيل على الورثة الموجودين.</p>`;
+  o+=`<div class="tbl" style="margin-top:10px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>السهام من ${T.asl}</th>${mid?`<th>بعد ${T.awl?'العول':'الردّ'} من ${T.base1}</th>`:''}${fix?`<th>بعد التصحيح من ${T.base2}</th>`:''}${pp?'<th>سهم الفرد</th>':''}</tr>`;
+  T.blocks.forEach(b=>{
+    const one=b.members.length===1;
+    const per=b.members.map(m=>(one?'':m.label+': ')+m.perU).join(' ، ');
+    o+=`<tr><td class="who"><b>${b.members.map(m=>m.label).join(' + ')}</b></td><td class="num">${b.members.map(m=>m.count).join(' + ')}</td><td class="small">${esc(b.fard)}</td><td class="num">${b.u0}</td>${mid?`<td class="num">${b.u1}</td>`:''}${fix?`<td class="num">${b.u2}</td>`:''}${pp?`<td class="num">${b.count===1&&one?'—':per}</td>`:''}</tr>`;
+  });
+  if(rest)o+=`<tr><td class="who"><b>${restL}</b></td><td class="num">—</td><td class="small">الباقي</td><td class="num">${T.restU/T.part}</td>${mid?`<td class="num">${T.restU/T.part}</td>`:''}${fix?`<td class="num">${T.restU}</td>`:''}${pp?'<td class="num">—</td>':''}</tr>`;
+  const t0=T.blocks.reduce((s,b)=>s+b.u0,0)+(rest?T.restU/T.part:0);
+  o+=`<tr><th>المجموع</th><th></th><th></th><th class="num">${t0}</th>${mid?`<th class="num">${T.base1}</th>`:''}${fix?`<th class="num">${T.base2}</th>`:''}${pp?'<th></th>':''}</tr></table></div>`;
+  o+=`<details class="edu-d" open style="margin-top:12px"><summary>خطوات الحل بالتفصيل</summary><div class="edu">${T.steps.map((st,i)=>`<h4>${ar2(i+1)}. ${esc(st.title)}</h4>${st.ps.map(p=>`<p>${esc(p)}</p>`).join('')}`).join('')}</div></details></div>`;
+  return o;
+}
+
 // ---------- الحساب ----------
 function run(ev){
   const input={};E.KEYS.forEach(k=>input[k]=val[k]);
@@ -146,6 +172,7 @@ function run(ev){
   if(r.errors.length&&!r.heirs.length){o+=`<div class="err">${r.errors.join('<br>')}</div>`;$('#out').innerHTML=o;last=null;return}
   last={r,net,mode,fac:tza?tza.factor:null};
   const fac=tza?tza.factor:null;
+  o+=tableCard(r,tza);
   o+=`<div class="card"><h2>النتيجة</h2>`;
   const chips=r.special.map(s=>`<span class="chip">${s}</span>`).join('')+(tza?'<span class="chip">التنزيل</span>':'');
   if(chips)o+=`<div>${chips}</div>`;

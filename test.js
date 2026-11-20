@@ -58,3 +58,19 @@ const chk=(n,got,exp)=>console.log(got===exp?'PASS':'FAIL',n,got===exp?'':got+' 
  chk('khuntha usib rejected',E.solveKhuntha({mother:1},'A','usib').errors.length>0,true);}
 {const m=E.munasakha({wives:1,sons:1,daughters:1},'A','sons',{wives:1,mother:1,sons:1},'A',{mother:'wives'});
  chk('munasakha',[m.errors.length,m.relation,m.T1,m.T2,m.J].join(','),'0,توافق,24,24,288');}
+
+// ---- طريقة الجدول (أصل المسألة، العول، الردّ، التصحيح): يجب أن تطابق الحساب الكسري
+(function(){
+  const ks=E.KEYS;let seed=7;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
+  let n=0,bad=0;
+  for(let i=0;i<5000;i++){const inp={};const k=1+Math.floor(rnd()*5);
+    for(let j=0;j<k;j++){const key=ks[Math.floor(rnd()*ks.length)];inp[key]=1+Math.floor(rnd()*(['husband','father','mother','gf','mawla'].includes(key)?1:4))}
+    for(const m of['A','B','C']){const r=E.solve(inp,m);if(!r.heirs.length)continue;n++;const T=E.buildTable(r);if(!T||!T.consistent||T.base2!==r.base)bad++}}
+  console.log(bad?'FAIL':'PASS','جدول الحل مطابق للمحرك',n,'حالة');
+  const c=(name,inp,m,kind,asl,base2)=>{const T=E.buildTable(E.solve(inp,m));const ok=T.kind===kind&&T.asl===asl&&T.base2===base2;console.log(ok?'PASS':'FAIL','جدول',name,ok?'':JSON.stringify([T.kind,T.asl,T.base2]))};
+  c('عول زوج+شقيقتان+أم',{husband:1,fs:2,mother:1},'A','عائلة',6,8);
+  c('أكدرية',{husband:1,mother:1,gf:1,fs:1},'A','عائلة',6,27);
+  c('ردّ مع زوج',{husband:1,daughters:1,mother:1},'B','ردية',12,16);
+  c('ردّ بلا زوج',{daughters:1,mother:1},'B','ردية',6,4);
+  c('تصحيح ابنان+بنت',{sons:2,daughters:1},'A','عادلة',5,5);
+})();

@@ -526,7 +526,7 @@ function solve(input, mode) {
   mode = mode || 'A';
   const n = Object.assign({}, DEF);
   KEYS.forEach(k => { const v = Number(input && input[k]); n[k] = isFinite(v) && v > 0 ? Math.floor(v) : 0; });
-  const out = { mode, steps: [], notes: [], heirs: [], blocked: [], errors: [], special: [], bayt: ZERO, base: null, awl: null, radd: null };
+  const out = { mode, steps: [], notes: [], heirs: [], blocked: [], errors: [], special: [], bayt: ZERO, base: null, awl: null, radd: null, pools: [], pre: null };
   if (n.husband > 1) n.husband = 1;
   if (n.wives > 4) n.wives = 4;
   if (n.father > 1) n.father = 1; if (n.mother > 1) n.mother = 1; if (n.gf > 1) n.gf = 1; if (n.mawla > 1) n.mawla = 1;
@@ -539,8 +539,14 @@ function solve(input, mode) {
   const res = {}; // key -> {share:Fr, kind, why}
   const give = (k, share, kind, why) => {
     if (share.isZero() || n[k] === 0) return;
-    if (res[k]) { res[k].share = res[k].share.add(share); res[k].kind = res[k].kind === kind ? kind : 'فرض وتعصيب'; res[k].why += ' + ' + why; }
-    else res[k] = { share, kind, why };
+    if (res[k]) { res[k].share = res[k].share.add(share); res[k].kind = res[k].kind === kind ? kind : 'فرض وتعصيب'; res[k].why += ' + ' + why; res[k].parts.push({ share, kind, why }); }
+    else res[k] = { share, kind, why, parts: [{ share, kind, why }] };
+  };
+  // لقطة الأنصبة قبل العول والردّ (تُستعمل في عرض الحل بالجدول)
+  const snap = () => {
+    const sh = {}, kd = {}, pt = {};
+    Object.keys(res).forEach(k => { sh[k] = res[k].share; kd[k] = res[k].kind; pt[k] = (res[k].parts || []).map(x => ({ share: x.share, kind: x.kind, why: x.why })); });
+    out.pre = Object.assign(out.pre || {}, { shares: sh, kinds: kd, parts: pt });
   };
   const sum = () => Object.values(res).reduce((s, r) => s.add(r.share), ZERO);
 
@@ -569,6 +575,12 @@ function solve(input, mode) {
     res.gf = { share: fr(8, 27), kind: 'فرض وتعصيب', why: 'يقاسم الأخت: له ضعف نصيبها من مجموع سهميهما' };
     res[sisKey] = { share: fr(4, 27), kind: 'فرض وتعصيب', why: 'تُفرض لها استثناءً ثم تُقاسَم الجدَّ' };
     out.special.push('الأكدرية');
+    out.pre = {
+      shares: { husband: fr(1, 2), mother: fr(1, 3), gf: fr(1, 6), [sisKey]: fr(1, 2) },
+      kinds: { husband: 'فرض', mother: 'فرض', gf: 'فرض', [sisKey]: 'فرض' },
+      parts: {}, fardText: { gf: 'سدس للجد + نصف للأخت (يُفرض لها استثناءً) ثم يقتسمان مجموع سهميهما' }
+    };
+    out.pools.push(['gf', sisKey]);
     out.awl = { from: 6, to: 9 };
     finalize(); return out;
   }
@@ -642,6 +654,7 @@ function solve(input, mode) {
     const why = mTot === 1 ? 'السدس للواحد منفرداً' : 'الثلث للاثنين فأكثر، يقتسمونه بالتساوي (الذكر كالأنثى)';
     give('mb', tot.mul(n.mb).div(mTot), 'فرض', why);
     give('ms', tot.mul(n.ms).div(mTot), 'فرض', why);
+    out.pools.push(['mb', 'ms']);
   } else if (mTot > 0) {
     const r = desc ? 'محجوبون بالفرع الوارث' : father ? 'محجوبون بالأب' : 'محجوبون بالجد (عند المالكية)';
     if (n.mb) out.blocked.push({ key: 'mb', reason: r }); if (n.ms) out.blocked.push({ key: 'ms', reason: r });
@@ -710,6 +723,7 @@ function solve(input, mode) {
       return share.gt(cap) ? { s: cap, ex: share.sub(cap) } : { s: share, ex: ZERO };
     };
     if (fullG && how !== 'المقاسمة') { const c = capSis(n.fs, n.fb, fullShare); fullShare = c.s; if (!c.ex.isZero()) { if (patG) patShare = patShare.add(c.ex); else gfShare = gfShare.add(c.ex), res.gf.share = res.gf.share.add(c.ex); } }
+    out.pools.push(['fb', 'fs'], ['pb', 'ps']);
     if (fullShare.gt(ZERO)) {
       const u = 2 * n.fb + n.fs;
       give('fb', fullShare.mul(2 * n.fb).div(u), 'تعصيب', 'يقاسم الجدَّ بحسب الأحظّ');
@@ -736,6 +750,7 @@ function solve(input, mode) {
     give('fs', third.mul(n.fs).div(heads), 'تشريك', 'شُرِّكت مع الإخوة لأم في الثلث');
     S.push('المسألة المشتركة (الحماريّة/الحجريّة): زوج وأم أو جدة وإخوة لأم (اثنان فأكثر) وإخوة أشقاء. استغرقت الفروض التركة، فعند المالكية يُشرَّك الأشقاء مع الإخوة لأم في الثلث ويقسمونه بالتساوي للذكر والأنثى، بخلاف الحنابلة والحنفية الذين يُسقطونهم.');
     out.special.push('المشتركة');
+    out.pools.push(['mb', 'ms', 'fb', 'fs']);
     ['fb', 'fs'].forEach(k => { if (n[k] && !res[k]) out.blocked.push({ key: k, reason: 'غير مشارك' }); });
     if (n.pb || n.ps) { if (n.pb) out.blocked.push({ key: 'pb', reason: 'محجوبون بالأخ الشقيق' }); if (n.ps) out.blocked.push({ key: 'ps', reason: 'محجوبات بالأخ الشقيق' }); }
     Ssum = sum();
@@ -767,6 +782,7 @@ function solve(input, mode) {
       const ks = Object.keys(g.m).filter(k => n[k] > 0 && (k !== 'gdaughters' || gdaughters > 0));
       if (!ks.length) continue;
       if (R.gt(ZERO)) {
+        out.pools.push(ks);
         const u = ks.reduce((s, k) => s + g.m[k] * (k === 'gdaughters' ? gdaughters : n[k]), 0);
         ks.forEach(k => give(k, R.mul(g.m[k] * (k === 'gdaughters' ? gdaughters : n[k])).div(u), 'تعصيب', g.why));
         asabaTaken = true;
@@ -777,6 +793,7 @@ function solve(input, mode) {
 
   // ---------- العول أو الباقي (الرد) ----------
   Ssum = sum();
+  snap();
   if (Ssum.gt(ONE)) {
     // عول
     const parts = Object.values(res).map(r => r.share);
@@ -1103,7 +1120,191 @@ function munasakha(p1, m1, deadKey, p2, m2, links) {
   return out;
 }
 
-root.MawarithEngine = { solve, solveTanzil, solveArham, takharuj, solveHaml, solveMafqud, solveKhuntha, munasakha, SPEC, Fr, fr, NAMES, KEYS };
+/* ============ طريقة الجدول: أصل المسألة والسهام والعول والردّ والتصحيح ============ */
+const gcdN = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; };
+const lcmN = (a, b) => (a / gcdN(a, b)) * b;
+const relOf = (a, b) => (a === b ? 'تماثل' : (a % b === 0 || b % a === 0) ? 'تداخل' : gcdN(a, b) > 1 ? 'توافق' : 'تباين');
+
+// نسبة الأعداد المطلوب تضعيفها (تماثل، تداخل، توافق، تباين) للوصول إلى جزء السهم
+function combineFactors(list) {
+  const steps = [];
+  let cur = list.map(x => ({ v: x.v, who: x.who.slice() }));
+  let changed = true;
+  while (changed && cur.length > 1) {
+    changed = false;
+    outer: for (let i = 0; i < cur.length; i++) for (let j = i + 1; j < cur.length; j++) {
+      const a = cur[i], b = cur[j], t = relOf(a.v, b.v);
+      if (t === 'تباين') continue;
+      let nv, txt;
+      if (t === 'تماثل') { nv = a.v; txt = a.v + ' و' + b.v + ' متماثلان، فنكتفي بأحدهما (' + nv + ').'; }
+      else if (t === 'تداخل') { nv = Math.max(a.v, b.v); txt = Math.min(a.v, b.v) + ' داخل في ' + nv + ' (تداخل)، فنكتفي بالأكبر (' + nv + ').'; }
+      else { const g = gcdN(a.v, b.v); nv = lcmN(a.v, b.v); txt = a.v + ' و' + b.v + ' متوافقان بالقاسم المشترك ' + g + '، فنضرب أحدهما في وفق الآخر (' + (a.v / g) + ' × ' + b.v + ') = ' + nv + '.'; }
+      cur.splice(j, 1); cur[i] = { v: nv, who: a.who.concat(b.who) }; steps.push(txt); changed = true; break outer;
+    }
+  }
+  const part = cur.reduce((p, x) => p * x.v, 1);
+  if (cur.length > 1) steps.push('الأعداد ' + cur.map(x => x.v).join(' و') + ' متباينة، فنضرب بعضها في بعض: ' + cur.map(x => x.v).join(' × ') + ' = ' + part + '.');
+  return { part, steps };
+}
+
+function buildTable(r) {
+  if (!r || !r.pre || !r.pre.shares || !r.heirs.length) return null;
+  const P = r.pre, mode = r.mode;
+  P.parts = P.parts || {};
+  const byKey = {}, order = r.heirs.map(h => h.key);
+  r.heirs.forEach(h => { byKey[h.key] = h; });
+  // 1) الفئات: الورثة الذين يقتسمون نصيباً واحداً (رؤوس) يجمعهم صف واحد
+  const used = new Set(), blocks = [];
+  (r.pools || []).forEach(pool => {
+    const ks = pool.filter(k => byKey[k] && !used.has(k));
+    if (ks.length < 2) return;
+    const pers = ks.map(k => byKey[k].per);
+    const mn = pers.reduce((m, x) => (x.lt(m) ? x : m));
+    const ws = pers.map(x => x.div(mn));
+    if (!ws.every(w => w.d === 1n)) return;
+    ks.forEach(k => used.add(k));
+    blocks.push({ keys: ks, w: ws.map(w => Number(w.n)) });
+  });
+  order.forEach(k => { if (!used.has(k)) blocks.push({ keys: [k], w: [1] }); });
+  const pos = b => Math.min(...b.keys.map(k => order.indexOf(k)));
+  blocks.sort((a, b) => pos(a) - pos(b));
+  const fardText = b => {
+    const ov = P.fardText && b.keys.map(k => P.fardText[k]).find(Boolean);
+    if (ov) return ov;
+    const parts = [].concat(...b.keys.map(k => P.parts[k] || []));
+    const f = parts.filter(p => p.kind === 'فرض'), a = parts.filter(p => p.kind === 'تعصيب');
+    if (!parts.length) return b.share.str();
+    if (f.length === parts.length) return b.share.str() + ' فرضاً';
+    if (a.length === parts.length) return 'الباقي تعصيباً';
+    if (f.length && a.length && f.length + a.length === parts.length) return f.reduce((s, p) => s.add(p.share), ZERO).str() + ' فرضاً + الباقي تعصيباً';
+    if (parts.some(p => p.kind === 'تشريك')) return b.share.str() + ' (يشتركون فيه)';
+    return b.share.str() + ' (' + String(parts[0].why).split(' + ')[0] + ')';
+  };
+  blocks.forEach(b => {
+    b.share = b.keys.reduce((s, k) => s.add(P.shares[k]), ZERO);
+    b.members = b.keys.map((k, i) => ({ key: k, label: byKey[k].label, count: byKey[k].count, w: b.w[i] }));
+    b.count = b.members.reduce((s, m) => s + m.count, 0);
+    b.heads = b.members.reduce((s, m) => s + m.w * m.count, 0);
+    b.fard = fardText(b);
+  });
+  const T = { mode, errors: [], steps: [], blocks };
+  const S = T.steps;
+  const say = (title, ...ps) => S.push({ title, ps });
+  const bl = b => b.members.map(m => m.label).join(' و');
+  // 2) أصل المسألة
+  let Lb = 1n; blocks.forEach(b => { Lb = lcmB(Lb, b.share.d); });
+  let asl = Number(Lb);
+  const single = blocks.length === 1 && blocks[0].share.eq(ONE);
+  if (single) asl = Math.max(1, blocks[0].heads);
+  blocks.forEach(b => { b.u0 = single ? b.heads : Number(b.share.n) * (asl / Number(b.share.d)); });
+  const T0 = blocks.reduce((s, b) => s + b.u0, 0);
+  T.asl = asl; T.T0 = T0;
+  const dens = [...new Set(blocks.map(b => Number(b.share.d)).filter(d => d > 1))].sort((a, b) => a - b);
+  if (single) {
+    say('أصل المسألة', 'لا يوجد في هذه المسألة صاحب فرض، والتركة كلها لمن يرثون بالتعصيب (' + bl(blocks[0]) + ').',
+      'فيكون أصل المسألة هو عدد رؤوسهم' + (blocks[0].members.some(m => m.w > 1) ? ' (للذكر رأسان وللأنثى رأس، لأن للذكر مثل حظ الأنثيين)' : '') + ' = ' + asl + '.');
+  } else {
+    say('أصل المسألة', 'نكتب نصيب كل وارث: ' + blocks.map(b => bl(b) + ' ' + b.fard).join('، ') + '.',
+      'مقامات الأنصبة: ' + (dens.length ? dens.join('، ') : '1') + '، وأصغر عدد تنقسم عليه كلها قسمة صحيحة هو ' + asl + '، فأصل المسألة ' + asl + '.');
+  }
+  // 3) السهام
+  say('سهام كل وارث', 'سهم الوارث = نصيبه × أصل المسألة (' + asl + '): ' + blocks.map(b => bl(b) + ' = ' + b.u0).join('، ') + (!single && blocks.some(b => /الباقي/.test(b.fard)) ? '. ويأخذ العاصب ما بقي بعد الفروض' : '') + '.',
+    'مجموع السهام = ' + T0 + (T0 === asl ? '، وهو يساوي أصل المسألة، فالمسألة عادلة ولا عول فيها ولا ردّ.' : T0 > asl ? '، وهو أكبر من أصل المسألة (' + asl + ').' : '، وهو أقل من أصل المسألة (' + asl + ') وينقصه ' + (asl - T0) + ' من السهام.'));
+  // 4) العول أو الردّ أو الباقي
+  let base1 = asl, kind = 'عادلة';
+  blocks.forEach(b => { b.u1 = b.u0; });
+  let restU = Math.max(0, asl - T0), restLabel = null;
+  if (T0 > asl) {
+    kind = 'عائلة'; base1 = T0; restU = 0;
+    T.awl = { from: asl, to: T0 };
+    const canAwl = { 6: '7 و8 و9 و10', 12: '13 و15 و17', 24: '27' };
+    say('العول', 'مجموع السهام (' + T0 + ') أكبر من أصل المسألة (' + asl + ')، فالمسألة عائلة: الفروض تزيد على التركة.',
+      'تعول المسألة فيصير أصلها ' + T0 + '، ويدخل النقص على جميع أصحاب الفروض بنسبة سهامهم، فنصيب كل واحد = سهمه ÷ ' + T0 + ' بدل سهمه ÷ ' + asl + '.',
+      canAwl[asl] ? 'الأصل ' + asl + ' من الأصول التي تعول، وعوله إلى ' + canAwl[asl] + '. وهنا عالت إلى ' + T0 + '.' : 'تنبيه: الأصل ' + asl + ' ليس من الأصول المعروفة بالعول (6 و12 و24)، فراجع إدخال الورثة.');
+    if (r.special.includes('الأكدرية')) S[S.length - 1].ps.push('وهذه هي الأكدرية: تُفرض للأخت النصف، فتعول المسألة من 6 إلى 9، ثم يضمّ الجدّ سهمه إلى سهم الأخت ويقتسمانه للذكر مثل حظ الأنثيين.');
+  } else if (T0 < asl) {
+    const elig = b => b.keys.every(k => !['husband', 'wives', 'father', 'gf'].includes(k) && P.kinds[k] === 'فرض');
+    if (r.radd) {
+      kind = 'ردية'; restU = 0;
+      const R = blocks.filter(elig), Fx = blocks.filter(b => !elig(b));
+      const src = mode === 'C' ? 'المادة 167 من قانون الأسرة الجزائري' : 'فتوى المتأخرين من المالكية';
+      if (!R.length) {
+        base1 = 1; blocks.forEach(b => { b.u1 = 1; });
+        T.radd = { spouseOnly: true };
+        say('الردّ', 'بقي ' + (asl - T0) + ' من السهام (من أصل ' + asl + ') ولا عاصب ولا صاحب فرض نسبي، فيُردّ الباقي على أحد الزوجين (' + src + '، الفقرة الثانية).',
+          'فيأخذ ' + bl(blocks[0]) + ' التركة كلها، وتصير المسألة من 1.');
+      } else {
+        let L2 = 1n; R.forEach(b => { L2 = lcmB(L2, b.share.d); });
+        const l2 = Number(L2), raw = R.map(b => Number(b.share.n) * (l2 / Number(b.share.d)));
+        const g2 = raw.reduce((g, x) => gcdN(g, x), 0) || 1, red = raw.map(x => x / g2), T2 = red.reduce((s, x) => s + x, 0);
+        if (!Fx.length) {
+          base1 = T2; R.forEach((b, i) => { b.u1 = red[i]; });
+          T.radd = { spouse: false, units: red, T2 };
+          say('الردّ', 'مجموع السهام (' + T0 + ') أقل من أصل المسألة (' + asl + ') وبقي ' + (asl - T0) + ' من السهام ولا عاصب، والمسألة هنا ردّية (' + src + ').',
+            'يُردّ الباقي على أصحاب الفروض بنسبة سهامهم، أي نجعل أصل المسألة مجموع سهامهم' + (g2 > 1 ? ' بعد اختصارها بقسمتها على ' + g2 : '') + ': ' + R.map((b, i) => bl(b) + ' ' + red[i]).join('، ') + ' فيكون المجموع ' + T2 + '.',
+            'فتصير المسألة من ' + T2 + ' بدل ' + asl + '.');
+        } else {
+          let L1 = 1n; Fx.forEach(b => { L1 = lcmB(L1, b.share.d); });
+          const b1 = Number(L1), fu = Fx.map(b => Number(b.share.n) * (b1 / Number(b.share.d)));
+          const rr = b1 - fu.reduce((s, x) => s + x, 0), gg = gcdN(rr, T2);
+          let m, relation;
+          if (rr % T2 === 0) { m = 1; relation = 'انقسام'; } else if (gg > 1) { m = T2 / gg; relation = 'توافق'; } else { m = T2; relation = 'تباين'; }
+          base1 = b1 * m;
+          Fx.forEach((b, i) => { b.u1 = fu[i] * m; });
+          R.forEach((b, i) => { b.u1 = red[i] * (rr * m / T2); });
+          T.radd = { spouse: true, base1: b1, fixed: Fx.map((b, i) => ({ label: bl(b), u: fu[i] })), rr, units: red, T2, relation, m, g: gg };
+          say('الردّ (مع وجود ' + Fx.map(bl).join(' و') + ')', 'مجموع السهام (' + T0 + ') أقل من أصل المسألة (' + asl + ') وبقي ' + (asl - T0) + ' من السهام ولا عاصب، فالمسألة ردّية (' + src + ').',
+            'لا يُردّ على الزوجين، فنحلّ مسألتين: المسألة الأولى أصلها ' + b1 + ' بحسب فرض ' + Fx.map(bl).join(' و') + ': ' + Fx.map((b, i) => bl(b) + ' ' + fu[i]).join('، ') + '، والباقي ' + rr + ' من السهام لبقية الورثة.',
+            'المسألة الثانية (مسألة الردّ) من سهام بقية الورثة' + (g2 > 1 ? ' بعد الاختصار' : '') + ': ' + R.map((b, i) => bl(b) + ' ' + red[i]).join('، ') + ' فمجموعها ' + T2 + '.',
+            'نقارن الباقي (' + rr + ') بمجموع سهام الردّ (' + T2 + '): ' + (relation === 'انقسام' ? 'ينقسم الباقي على ' + T2 + ' قسمة صحيحة (انقسام)، فلا نضرب شيئاً وأصل المسألة ' + b1 + '.' : relation === 'توافق' ? 'بينهما توافق بالقاسم ' + gg + '، فنضرب المسألة الأولى في وفق مجموع الردّ (' + T2 + ' ÷ ' + gg + ' = ' + m + ') فتصير ' + b1 + ' × ' + m + ' = ' + base1 + '.' : 'بينهما تباين، فنضرب المسألة الأولى في مجموع سهام الردّ (' + T2 + ') فتصير ' + b1 + ' × ' + T2 + ' = ' + base1 + '.'),
+            'ثم تُضرب سهام ' + Fx.map(bl).join(' و') + ' في ' + m + '، ويقتسم بقية الورثة ' + (rr * m) + ' من السهام بنسبة سهام الردّ (' + red.join(' : ') + ').');
+        }
+      }
+    } else {
+      kind = 'ناقصة'; restLabel = mode === 'A' ? 'بيت المال' : 'الباقي (ذوو الأرحام أو بيت المال)';
+      say('الباقي', 'بقي ' + (asl - T0) + ' من السهام (من أصل ' + asl + ') ولا عاصب في المسألة.',
+        mode === 'A' ? 'أصل المذهب المالكي أنه لا ردّ على أصحاب الفروض ولا توريث لذوي الأرحام، فيؤول الباقي إلى بيت المال.' : 'لا يُردّ هنا على أحد من الورثة المذكورين، فيؤول الباقي إلى ذوي الأرحام (المادة 168) فإن لم يوجدوا فللخزينة العمومية/بيت المال.');
+    }
+  }
+  T.kind = kind; T.base1 = base1; T.restLabel = restLabel;
+  // 5) التصحيح
+  const checks = blocks.map(b => {
+    const u = b.u1, c = b.heads;
+    if (c <= 1 || u % c === 0) return { b, ok: true };
+    const g = gcdN(u, c);
+    return { b, ok: false, u, c, g, relation: g > 1 ? 'توافق' : 'تباين', factor: g > 1 ? c / g : c };
+  });
+  const need = checks.filter(x => !x.ok);
+  let part = 1;
+  if (!need.length) {
+    const mh = blocks.filter(b => b.heads > 1);
+    say('التصحيح', mh.length ? 'نقارن سهام كل فريق بعدد رؤوسه: ' + mh.map(b => bl(b) + ' (السهام ' + b.u1 + '، الرؤوس ' + b.heads + ')').join('، ') + '. كل فريق تنقسم سهامه على رؤوسه قسمة صحيحة، فلا تحتاج المسألة إلى تصحيح وتصحّ من ' + base1 + '.'
+      : 'كل وارث في المسألة فرد واحد، فلا حاجة إلى تصحيح وتصحّ المسألة من ' + base1 + '.');
+  } else {
+    const ps = ['نقارن سهام كل فريق بعدد رؤوسه' + (blocks.some(b => b.members.some(m => m.w > 1)) ? ' (الذكر برأسين والأنثى برأس)' : '') + ':'];
+    need.forEach(x => ps.push(bl(x.b) + ': سهامهم ' + x.u + ' وعدد رؤوسهم ' + x.c + ' فلا تنقسم. العلاقة بين ' + x.u + ' و' + x.c + ' ' + x.relation + (x.relation === 'توافق' ? ' (القاسم المشترك ' + x.g + ')، فنأخذ وفق عدد الرؤوس: ' + x.c + ' ÷ ' + x.g + ' = ' + x.factor : '، فنأخذ عدد الرؤوس كاملاً: ' + x.factor) + '.'));
+    const cf = combineFactors(need.map(x => ({ v: x.factor, who: [bl(x.b)] })));
+    part = cf.part;
+    if (need.length > 1) { ps.push('نقارن الأعداد الناتجة ' + need.map(x => x.factor).join(' و') + ' فيما بينها:'); cf.steps.forEach(t => ps.push(t)); }
+    ps.push('جزء السهم = ' + part + '، فنضرب أصل المسألة' + (T.awl || T.radd ? ' بعد ' + (T.awl ? 'العول' : 'الردّ') : '') + ' (' + base1 + ') في ' + part + ' فتصحّ المسألة من ' + (base1 * part) + '، وتُضرب سهام كل وارث في ' + part + '.');
+    say('التصحيح', ...ps);
+  }
+  T.checks = checks.map(x => ({ label: bl(x.b), ok: x.ok, u: x.b.u1, heads: x.b.heads, relation: x.relation || null, factor: x.factor || null }));
+  T.part = part; T.base2 = base1 * part;
+  blocks.forEach(b => {
+    b.u2 = b.u1 * part;
+    b.members.forEach(m => { m.perU = (b.u2 / b.heads) * m.w; });
+  });
+  T.restU = restU * part;
+  // 6) نصيب كل فرد
+  say('نصيب كل وارث', 'بعد التصحيح تصحّ المسألة من ' + T.base2 + '، وسهام الورثة: ' + blocks.map(b => b.members.length === 1 && b.members[0].count === 1 ? bl(b) + ' ' + b.u2 : b.members.map(m => m.label + (m.count > 1 ? ' (للفرد الواحد ' + m.perU + ')' : ' ' + m.perU)).join('، ')).join('، ') + (T.restU ? '، و' + (restLabel || 'الباقي') + ' ' + T.restU : '') + '.',
+    'ونصيب الوارث من التركة = سهامه ÷ ' + T.base2 + '، أي أن الجدول يوصل إلى الأنصبة نفسها التي في الحساب الكسري.');
+  // تحقق داخلي: كل نصيب من الجدول = نصيب المحرك
+  T.consistent = blocks.every(b => b.members.every(m => fr(m.perU * m.count, T.base2).eq(byKey[m.key].share))) && blocks.reduce((s, b) => s + b.u2, 0) + T.restU === T.base2;
+  return T;
+}
+
+root.MawarithEngine = { buildTable, solve, solveTanzil, solveArham, takharuj, solveHaml, solveMafqud, solveKhuntha, munasakha, SPEC, Fr, fr, NAMES, KEYS };
 if (typeof module !== 'undefined') module.exports = root.MawarithEngine;
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -1223,6 +1424,32 @@ function explain(r,ctx){
   return o+`</div>`;
 }
 
+
+// ---------- طريقة الجدول: أصل المسألة والسهام والعول والردّ والتصحيح ----------
+const AD2=['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+const ar2=n=>String(n).replace(/\d/g,d=>AD2[d]);
+function tableCard(r,tza){
+  let T;try{T=E.buildTable(r)}catch(e){T=null}
+  if(!T||!T.consistent)return '';
+  const mid=!!(T.awl||T.radd), fix=T.part>1, rest=T.restU>0, pp=T.blocks.some(b=>b.count>1);
+  const restL=T.restLabel||(mode==='A'?'بيت المال':'الباقي');
+  const kindTxt={'عادلة':'عادلة: السهام = الأصل','عائلة':'عائلة (عالت من '+T.asl+' إلى '+T.base1+')','ردية':'ردّية'+(T.radd&&T.radd.spouseOnly?' (على أحد الزوجين)':''),'ناقصة':'ناقصة: بقي للباقي بلا ردّ'}[T.kind];
+  let o=`<div class="card"><h2>حلّ المسألة بالجدول</h2><p class="small" style="margin:0 0 6px">أصل المسألة وسهام كل وارث، ثم العول أو الردّ إن وُجد، ثم التصحيح، وكل ذلك قبل الحساب الكسري والمبالغ.</p>`;
+  o+=`<div><span class="chip g">أصل المسألة: ${T.asl}</span><span class="chip">${kindTxt}</span>${fix?`<span class="chip">تصحّ من ${T.base2} (جزء السهم ${T.part})</span>`:`<span class="chip">تصحّ من ${T.base2}</span>`}</div>`;
+  if(tza)o+=`<p class="small">ملاحظة: الجدول يقسم ما يبقى من التركة بعد التنزيل على الورثة الموجودين.</p>`;
+  o+=`<div class="tbl" style="margin-top:10px"><table><tr><th>الوارث</th><th>العدد</th><th>النصيب</th><th>السهام من ${T.asl}</th>${mid?`<th>بعد ${T.awl?'العول':'الردّ'} من ${T.base1}</th>`:''}${fix?`<th>بعد التصحيح من ${T.base2}</th>`:''}${pp?'<th>سهم الفرد</th>':''}</tr>`;
+  T.blocks.forEach(b=>{
+    const one=b.members.length===1;
+    const per=b.members.map(m=>(one?'':m.label+': ')+m.perU).join(' ، ');
+    o+=`<tr><td class="who"><b>${b.members.map(m=>m.label).join(' + ')}</b></td><td class="num">${b.members.map(m=>m.count).join(' + ')}</td><td class="small">${esc(b.fard)}</td><td class="num">${b.u0}</td>${mid?`<td class="num">${b.u1}</td>`:''}${fix?`<td class="num">${b.u2}</td>`:''}${pp?`<td class="num">${b.count===1&&one?'—':per}</td>`:''}</tr>`;
+  });
+  if(rest)o+=`<tr><td class="who"><b>${restL}</b></td><td class="num">—</td><td class="small">الباقي</td><td class="num">${T.restU/T.part}</td>${mid?`<td class="num">${T.restU/T.part}</td>`:''}${fix?`<td class="num">${T.restU}</td>`:''}${pp?'<td class="num">—</td>':''}</tr>`;
+  const t0=T.blocks.reduce((s,b)=>s+b.u0,0)+(rest?T.restU/T.part:0);
+  o+=`<tr><th>المجموع</th><th></th><th></th><th class="num">${t0}</th>${mid?`<th class="num">${T.base1}</th>`:''}${fix?`<th class="num">${T.base2}</th>`:''}${pp?'<th></th>':''}</tr></table></div>`;
+  o+=`<details class="edu-d" open style="margin-top:12px"><summary>خطوات الحل بالتفصيل</summary><div class="edu">${T.steps.map((st,i)=>`<h4>${ar2(i+1)}. ${esc(st.title)}</h4>${st.ps.map(p=>`<p>${esc(p)}</p>`).join('')}`).join('')}</div></details></div>`;
+  return o;
+}
+
 // ---------- الحساب ----------
 function run(ev){
   const input={};E.KEYS.forEach(k=>input[k]=val[k]);
@@ -1257,6 +1484,7 @@ function run(ev){
   if(r.errors.length&&!r.heirs.length){o+=`<div class="err">${r.errors.join('<br>')}</div>`;$('#out').innerHTML=o;last=null;return}
   last={r,net,mode,fac:tza?tza.factor:null};
   const fac=tza?tza.factor:null;
+  o+=tableCard(r,tza);
   o+=`<div class="card"><h2>النتيجة</h2>`;
   const chips=r.special.map(s=>`<span class="chip">${s}</span>`).join('')+(tza?'<span class="chip">التنزيل</span>':'');
   if(chips)o+=`<div>${chips}</div>`;
