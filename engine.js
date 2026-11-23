@@ -803,7 +803,8 @@ function buildTable(r) {
     ps.push('جزء السهم = ' + part + '، فنضرب أصل المسألة' + (T.awl || T.radd ? ' بعد ' + (T.awl ? 'العول' : 'الردّ') : '') + ' (' + base1 + ') في ' + part + ' فتصحّ المسألة من ' + (base1 * part) + '، وتُضرب سهام كل وارث في ' + part + '.');
     say('التصحيح', ...ps);
   }
-  T.checks = checks.map(x => ({ label: bl(x.b), ok: x.ok, u: x.b.u1, heads: x.b.heads, relation: x.relation || null, factor: x.factor || null }));
+  T.checks = checks.map(x => ({ label: bl(x.b), ok: x.ok, u: x.b.u1, heads: x.b.heads, relation: x.ok ? (x.b.heads > 1 ? 'انقسام' : null) : x.relation, g: x.ok ? null : x.g, factor: x.factor || null }));
+  T.cfSteps = need.length > 1 ? combineFactors(need.map(x => ({ v: x.factor, who: [bl(x.b)] }))).steps : [];
   T.part = part; T.base2 = base1 * part;
   blocks.forEach(b => {
     b.u2 = b.u1 * part;
